@@ -14,5 +14,16 @@ namespace Decorator
 
 		public string Type { get; }
 		public object[] Args { get; }
-    }
+
+		public override string ToString() {
+			var strb = new StringBuilder();
+
+			strb.AppendLine($"Type: {this.Type ?? "null"}");
+
+			for (int i = 0; i < this.Args.Length; i++)
+				strb.AppendLine($"\t[{i}] {this.Args[i].GetType()}: {this.Args[i]}");
+
+			return strb.ToString();
+		}
+	}
 }

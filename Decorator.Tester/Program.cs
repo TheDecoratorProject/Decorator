@@ -27,6 +27,19 @@ namespace Decorator.Tester {
 
 	class Program {
 		static void Main(string[] args) {
+			var ping = new Ping {
+				Pong = 1337
+			};
+
+			var msg = Serializer.Serialize(ping);
+
+			Console.WriteLine(msg);
+
+			Get<Ping>(msg.Type, msg.Args);
+
+			Deserializer.DeserializeToEvent<Program>(new Program(), msg);
+
+			/*
 			Get<Ping>("ping", 1234);
 			Get<PingWithMessage>("ping", 1234, "k");
 
@@ -34,6 +47,7 @@ namespace Decorator.Tester {
 
 			Deserializer.DeserializeToEvent<Program>(new Program(), new Message("ping", 1234));
 			Deserializer.DeserializeToEvent<Program>(new Program(), new Message("ping", 1234, "k"));
+			*/
 
 			Console.ReadLine();
 		}
