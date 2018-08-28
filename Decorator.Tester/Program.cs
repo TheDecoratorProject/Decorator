@@ -28,30 +28,24 @@ namespace Decorator.Tester {
 	class Program {
 		static void Main(string[] args) {
 			Get<Ping>("ping", 1234);
-			Get<PingWithMessage>("ping", 1234);
 			Get<PingWithMessage>("ping", 1234, "k");
-			Get<Ping>("ping", 1234);
-			Get<Ping>("ping", "ee");
-			Get<Ping>("pong", 4567);
-			Get<Ping>("ping", null);
-			Get<Ping>(null, 123);
-			Get<Ping>(null, null);
 
-			Get<PingWithMessage>("ping", 1234, "k");
-			Get<PingWithMessage>("ping", "ee", "k");
-			Get<PingWithMessage>("pong", 4567, "k");
-			Get<PingWithMessage>("ping", null, "k");
-			Get<PingWithMessage>(null, 123, "k");
-			Get<PingWithMessage>(null, null, null);
+			Get<Ping>("pig");
 
-			Get<PingWithMessage>("ping", 1234);
-			Get<PingWithMessage>("ping", "ee");
-			Get<PingWithMessage>("pong", 4567);
-			Get<PingWithMessage>("ping", null);
-			Get<PingWithMessage>(null, 123);
-			Get<PingWithMessage>(null, null);
+			Deserializer.DeserializeToEvent<Program>(new Program(), new Message("ping", 1234));
+			Deserializer.DeserializeToEvent<Program>(new Program(), new Message("ping", 1234, "k"));
 
 			Console.ReadLine();
+		}
+
+		[DeserializedHandler]
+		public void OnGetPing(Ping p) {
+			Console.WriteLine($"Ping! {p}");
+		}
+
+		[DeserializedHandler]
+		public void OnGetPWM(PingWithMessage p) {
+			Console.WriteLine($"PingWithmessage! {p}");
 		}
 
 		static T Get<T>(string type, params object[] args) {
