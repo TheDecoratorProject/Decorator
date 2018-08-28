@@ -6,6 +6,7 @@ namespace Decorator.Tester {
 	public class Ping {
 
 		[Position(0)]
+		[Required]
 		public int Pong { get; set; }
 
 		public override string ToString()
@@ -13,12 +14,25 @@ namespace Decorator.Tester {
 	}
 
 	[Message("ping")]
+	public class Ping2 {
+
+		[Position(0)]
+		[Required]
+		public int Pong2 { get; set; }
+
+		public override string ToString()
+			=> $"[{nameof(Ping2)}] {this.Pong2}";
+	}
+
+	[Message("ping")]
 	public class PingWithMessage {
 
 		[Position(0)]
+		[Required]
 		public int Pong { get; set; }
 
 		[Position(1)]
+		[Required]
 		public string Message { get; set; }
 
 		public override string ToString()
@@ -31,12 +45,24 @@ namespace Decorator.Tester {
 				Pong = 1337
 			};
 
+			var pingwm = new PingWithMessage {
+				Pong = 1337,
+				Message = "testing"
+			};
+
 			var msg = Serializer.Serialize(ping);
+			var msg2 = Serializer.Serialize(pingwm);
 
 			Console.WriteLine(msg);
+			Console.WriteLine(msg2);
 
 			Get<Ping>(msg.Type, msg.Args);
+			Get<PingWithMessage>(msg2.Type, msg2.Args);
+			
+			Deserializer.DeserializeToEvent<Program>(null, msg);
 
+			Deserializer.DeserializeToEvent<Program>(new Program(), msg2);
+			Deserializer.DeserializeToEvent<Program>(null, msg2);
 			Deserializer.DeserializeToEvent<Program>(new Program(), msg);
 
 			/*
@@ -53,8 +79,23 @@ namespace Decorator.Tester {
 		}
 
 		[DeserializedHandler]
+		public static void OnGetPingStatic(Ping p) {
+			Console.WriteLine($"Static Ping! {p}");
+		}
+
+		[DeserializedHandler]
 		public void OnGetPing(Ping p) {
 			Console.WriteLine($"Ping! {p}");
+		}
+
+		[DeserializedHandler]
+		public void OnGetPing(Ping2 p) {
+			Console.WriteLine($"Ping! {p}");
+		}
+
+		[DeserializedHandler]
+		public static void OnGetPWMStatic(PingWithMessage p) {
+			Console.WriteLine($"Static PingWithmessage! {p}");
 		}
 
 		[DeserializedHandler]

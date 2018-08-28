@@ -1,19 +1,19 @@
 ﻿using Decorator.Attributes;
-using System;
+
 using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
-namespace Decorator
-{
+namespace Decorator {
+
 	public static class Serializer {
+
 		public static Message Serialize<T>(T item) {
 			var msgAttrib = (MessageAttribute)typeof(T).GetCustomAttribute(typeof(MessageAttribute));
 			if (msgAttrib == default(MessageAttribute)) throw new CustomAttributeFormatException($"The type {typeof(T)} doesn't have a [{nameof(MessageAttribute)}] attribute modifier defined on it.");
 
 			var items = new Dictionary<int, object>();
 
-			foreach(var i in typeof(T).GetProperties()) {
+			foreach (var i in typeof(T).GetProperties()) {
 				var posAttrib = (PositionAttribute)i.GetCustomAttribute(typeof(PositionAttribute), true);
 
 				if (posAttrib != default(PositionAttribute)) {

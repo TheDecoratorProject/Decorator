@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-
-namespace Decorator
-{
+﻿namespace Decorator {
 	// FOR REFERENCE ONLY
 	// copying code from this is an awful idea
 
@@ -51,7 +45,7 @@ namespace Decorator
 		void WriteObject(object obj, int index);
 		void WriteType(string type);
 	}
-	
+
 	public static class Parser {
 		public static bool WriteMessage(object message, IMessageWriter writeTo) {
 			if (writeTo == null) throw new ArgumentNullException(nameof(writeTo));
@@ -70,7 +64,6 @@ namespace Decorator
 
 					if (mpa != default(MessagePlaceAttribute) &&
 						mpa != null) {
-						
 					}
 				}
 			}
@@ -86,7 +79,6 @@ namespace Decorator
 
 				if (mpa != default(MessagePlaceAttribute) &&
 					mpa != null) {
-
 					if(mpa.Location > maxPlace) {
 						maxPlace = mpa.Location;
 					}
@@ -104,7 +96,6 @@ namespace Decorator
 			foreach (var k in GetDependentAssemblies(typeof(Parser).Assembly))
 				foreach (var i in k.GetTypes())
 					if (GetAttributeOf<MessageAttribute>(i) != null) {
-
 						result = Activator.CreateInstance(i);
 
 						var args = new object[] { msg, null };
@@ -128,23 +119,21 @@ namespace Decorator
 			result = default(T);
 
 			if (msg == null) throw new ArgumentNullException(nameof(msg));
-			
+
 			var msgAttrib = GetAttributeOf<MessageAttribute>(typeof(T));
 
 			if (msgAttrib != null &&
 				msgAttrib.Type == msg.GetMessageType() &&
 				msgAttrib != default(MessageAttribute)) {
-
 				var msgPlaces = 0;
 
 				result = (T)Activator.CreateInstance(typeof(T));
 
 				foreach (var i in typeof(T).GetProperties()) {
 					var mpa = GetAttributeOf<MessagePlaceAttribute>(i);
-					
+
 					if (mpa != default(MessagePlaceAttribute) &&
 						mpa != null) {
-
 						msgPlaces++;
 
 						if (msg.GetItemCount() > mpa.Location) {
@@ -152,7 +141,7 @@ namespace Decorator
 						} else return false;
 					}
 				}
-				
+
 				return msgPlaces == msg.GetItemCount();
 			}
 
@@ -188,5 +177,4 @@ namespace Decorator
 				.Select(assemblyName => assemblyName.FullName);
 		}
 	}*/
-	
 }
