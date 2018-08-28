@@ -1,7 +1,79 @@
 ﻿using System;
+using Decorator.Attributes;
 
-namespace Decorator.Tester
-{
+namespace Decorator.Tester {
+	[Message("ping")]
+	public class Ping {
+
+		[Position(0)]
+		public int Pong { get; set; }
+
+		public override string ToString()
+			=> $"[{nameof(Ping)}] {this.Pong}";
+	}
+
+	[Message("ping")]
+	public class PingWithMessage {
+
+		[Position(0)]
+		public int Pong { get; set; }
+
+		[Position(1)]
+		public string Message { get; set; }
+
+		public override string ToString()
+			=> $"[{nameof(PingWithMessage)}] {this.Pong}: {this.Message}";
+	}
+
+	class Program {
+		static void Main(string[] args) {
+			Get<Ping>("ping", 1234);
+			Get<PingWithMessage>("ping", 1234);
+			Get<PingWithMessage>("ping", 1234, "k");
+			Get<Ping>("ping", 1234);
+			Get<Ping>("ping", "ee");
+			Get<Ping>("pong", 4567);
+			Get<Ping>("ping", null);
+			Get<Ping>(null, 123);
+			Get<Ping>(null, null);
+
+			Get<PingWithMessage>("ping", 1234, "k");
+			Get<PingWithMessage>("ping", "ee", "k");
+			Get<PingWithMessage>("pong", 4567, "k");
+			Get<PingWithMessage>("ping", null, "k");
+			Get<PingWithMessage>(null, 123, "k");
+			Get<PingWithMessage>(null, null, null);
+
+			Get<PingWithMessage>("ping", 1234);
+			Get<PingWithMessage>("ping", "ee");
+			Get<PingWithMessage>("pong", 4567);
+			Get<PingWithMessage>("ping", null);
+			Get<PingWithMessage>(null, 123);
+			Get<PingWithMessage>(null, null);
+
+			Console.ReadLine();
+		}
+
+		static T Get<T>(string type, params object[] args) {
+			var msg = new Message(type, args);
+
+			Console.WriteLine();
+
+			try {
+				var res = Deserializer.Deserialize<T>(msg);
+				if (res == null) Console.WriteLine("null");
+				else Console.WriteLine(res.ToString());
+				return res;
+			} catch (Exception ex) {
+				Console.WriteLine($"{ex.Message} {ex.StackTrace}");
+				return default(T);
+			}
+		}
+	}
+
+	// FOR REFERENCE ONLY
+
+	/*
 	public class DemoMessage {
 		public string Type { get; set; }
 
@@ -82,5 +154,5 @@ namespace Decorator.Tester
 			} else Console.WriteLine($"Couldn't des. {ini2t == null} {init == null}");
 			Console.ReadLine();
         }
-    }
+    }*/
 }

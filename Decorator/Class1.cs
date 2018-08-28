@@ -5,6 +5,10 @@ using System.Reflection;
 
 namespace Decorator
 {
+	// FOR REFERENCE ONLY
+	// copying code from this is an awful idea
+
+	/*
 	public sealed class MessageAttribute : Attribute {
 		public MessageAttribute(string name) {
 			this.Type = name;
@@ -183,6 +187,6 @@ namespace Decorator
 			return assembly.GetReferencedAssemblies()
 				.Select(assemblyName => assemblyName.FullName);
 		}
-	}
+	}*/
 	
 }
