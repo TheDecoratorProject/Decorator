@@ -42,7 +42,7 @@ namespace Decorator.Tester {
 	class Program {
 		static void Main(string[] args) {
 			var ping = new Ping {
-				Pong = 1337
+				Pong = 55
 			};
 
 			var pingwm = new PingWithMessage {
@@ -56,14 +56,18 @@ namespace Decorator.Tester {
 			Console.WriteLine(msg);
 			Console.WriteLine(msg2);
 
+			msg = new Message("ping", "eight");
+
 			Get<Ping>(msg.Type, msg.Args);
 			Get<PingWithMessage>(msg2.Type, msg2.Args);
 			
 			Deserializer.DeserializeToEvent<Program>(null, msg);
 
 			Deserializer.DeserializeToEvent<Program>(new Program(), msg2);
+
 			Deserializer.DeserializeToEvent<Program>(null, msg2);
-			Deserializer.DeserializeToEvent<Program>(new Program(), msg);
+
+			//Deserializer.DeserializeToEvent<Program>(new Program(), msg);
 
 			/*
 			Get<Ping>("ping", 1234);

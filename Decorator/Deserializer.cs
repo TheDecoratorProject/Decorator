@@ -98,11 +98,15 @@ namespace Decorator {
 			var t = typeof(T);
 			var item = (T)Activator.CreateInstance(t);
 
-			if (msg == null) throw new ArgumentNullException("Message is null.");
+			if (msg == null) throw new ArgumentNullException(nameof(msg), "Message is null.");
 
+			//TODO: wrap this in it's own function
 			var msgAttrib = (MessageAttribute)t.GetCustomAttribute(typeof(MessageAttribute), true);
 			if (msgAttrib == default(MessageAttribute)) throw new CustomAttributeFormatException($"The type {t} doesn't have a [{nameof(MessageAttribute)}] attribute modifier defined on it.");
 			if (msgAttrib.Type != msg.Type) throw new ArgumentException($"The message types don't match.");
+
+			var limiter = (ArgumentLimitAttribute)t.GetCustomAttribute(typeof(ArgumentLimitAttribute), true);
+			if (limiter != default(ArgumentLimitAttribute)) if (msg.Args.Length > limiter.ArgLimit) throw new MessageException($"Too many arguments specified");
 
 			var matchAmount = 0;
 
@@ -120,6 +124,8 @@ namespace Decorator {
 					}
 
 					if (setPropValue) {
+						if (i.PropertyType != msg.Args[posAttrib.Position].GetType())
+							throw new MessageException($"The property type of {i.Name} doesn't match the property type of the argument at {posAttrib.Position} ({msg.Args[posAttrib.Position].GetType()})");
 						matchAmount++;
 						i.SetValue(item, msg.Args[posAttrib.Position]);
 					}
