@@ -1,6 +1,16 @@
 ﻿using System;
 using Decorator.Attributes;
 
+// ROADMAP:
+// - add an attribute to specify the amount of "favor
+//   points" a class gets by default
+//
+// - Optional & Required attributes worth different points
+//
+// - add [Deserializable] attribute to classes and
+//   let the classes implement a method to deserialize
+//   an int, uint, or more.
+
 namespace Decorator.Tester {
 	[Message("ping")]
 	public class Ping {
