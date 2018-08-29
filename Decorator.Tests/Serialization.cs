@@ -16,22 +16,22 @@ namespace Decorator.Tests
 			test.AssertArgs(msg.Args);
 		}
 
-		[Fact(DisplayName = "Type:      Null      Value:\tNon-Null")]
+		[Fact(DisplayName = "Type:      Null      Value:    Non-Null")]
 		public void _1() {
 			TestTestable(NullType.GetInstance(1234));
 		}
 
-		[Fact(DisplayName = "Type:      Null      Value:\tNull")]
+		[Fact(DisplayName = "Type:      Null      Value:    Null")]
 		public void _2() {
 			TestTestable(NullType.GetInstance(null));
 		}
 
-		[Fact(DisplayName = "Type:      Non-Null  Value:\tNull")]
+		[Fact(DisplayName = "Type:      Non-Null  Value:    Null")]
 		public void _3() {
 			TestTestable(NonNullType.GetInstance(null));
 		}
 
-		[Fact(DisplayName = "Type:      Non-Null  Value:\tNon-Null")]
+		[Fact(DisplayName = "Type:      Non-Null  Value:    Non-Null")]
 		public void _4() {
 			TestTestable(NonNullType.GetInstance("lorem ipsum"));
 		}

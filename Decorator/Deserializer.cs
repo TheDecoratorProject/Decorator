@@ -144,7 +144,8 @@ namespace Decorator {
 
 						// can't determine type, so we'll just have to try set it to null and see if it fails.
 						if (msg.Args[posAttrib.Position] != null)
-							if (i.PropertyType != msg.Args[posAttrib.Position].GetType())
+							if (i.PropertyType != msg.Args[posAttrib.Position].GetType() &&
+								!i.PropertyType.IsInstanceOfType(msg.Args[posAttrib.Position].GetType()))
 								throw new MessageException($"The property type of {i.Name} doesn't match the property type of the argument at {posAttrib.Position} ({msg.Args[posAttrib.Position].GetType()})");
 						
 						matchAmount++;
