@@ -1,5 +1,6 @@
 ﻿using System;
 using Decorator.Attributes;
+using Decorator.Tester.MessageTypes;
 
 // ROADMAP:
 // - add an attribute to specify the amount of "favor
@@ -12,125 +13,31 @@ using Decorator.Attributes;
 //   an int, uint, or more.
 
 namespace Decorator.Tester {
-	[Message("ping")]
-	public class Ping {
-
-		[Position(0)]
-		[Required]
-		public int Pong { get; set; }
-
-		public override string ToString()
-			=> $"[{nameof(Ping)}] {this.Pong}";
-	}
-
-	[Message("ping")]
-	public class Ping2 {
-
-		[Position(0)]
-		[Required]
-		public int Pong2 { get; set; }
-
-		public override string ToString()
-			=> $"[{nameof(Ping2)}] {this.Pong2}";
-	}
-
-	[Message("ping")]
-	public class PingWithMessage {
-
-		[Position(0)]
-		[Required]
-		public int Pong { get; set; }
-
-		[Position(1)]
-		[Required]
-		public string Message { get; set; }
-
-		public override string ToString()
-			=> $"[{nameof(PingWithMessage)}] {this.Pong}: {this.Message}";
-	}
-
 	class Program {
 		static void Main(string[] args) {
-			var ping = new Ping {
-				Pong = 55
-			};
 
-			var pingwm = new PingWithMessage {
-				Pong = 1337,
-				Message = "testing"
-			};
+			var client1 = new Client();
+			var client2 = new Client();
+			var client3 = new Client();
+			var server = new Server();
 
-			var msg = Serializer.Serialize(ping);
-			var msg2 = Serializer.Serialize(pingwm);
+			client1.Join(server);
+			client2.Join(server);
+			client3.Join(server);
 
-			Console.WriteLine(msg);
-			Console.WriteLine(msg2);
-
-			msg = new Message("ping", "eight");
-
-			Get<Ping>(msg.Type, msg.Args);
-			Get<PingWithMessage>(msg2.Type, msg2.Args);
+			client1.SendChat("Hello, World!");
+			client2.SendChat("Hey, nice to meet you too!");
 			
-			Deserializer.DeserializeToEvent<Program>(null, msg);
+			client3.SendChat("Bye guys!");
+			client3.Disconnect();
 
-			Deserializer.DeserializeToEvent<Program>(new Program(), msg2);
+			client2.SendChat("Cya!");
+			client2.Disconnect();
 
-			Deserializer.DeserializeToEvent<Program>(null, msg2);
+			client1.SendChat("Darn, I got chores to do anyways.");
+			client1.Disconnect();
 
-			//Deserializer.DeserializeToEvent<Program>(new Program(), msg);
-
-			/*
-			Get<Ping>("ping", 1234);
-			Get<PingWithMessage>("ping", 1234, "k");
-
-			Get<Ping>("pig");
-
-			Deserializer.DeserializeToEvent<Program>(new Program(), new Message("ping", 1234));
-			Deserializer.DeserializeToEvent<Program>(new Program(), new Message("ping", 1234, "k"));
-			*/
-
-			Console.ReadLine();
-		}
-
-		[DeserializedHandler]
-		public static void OnGetPingStatic(Ping p) {
-			Console.WriteLine($"Static Ping! {p}");
-		}
-
-		[DeserializedHandler]
-		public void OnGetPing(Ping p) {
-			Console.WriteLine($"Ping! {p}");
-		}
-
-		[DeserializedHandler]
-		public void OnGetPing(Ping2 p) {
-			Console.WriteLine($"Ping! {p}");
-		}
-
-		[DeserializedHandler]
-		public static void OnGetPWMStatic(PingWithMessage p) {
-			Console.WriteLine($"Static PingWithmessage! {p}");
-		}
-
-		[DeserializedHandler]
-		public void OnGetPWM(PingWithMessage p) {
-			Console.WriteLine($"PingWithmessage! {p}");
-		}
-
-		static T Get<T>(string type, params object[] args) {
-			var msg = new Message(type, args);
-
-			Console.WriteLine();
-
-			try {
-				var res = Deserializer.Deserialize<T>(msg);
-				if (res == null) Console.WriteLine("null");
-				else Console.WriteLine(res.ToString());
-				return res;
-			} catch (Exception ex) {
-				Console.WriteLine($"{ex.Message} {ex.StackTrace}");
-				return default(T);
-			}
+			System.Threading.Thread.Sleep(1000);
 		}
 	}
 }

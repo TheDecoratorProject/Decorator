@@ -1,5 +1,5 @@
 ﻿using System.Text;
-
+//test
 namespace Decorator {
 
 	/// <summary>The message class that is used for all serialization/deserialization transfers</summary>

@@ -12,9 +12,10 @@ namespace Decorator.Attributes {
 
 		public bool CheckRequirements<T>(PropertyInfo propInfo, Message msg, T item, PositionAttribute pos) {
 			return
-				msg == null ||
-				msg.Args == null ||
-				msg.Args.Length <= pos.Position;
+				msg == null &&
+				msg.Args == null &&
+				msg.Args.Length <= pos.Position &&
+				msg.Args[pos.Position] != null;
 		}
 	}
 }

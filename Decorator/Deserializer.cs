@@ -8,11 +8,11 @@ namespace Decorator {
 
 	public static class Deserializer {
 
-		public static void DeserializeToEvent<T>(T eventClass, Message msg)
+		public static void DeserializeToEvent<T>(T eventClass, Message msg, params object[] additionalInfo)
 			where T : class {
 			// if eventClass is null, it's a probably a static method.
 
-			var matches = new List<(IMatchClass, Type, MethodInfo)>(8);
+			var matches = new List<MatchResult>(8);
 
 			foreach (var i in typeof(T).GetMethods()) {
 				// make sure that if it's a static method, we're being passed null
@@ -23,31 +23,31 @@ namespace Decorator {
 
 					if (dhAttrib != default(DeserializedHandlerAttribute)) {
 						var args = i.GetParameters();
-						if (args.Length != 1) throw new CustomAttributeFormatException($"Any method with the {nameof(DeserializedHandlerAttribute)} Attribute must have one parameter.");
+						if (args?.Length == 1 + additionalInfo?.Length) {
 
-						var type = args[0].ParameterType;
+							var type = args[0].ParameterType;
 
-						if (TryDeserializeGenerically(msg, type, out var genRes)) {
-							var res = (IMatchClass)genRes;
+							if (TryDeserializeGenerically(msg, type, out var genRes)) {
+								var res = (IMatchClass)genRes;
 
-							matches.Add((res, type, i));
-						}
+								matches.Add(new MatchResult(res, type, i));
+							}
+						} // else throw new CustomAttributeFormatException($"Any method with the {nameof(DeserializedHandlerAttribute)} Attribute must have the right amount of parameters.");
 					}
 				}
 			}
 
 			if (matches.Count > 0) {
-				//TODO: don't use a tuple
-				(IMatchClass, Type, MethodInfo) winner = default;
+				//TODO: make sure that the parameters match the additionalInfo
+				MatchResult winner = default;
 				bool duplicate = false;
 				foreach (var i in matches) {
-					if (winner == default) {
+					if (winner == default(MatchResult)) {
+						winner = i;
+					} else if (i.MatchClass.MatchAmount > winner.MatchClass.MatchAmount) {
 						duplicate = false;
 						winner = i;
-					} else if (i.Item1.MatchAmount > winner.Item1.MatchAmount) {
-						duplicate = false;
-						winner = i;
-					} else if (i.Item1.MatchAmount == winner.Item1.MatchAmount) {
+					} else if (i.MatchClass.MatchAmount == winner.MatchClass.MatchAmount) {
 						duplicate = true;
 					}
 				}
@@ -55,8 +55,24 @@ namespace Decorator {
 				if(duplicate)
 					throw new AmbiguousMatchException($"More then one canidates were found during deserialization.");
 
-				winner.Item3.Invoke(eventClass, new object[] { Convert.ChangeType(winner.Item1.InnerClass, winner.Item2) });
+				object[] invokeEvents;
+				
+				if(additionalInfo != null) {
+					invokeEvents = new object[additionalInfo.Length + 1];
+
+					for(int i = 0; i < additionalInfo.Length; i++)
+						invokeEvents[i + 1] = additionalInfo[i];
+				} else invokeEvents = new object[1];
+
+				invokeEvents[0] = Convert.ChangeType(winner.MatchClass.InnerClass, winner.Type);
+
+				winner.MethodInfo.Invoke(eventClass, invokeEvents);
 				return;
+			} else {
+				var help = "";
+				if (eventClass == default(T))
+					help = "If you intended to target a public method, ensure that the target is not null.";
+				throw new NotSupportedException($"Unable to find a viable method. {help}");
 			}
 		}
 
@@ -81,6 +97,7 @@ namespace Decorator {
 				result = InternalDeserialize<T>(msg);
 				return true;
 			} catch (Exception ex) when (
+				ex is ArgumentException ||
 				ex is ArgumentNullException ||
 				ex is CustomAttributeFormatException ||
 				ex is NullReferenceException ||
@@ -124,24 +141,16 @@ namespace Decorator {
 					}
 
 					if (setPropValue) {
-						if (i.PropertyType != msg.Args[posAttrib.Position].GetType())
-							throw new MessageException($"The property type of {i.Name} doesn't match the property type of the argument at {posAttrib.Position} ({msg.Args[posAttrib.Position].GetType()})");
+
+						// can't determine type, so we'll just have to try set it to null and see if it fails.
+						if (msg.Args[posAttrib.Position] != null)
+							if (i.PropertyType != msg.Args[posAttrib.Position].GetType())
+								throw new MessageException($"The property type of {i.Name} doesn't match the property type of the argument at {posAttrib.Position} ({msg.Args[posAttrib.Position].GetType()})");
+						
 						matchAmount++;
 						i.SetValue(item, msg.Args[posAttrib.Position]);
 					}
 				}
-
-				/*
-				var posAttrib = (PositionAttribute)i.GetCustomAttribute(typeof(PositionAttribute), true);
-
-				if (posAttrib != default(PositionAttribute)) {
-					if (msg.Args == null) throw new NullReferenceException($"Detected a position attribute, but the message arguments are null.");
-					if (msg.Args.Length <= posAttrib.Position) throw new MessageException($"There aren't enough args in the message to match the position attribute.");
-					if (i.PropertyType != msg.Args[posAttrib.Position].GetType()) throw new MessageException($"The message type in the args isn't equal to the property's value.");
-
-					attribsSet++;
-					i.SetValue(item, msg.Args[posAttrib.Position]);
-				}*/
 			}
 
 			return new MatchClass<T>(item, matchAmount);
