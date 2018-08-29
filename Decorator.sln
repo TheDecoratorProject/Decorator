@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Decorator", "Decorator\Decorator.csproj", "{FC2D1A2B-308A-4A04-8E34-0A6C9645117A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decorator", "Decorator\Decorator.csproj", "{FC2D1A2B-308A-4A04-8E34-0A6C9645117A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Decorator.Tester", "Decorator.Tester\Decorator.Tester.csproj", "{AB74D9DB-3566-43D7-AA58-F2FE3EAA7850}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decorator.Tester", "Decorator.Tester\Decorator.Tester.csproj", "{AB74D9DB-3566-43D7-AA58-F2FE3EAA7850}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Decorator.Tests", "Decorator.Tests\Decorator.Tests.csproj", "{DB1C0136-5156-48A1-B402-BCA3E90C59F0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{AB74D9DB-3566-43D7-AA58-F2FE3EAA7850}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB74D9DB-3566-43D7-AA58-F2FE3EAA7850}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB74D9DB-3566-43D7-AA58-F2FE3EAA7850}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB1C0136-5156-48A1-B402-BCA3E90C59F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB1C0136-5156-48A1-B402-BCA3E90C59F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB1C0136-5156-48A1-B402-BCA3E90C59F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB1C0136-5156-48A1-B402-BCA3E90C59F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

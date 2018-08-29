@@ -1,5 +1,5 @@
 ﻿using Decorator.Attributes;
-
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -8,12 +8,18 @@ namespace Decorator {
 	public static class Serializer {
 
 		public static Message Serialize<T>(T item) {
-			var msgAttrib = (MessageAttribute)typeof(T).GetCustomAttribute(typeof(MessageAttribute));
-			if (msgAttrib == default(MessageAttribute)) throw new CustomAttributeFormatException($"The type {typeof(T)} doesn't have a [{nameof(MessageAttribute)}] attribute modifier defined on it.");
+			Type t;
+
+			if (EqualityComparer<T>.Default.Equals(item, default))
+				t = typeof(T);
+			else t = item.GetType();
+
+			var msgAttrib = (MessageAttribute)t.GetCustomAttribute(typeof(MessageAttribute), true);
+			if (msgAttrib == default(MessageAttribute)) throw new CustomAttributeFormatException($"The type {t} doesn't have a [{nameof(MessageAttribute)}] attribute modifier defined on it.");
 
 			var items = new Dictionary<int, object>();
 
-			foreach (var i in typeof(T).GetProperties()) {
+			foreach (var i in t.GetProperties()) {
 				var posAttrib = (PositionAttribute)i.GetCustomAttribute(typeof(PositionAttribute), true);
 
 				if (posAttrib != default(PositionAttribute)) {
