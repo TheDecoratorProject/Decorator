@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Decorator.Tester {
 
 	public class Server {
-		private uint _counter { get; set; } = 0;
+		private uint _counter { get; set; }
 		private Dictionary<uint, Client> _clients { get; set; } = new Dictionary<uint, Client>();
 
 		public void Join(Client cli) {
@@ -18,10 +18,9 @@ namespace Decorator.Tester {
 
 			this._clients[this._counter] = cli;
 
-			foreach (var i in this._clients) {
+			foreach (var i in this._clients)
 				if (i.Key != this._counter)
 					Deserializer.DeserializeToEvent<Client>(i.Value, msg);
-			}
 
 			var initMsg = Serializer.Serialize(new InitEvent {
 				MyId = this._counter
@@ -33,18 +32,15 @@ namespace Decorator.Tester {
 		}
 
 		public void Disconnect(uint clientId) {
-			foreach (var i in this._clients) {
-				if (i.Key != clientId) {
+			foreach (var i in this._clients)
+				if (i.Key != clientId)
 					Deserializer.DeserializeToEvent<Client>(i.Value, Serializer.Serialize(new ClientEvent {
 						Id = clientId,
 						JoinState = false,
 						Username = null
 					}));
-				}
-			}
 
-			Deserializer.DeserializeToEvent<Client>(this._clients[clientId], Serializer.Serialize(new SafeDisconnectEvent {
-			}));
+			Deserializer.DeserializeToEvent<Client>(this._clients[clientId], Serializer.Serialize(new SafeDisconnectEvent()));
 
 			this._clients.Remove(clientId);
 		}
@@ -55,7 +51,7 @@ namespace Decorator.Tester {
 		}
 
 		[DeserializedHandler]
-		public void ChatMessage(SendChat schat, uint clientId, Client client) {
+		public void ChatMessage(SendChat schat, uint clientId) {
 			var chat = new Chat {
 				PlayerId = clientId,
 				ChatMessage = schat.ChatMessage

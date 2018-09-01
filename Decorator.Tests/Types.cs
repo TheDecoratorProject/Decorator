@@ -22,7 +22,7 @@ namespace Decorator.Tests {
 		public void AssertType(Message msg) => Assert.Equal(msg.Type, TypeName);
 
 		public void AssertArgs(object[] args) {
-			Assert.Equal(args.Length, 1);
+			Assert.Single(args);
 			Assert.Equal(args[0], this.Value);
 		}
 
@@ -42,7 +42,7 @@ namespace Decorator.Tests {
 		public object Value { get; set; }
 
 		public void AssertArgs(object[] args) {
-			Assert.Equal(args.Length, 1);
+			Assert.Single(args);
 			Assert.Equal(args[0], this.Value);
 		}
 

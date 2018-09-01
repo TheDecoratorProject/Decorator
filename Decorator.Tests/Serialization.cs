@@ -16,28 +16,23 @@ namespace Decorator.Tests {
 		}
 
 		[Fact(DisplayName = "Type:      Null      Value:    Non-Null")]
-		public void _1() {
-			TestTestable(NullType.GetInstance(1234));
-		}
+		public void _1()
+			=> TestTestable(NullType.GetInstance(1234));
 
 		[Fact(DisplayName = "Type:      Null      Value:    Null")]
-		public void _2() {
-			TestTestable(NullType.GetInstance(null));
-		}
+		public void _2()
+			=> TestTestable(NullType.GetInstance(null));
 
 		[Fact(DisplayName = "Type:      Non-Null  Value:    Null")]
-		public void _3() {
-			TestTestable(NonNullType.GetInstance(null));
-		}
+		public void _3()
+			=> TestTestable(NonNullType.GetInstance(null));
 
 		[Fact(DisplayName = "Type:      Non-Null  Value:    Non-Null")]
-		public void _4() {
-			TestTestable(NonNullType.GetInstance("lorem ipsum"));
-		}
+		public void _4()
+			=> TestTestable(NonNullType.GetInstance("lorem ipsum"));
 
 		[Fact(DisplayName = "SerializeNull")]
-		public void _5() {
-			Assert.Throws<CustomAttributeFormatException>(() => Serializer.Serialize<ITestable>(null));
-		}
+		public void _5()
+			=> Assert.Throws<CustomAttributeFormatException>(() => Serializer.Serialize<ITestable>(null));
 	}
 }

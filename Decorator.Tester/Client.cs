@@ -28,9 +28,8 @@ namespace Decorator.Tester {
 		}
 
 		[DeserializedHandler]
-		public void SafeDisconnectEvent(SafeDisconnectEvent sde) {
-			this.Log("This client has disconnected safely.");
-		}
+		public void SafeDisconnectEvent(SafeDisconnectEvent sde)
+			=> this.Log("This client has disconnected safely.");
 
 		[DeserializedHandler]
 		public void ClientEvent(ClientEvent ce) {
@@ -48,14 +47,12 @@ namespace Decorator.Tester {
 		}
 
 		[DeserializedHandler]
-		public void ChatHandler(Chat chat) {
-			this.Log($"Chat from {chat.PlayerId}: {chat.ChatMessage}");
-		}
+		public void ChatHandler(Chat chat)
+			=> this.Log($"Chat from {chat.PlayerId}: {chat.ChatMessage}");
 
 		[DeserializedHandler]
-		public void PingHandler(Ping ping) {
-			this.Log($"Recieved back ping: {ping.IntegerValue}");
-		}
+		public void PingHandler(Ping ping)
+			=> this.Log($"Recieved back ping: {ping.IntegerValue}");
 
 		private void Log(string msg)
 			=> Console.WriteLine($"[{this._id}] {msg}");

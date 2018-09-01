@@ -6,9 +6,7 @@ namespace Decorator.Attributes {
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
 	public sealed class MessageAttribute : Attribute {
 
-		public MessageAttribute(string type) {
-			this.Type = type;
-		}
+		public MessageAttribute(string type) => this.Type = type;
 
 		public string Type { get; set; }
 	}

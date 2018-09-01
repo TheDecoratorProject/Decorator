@@ -6,9 +6,7 @@ namespace Decorator.Attributes {
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
 	public sealed class ArgumentLimitAttribute : Attribute {
 
-		public ArgumentLimitAttribute(int argLimit) {
-			this.ArgLimit = argLimit;
-		}
+		public ArgumentLimitAttribute(int argLimit) => this.ArgLimit = argLimit;
 
 		public int ArgLimit { get; set; }
 	}

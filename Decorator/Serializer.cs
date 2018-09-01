@@ -11,9 +11,9 @@ namespace Decorator {
 		public static Message Serialize<T>(T item) {
 			Type t;
 
-			if (EqualityComparer<T>.Default.Equals(item, default))
-				t = typeof(T);
-			else t = item.GetType();
+			t = EqualityComparer<T>.Default.Equals(item, default) ?
+				typeof(T) :
+				item.GetType();
 
 			var msgAttrib = (MessageAttribute)t.GetCustomAttribute(typeof(MessageAttribute), true);
 			if (msgAttrib == default(MessageAttribute)) throw new CustomAttributeFormatException($"The type {t} doesn't have a [{nameof(MessageAttribute)}] attribute modifier defined on it.");
@@ -28,7 +28,7 @@ namespace Decorator {
 				}
 			}
 
-			object[] itms = new object[items.Count];
+			var itms = new object[items.Count];
 
 			foreach (var i in items)
 				if (i.Key >= itms.Length)

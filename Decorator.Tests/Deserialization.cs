@@ -25,24 +25,20 @@ namespace Decorator.Tests {
 		}
 
 		[Fact(DisplayName = "Type:      Null      Value:    Null")]
-		public void _1() {
-			Test(null, new object[] { null });
-		}
+		public void _1()
+			=> Test(null, new object[] { null });
 
 		[Fact(DisplayName = "Type:      Null      Value:    Non-Null")]
-		public void _2() {
-			Test(null, 1234);
-		}
+		public void _2()
+			=> Test(null, 1234);
 
 		[Fact(DisplayName = "Type:      Non-Null  Value:    Null")]
-		public void _3() {
-			Test(NonNullType.TypeName, new object[] { null });
-		}
+		public void _3()
+			=> Test(NonNullType.TypeName, new object[] { null });
 
 		[Fact(DisplayName = "Type:      Non-Null  Value:    Non-Null")]
-		public void _4() {
-			Test(NonNullType.TypeName, "lorem ipsum");
-		}
+		public void _4()
+			=> Test(NonNullType.TypeName, "lorem ipsum");
 
 		[DeserializedHandler]
 		public void HandleNull(NullType nullType, Message msg, bool[] modify) {

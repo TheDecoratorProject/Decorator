@@ -4,7 +4,6 @@ using System;
 using System.Reflection;
 
 namespace Decorator {
-
 	// TODO: use enums instead of strings
 
 	public static class Deserializer {
@@ -13,7 +12,7 @@ namespace Decorator {
 			where T : class {
 			var success = false;
 
-			foreach (var i in ReflectionHelper.GetDeserializableHandlers(ReflectionHelper.GetTypeOf(eventClass))) {
+			foreach (var i in ReflectionHelper.GetMethodsWithAttribute<DeserializedHandlerAttribute>(ReflectionHelper.GetTypeOf(eventClass))) {
 				var args = i.GetParameters();
 
 				if (args?.Length < 1) throw new CustomAttributeFormatException($"Invalid [{nameof(DeserializedHandlerAttribute)}] - must have at least one parameter");
@@ -25,7 +24,7 @@ namespace Decorator {
 
 					var invokeArgs = new object[extraParams.Length + 1];
 					invokeArgs[0] = param;
-					for (int k = 0; k < extraParams.Length; k++)
+					for (var k = 0; k < extraParams.Length; k++)
 						invokeArgs[k + 1] = extraParams[k];
 
 					i.Invoke(eventClass, invokeArgs);
@@ -49,16 +48,15 @@ namespace Decorator {
 
 			// if there's a limit on the amount of arguments set for the item
 
-			if (ReflectionHelper.TryGetAttributeOf<ArgumentLimitAttribute>(typeof(T), out var limit))
-				if (msg?.Args?.Length > limit.ArgLimit)
-					return OneLinerFail($"Surpassed the maximum amount of args bound by the {nameof(ArgumentLimitAttribute)}", out failErrMsg);
+			if (ReflectionHelper.TryGetAttributeOf<ArgumentLimitAttribute>(typeof(T), out var limit) &&
+				msg?.Args?.Length > limit.ArgLimit)
+				return OneLinerFail($"Surpassed the maximum amount of args bound by the {nameof(ArgumentLimitAttribute)}", out failErrMsg);
 
 			// loop through every property
 
 			res = Activator.CreateInstance<T>();
 
-			foreach (var i in typeof(T).GetProperties())
-
+			foreach (var i in ReflectionHelper.GetPropertiesWithAttribute<PositionAttribute>(typeof(T))) {
 				// if it has a position
 				if (ReflectionHelper.TryGetAttributeOf<PositionAttribute>(i, out var posAttrib))
 
@@ -69,11 +67,12 @@ namespace Decorator {
 					} else {
 						// if there's no optional attribute, or there's a required attribute
 						if (!ReflectionHelper.TryGetAttributeOf<OptionalAttribute>(i, out var _) ||
-							ReflectionHelper.TryGetAttributeOf<RequiredAttribute>(i, out var __))
-
+							ReflectionHelper.TryGetAttributeOf<RequiredAttribute>(i, out var __)) {
 							// yell at 'em
 							return OneLinerFail($"Unable to set {i.Name}", out failErrMsg);
+						}
 					}
+			}
 
 			return true;
 		}

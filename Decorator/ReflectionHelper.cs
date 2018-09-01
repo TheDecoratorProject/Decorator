@@ -1,11 +1,10 @@
-﻿using Decorator.Attributes;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
 namespace Decorator {
+
 	internal static class ReflectionHelper {
 
 		public static void CheckNull<T>(T item, string paramName)
@@ -13,15 +12,13 @@ namespace Decorator {
 			if (item == default(T)) throw new ArgumentNullException(paramName);
 		}
 
-		public static T EnsureAttributeGet<T, T2>(T2 itm)
-			where T : Attribute
-			where T2 : class
-			=> GetAttributeOf<T>(GetTypeOf(itm));
-
 		public static T EnsureAttributeGet<T, T2>()
-			where T : Attribute
-			where T2 : class
-			=> GetAttributeOf<T>(typeof(T2));
+				where T : Attribute
+				where T2 : class {
+			var attrib = GetAttributeOf<T>(typeof(T2));
+			if (attrib == default) throw new CustomAttributeFormatException($"No attribute was found on the item despite it needing the attribute.");
+			return attrib;
+		}
 
 		public static T GetAttributeOf<T>(Type t)
 			where T : Attribute {
@@ -62,9 +59,24 @@ namespace Decorator {
 					yield return attrib;
 		}
 
-		public static IEnumerable<MethodInfo> GetDeserializableHandlers(Type t) {
+		public static IEnumerable<T> GetAttributesOf<T>(PropertyInfo t)
+			where T : Attribute {
+			foreach (var i in GetAttributesOf(t))
+				if (i is T attrib)
+					yield return attrib;
+		}
+
+		public static IEnumerable<MethodInfo> GetMethodsWithAttribute<T>(Type t)
+			where T : Attribute {
 			foreach (var i in t.GetMethods())
-				if (GetAttributesOf<DeserializedHandlerAttribute>(i).Count() > 0)
+				if (GetAttributesOf<T>(i).Count() > 0)
+					yield return i;
+		}
+
+		public static IEnumerable<PropertyInfo> GetPropertiesWithAttribute<T>(Type t)
+			where T : Attribute {
+			foreach (var i in t.GetProperties())
+				if (GetAttributesOf<T>(i).Count() > 0)
 					yield return i;
 		}
 
@@ -73,12 +85,16 @@ namespace Decorator {
 			=> item == default(T) ? typeof(T) : item.GetType();
 
 		public static bool TryGetAttributeOf<T>(Type t, out T attrib)
-			where T : Attribute
-			=> (attrib = GetAttributeOf<T>(t)) != default(T);
+			where T : Attribute {
+			attrib = GetAttributeOf<T>(t);
+			return attrib != default(T);
+		}
 
 		public static bool TryGetAttributeOf<T>(PropertyInfo t, out T attrib)
-			where T : Attribute
-			=> (attrib = GetAttributeOf<T>(t)) != default(T);
+			where T : Attribute {
+			attrib = GetAttributeOf<T>(t);
+			return attrib != default(T);
+		}
 
 		private static IEnumerable<Attribute> GetFrom(object[] attribs) {
 			foreach (var i in attribs)

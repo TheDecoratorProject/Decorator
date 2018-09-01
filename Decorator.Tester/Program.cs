@@ -12,9 +12,9 @@ using System;
 
 namespace Decorator.Tester {
 
-	internal class Program {
+	public class Program {
 
-		private static void Main(string[] args) {
+		public static void Main() {
 			var client1 = new Client();
 			var client2 = new Client();
 			var client3 = new Client();

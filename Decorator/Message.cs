@@ -21,7 +21,7 @@ namespace Decorator {
 
 			strb.AppendLine($"Type: {this.Type ?? "null"}");
 
-			for (int i = 0; i < this.Args.Length; i++)
+			for (var i = 0; i < this.Args.Length; i++)
 				strb.AppendLine($"\t[{i}] {this.Args[i].GetType()}: {this.Args[i]}");
 
 			return strb.ToString();
