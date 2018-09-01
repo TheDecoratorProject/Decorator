@@ -16,6 +16,7 @@ namespace Decorator.Tests {
 		public const string TypeName = "serialization";
 
 		[Position(0)]
+		[Optional]
 		public string Value { get; set; }
 
 		public void AssertType(Message msg) => Assert.Equal(msg.Type, TypeName);
@@ -37,6 +38,7 @@ namespace Decorator.Tests {
 		public void AssertType(Message msg) => Assert.Null(msg.Type);
 
 		[Position(0)]
+		[Optional]
 		public object Value { get; set; }
 
 		public void AssertArgs(object[] args) {

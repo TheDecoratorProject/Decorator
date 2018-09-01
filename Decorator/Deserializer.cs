@@ -1,7 +1,6 @@
 ﻿using Decorator.Attributes;
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -15,78 +14,7 @@ namespace Decorator {
 
 	public static class Deserializer {
 
-		public static T Deserialize<T>(Message msg) {
-			return InternalDeserialize<T>(msg).InnerClass;
-		}
-
-		public static void DeserializeToEvent<T>(T eventClass, Message msg, params object[] additionalInfo)
-					where T : class {
-			// if eventClass is null, it's a probably a static method.
-
-			var matches = new List<MatchResult>(8);
-
-			foreach (var i in typeof(T).GetMethods()) {
-				// make sure that if it's a static method, we're being passed null
-				// or, make sure that if it's not a static method, we're being passed a value
-				if ((i.IsStatic && eventClass == default(T)) ||
-					!i.IsStatic && eventClass != default(T)) {
-					var dhAttrib = (DeserializedHandlerAttribute)i.GetCustomAttribute(typeof(DeserializedHandlerAttribute), true);
-
-					if (dhAttrib != default(DeserializedHandlerAttribute)) {
-						var args = i.GetParameters();
-						if (args?.Length == 1 + additionalInfo?.Length) {
-							var type = args[0].ParameterType;
-
-							if (TryDeserializeGenerically(msg, type, out var genRes)) {
-								var res = (IMatchClass)genRes;
-
-								matches.Add(new MatchResult(res, type, i));
-							}
-						} // else throw new CustomAttributeFormatException($"Any method with the {nameof(DeserializedHandlerAttribute)} Attribute must have the right amount of parameters.");
-					}
-				}
-			}
-
-			if (matches.Count > 0) {
-				//TODO: make sure that the parameters match the additionalInfo
-				MatchResult winner = default;
-				bool duplicate = false;
-				foreach (var i in matches) {
-					if (winner == default(MatchResult)) {
-						winner = i;
-					} else if (i.MatchClass.MatchAmount > winner.MatchClass.MatchAmount) {
-						duplicate = false;
-						winner = i;
-					} else if (i.MatchClass.MatchAmount == winner.MatchClass.MatchAmount) {
-						duplicate = true;
-					}
-				}
-
-				if (duplicate)
-					throw new AmbiguousMatchException($"More then one canidates were found during deserialization.");
-
-				object[] invokeEvents;
-
-				if (additionalInfo != null) {
-					invokeEvents = new object[additionalInfo.Length + 1];
-
-					for (int i = 0; i < additionalInfo.Length; i++)
-						invokeEvents[i + 1] = additionalInfo[i];
-				} else invokeEvents = new object[1];
-
-				invokeEvents[0] = Convert.ChangeType(winner.MatchClass.InnerClass, winner.Type);
-
-				winner.MethodInfo.Invoke(eventClass, invokeEvents);
-				return;
-			} else {
-				var help = "";
-				if (eventClass == default(T))
-					help = "If you intended to target a public method, ensure that the target is not null.";
-				throw new NotSupportedException($"Unable to find a viable method. {help}");
-			}
-		}
-
-		public static bool InternalDeserializeToEventBest<T>(T eventClass, Message msg)
+		public static bool DeserializeToEvent<T>(T eventClass, Message msg, params object[] extraParams)
 			where T : class {
 			var success = false;
 
@@ -95,31 +23,22 @@ namespace Decorator {
 
 				if (args?.Length < 1) throw new CustomAttributeFormatException($"Invalid [{nameof(DeserializedHandlerAttribute)}] - must have at least one parameter");
 
-				if(InternalTryDeserializeBestInternal(msg, args[0].ParameterType, out var param, out var _)) {
+				if (TryDeserializeGenerically(msg, args[0].ParameterType, out var param, out var _)) {
 					success = true;
 
-					i.Invoke(eventClass, new object[] {
-						param
-					});
+					var invokeArgs = new object[extraParams.Length + 1];
+					invokeArgs[0] = param;
+					for (int k = 0; k < extraParams.Length; k++)
+						invokeArgs[k + 1] = extraParams[k];
+
+					i.Invoke(eventClass, invokeArgs);
 				}
 			}
 
 			return success;
 		}
 
-		public static bool InternalTryDeserializeBestInternal(Message msg, Type desType, out object res, out string failErrMsg) {
-			var args = new object[] { msg, null, null };
-
-			var generic = typeof(Deserializer).GetMethod(nameof(InternalTryDeserializeBest), BindingFlags.Public | BindingFlags.Static).MakeGenericMethod(desType);
-			var gmo = (bool)generic.Invoke(null, args);
-
-			res = args[1];
-			failErrMsg = (string)args[2];
-
-			return gmo;
-		}
-
-		public static bool InternalTryDeserializeBest<T>(Message msg, out T res, out string failErrMsg)
+		public static bool TryDeserialize<T>(Message msg, out T res, out string failErrMsg)
 			where T : class, new() {
 			// ensure some basic things
 
@@ -151,7 +70,6 @@ namespace Decorator {
 						i.PropertyType.IsAssignableFrom(ReflectionHelper.GetTypeOf(msg?.Args?[posAttrib.Position]))) {
 						i.SetValue(res, msg.Args[posAttrib.Position]);
 					} else {
-
 						// if there's no optional attribute, or there's a required attribute
 						if (!ReflectionHelper.TryGetAttributeOf<OptionalAttribute>(i, out var _) ||
 							ReflectionHelper.TryGetAttributeOf<RequiredAttribute>(i, out var __))
@@ -163,83 +81,21 @@ namespace Decorator {
 			return true;
 		}
 
-		public static bool TryDeserialize<T>(Message msg, out T result) {
-			var res = InternalTryDeserialize<T>(msg, out var test);
-			result = test.InnerClass;
-			return res;
-		}
-		private static MatchClass<T> InternalDeserialize<T>(Message msg) {
-			var t = typeof(T);
-			var item = (T)Activator.CreateInstance(t);
+		public static bool TryDeserializeGenerically(Message msg, Type desType, out object res, out string failErrMsg) {
+			var args = new object[] { msg, null, null };
 
-			if (msg == null) throw new ArgumentNullException(nameof(msg));
+			var generic = typeof(Deserializer).GetMethod(nameof(TryDeserialize), BindingFlags.Public | BindingFlags.Static).MakeGenericMethod(desType);
+			var gmo = (bool)generic.Invoke(null, args);
 
-			//TODO: wrap this in it's own function
-			var msgAttrib = (MessageAttribute)t.GetCustomAttribute(typeof(MessageAttribute), true);
-			if (msgAttrib == default(MessageAttribute)) throw new CustomAttributeFormatException($"The type {t} doesn't have a [{nameof(MessageAttribute)}] attribute modifier defined on it.");
-			if (msgAttrib.Type != msg.Type) throw new ArgumentException($"The message types don't match.");
+			res = args[1];
+			failErrMsg = (string)args[2];
 
-			var limiter = (ArgumentLimitAttribute)t.GetCustomAttribute(typeof(ArgumentLimitAttribute), true);
-			if (limiter != default(ArgumentLimitAttribute)) if (msg.Args.Length > limiter.ArgLimit) throw new MessageException($"Too many arguments specified");
-
-			var matchAmount = 0;
-
-			foreach (var i in t.GetProperties()) {
-				var attribs = i.GetCustomAttributes();
-
-				var posAttrib = (PositionAttribute)i.GetCustomAttribute(typeof(PositionAttribute), true);
-
-				if (posAttrib != default(PositionAttribute)) {
-					var setPropValue = true;
-
-					foreach (var k in attribs) {
-						if (k.GetType().GetInterface(nameof(Attributes.IPropertyAttributeBase)) != default)
-							setPropValue = ((IPropertyAttributeBase)k).CheckRequirements<T>(i, msg, item, posAttrib) && setPropValue;
-					}
-
-					if (setPropValue) {
-						// can't determine type, so we'll just have to try set it to null and see if it fails.
-						if (msg.Args[posAttrib.Position] != null)
-							if (i.PropertyType != msg.Args[posAttrib.Position].GetType() &&
-								!i.PropertyType.IsInstanceOfType(msg.Args[posAttrib.Position].GetType()))
-								throw new MessageException($"The property type of {i.Name} doesn't match the property type of the argument at {posAttrib.Position} ({msg.Args[posAttrib.Position].GetType()})");
-
-						matchAmount++;
-						i.SetValue(item, msg.Args[posAttrib.Position]);
-					}
-				}
-			}
-
-			return new MatchClass<T>(item, matchAmount);
-		}
-
-		private static bool InternalTryDeserialize<T>(Message msg, out MatchClass<T> result) {
-			try {
-				result = InternalDeserialize<T>(msg);
-				return true;
-			} catch (Exception ex) when (
-				ex is ArgumentException ||
-				ex is ArgumentNullException ||
-				ex is CustomAttributeFormatException ||
-				ex is NullReferenceException ||
-				ex is MessageException) {
-				result = default;
-				return false;
-			}
+			return gmo;
 		}
 
 		private static bool OneLinerFail(string amt, out string failErrMsg) {
 			failErrMsg = amt;
 			return false;
-		}
-		private static bool TryDeserializeGenerically(Message msg, Type msgType, out object result) {
-			var args = new object[] { msg, null };
-
-			var generic = typeof(Deserializer).GetMethod(nameof(InternalTryDeserialize), BindingFlags.NonPublic | BindingFlags.Static).MakeGenericMethod(msgType);
-			var gmo = (bool)generic.Invoke(null, args);
-
-			result = args[1];
-			return gmo;
 		}
 	}
 
@@ -281,7 +137,7 @@ namespace Decorator {
 		public static IEnumerable<Attribute> GetAttributesOf(Type t) {
 			//if (AttributeCache.TryGetValue(t, out var attribs)) return attribs;
 
-			var attribs = GetFrom(t.GetCustomAttributes(true));
+			var attribs = GetFrom(t.GetCustomAttributes(true)).ToArray();
 			//AttributeCache.TryAdd(t, attribs.ToArray());
 
 			return attribs;
@@ -289,6 +145,16 @@ namespace Decorator {
 
 		public static IEnumerable<Attribute> GetAttributesOf(PropertyInfo t)
 			=> GetFrom(t.GetCustomAttributes(true));
+
+		public static IEnumerable<Attribute> GetAttributesOf(MethodInfo t)
+			=> GetFrom(t.GetCustomAttributes(true));
+
+		public static IEnumerable<Attribute> GetAttributesOf<T>(MethodInfo t)
+			where T : Attribute {
+			foreach (var i in GetAttributesOf(t))
+				if (i is T attrib)
+					yield return attrib;
+		}
 
 		public static IEnumerable<T> GetAttributesOf<T>(Type t)
 			where T : Attribute {
@@ -299,13 +165,14 @@ namespace Decorator {
 
 		public static IEnumerable<MethodInfo> GetDeserializableHandlers(Type t) {
 			foreach (var i in t.GetMethods())
-				if (GetAttributesOf<DeserializedHandlerAttribute>(t).Count() > 0)
+				if (GetAttributesOf<DeserializedHandlerAttribute>(i).Count() > 0)
 					yield return i;
 		}
 
 		public static Type GetTypeOf<T>(T item)
 																			where T : class
 			=> item == default(T) ? typeof(T) : item.GetType();
+
 		public static bool TryGetAttributeOf<T>(Type t, out T attrib)
 			where T : Attribute
 			=> (attrib = GetAttributeOf<T>(t)) != default(T);
@@ -313,12 +180,14 @@ namespace Decorator {
 		public static bool TryGetAttributeOf<T>(PropertyInfo t, out T attrib)
 			where T : Attribute
 			=> (attrib = GetAttributeOf<T>(t)) != default(T);
+
 		private static IEnumerable<Attribute> GetFrom(object[] attribs) {
 			foreach (var i in attribs)
 				if (i is Attribute attrib)
 					yield return attrib;
 		}
 	}
+
 	internal class MatchClass<T> : IMatchClass {
 
 		public MatchClass(T @class, int matchAmount) {
