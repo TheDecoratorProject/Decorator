@@ -8,6 +8,8 @@
 //   let the classes implement a method to deserialize
 //   an int, uint, or more.
 
+using System;
+
 namespace Decorator.Tester {
 
 	internal class Program {
@@ -34,7 +36,7 @@ namespace Decorator.Tester {
 			client1.SendChat("Darn, I got chores to do anyways.");
 			client1.Disconnect();
 
-			System.Threading.Thread.Sleep(1000);
+			Console.ReadLine();
 		}
 	}
 }
