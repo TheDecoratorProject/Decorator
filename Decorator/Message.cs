@@ -1,4 +1,5 @@
 ﻿using System.Text;
+
 //test
 namespace Decorator {
 

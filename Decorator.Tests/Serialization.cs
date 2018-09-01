@@ -1,12 +1,11 @@
-using Decorator.Attributes;
-using System;
 using System.Reflection;
+
 using Xunit;
 
-namespace Decorator.Tests
-{
-    public class Serialization
-    {
+namespace Decorator.Tests {
+
+	public class Serialization {
+
 		private void TestTestable<T>(T test)
 			where T : ITestable {
 			var msg = Serializer.Serialize(test);

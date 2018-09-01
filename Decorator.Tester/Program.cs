@@ -1,8 +1,4 @@
-﻿using System;
-using Decorator.Attributes;
-using Decorator.Tester.MessageTypes;
-
-// ROADMAP:
+﻿// ROADMAP:
 // - add an attribute to specify the amount of "favor
 //   points" a class gets by default
 //
@@ -13,9 +9,10 @@ using Decorator.Tester.MessageTypes;
 //   an int, uint, or more.
 
 namespace Decorator.Tester {
-	class Program {
-		static void Main(string[] args) {
 
+	internal class Program {
+
+		private static void Main(string[] args) {
 			var client1 = new Client();
 			var client2 = new Client();
 			var client3 = new Client();
@@ -27,7 +24,7 @@ namespace Decorator.Tester {
 
 			client1.SendChat("Hello, World!");
 			client2.SendChat("Hey, nice to meet you too!");
-			
+
 			client3.SendChat("Bye guys!");
 			client3.Disconnect();
 

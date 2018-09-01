@@ -1,12 +1,13 @@
 ﻿using Decorator.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 using Xunit;
 
 namespace Decorator.Tests {
+
 	public interface ITestable {
+
 		void AssertType(Message msg);
+
 		void AssertArgs(object[] args);
 	}
 
@@ -32,6 +33,7 @@ namespace Decorator.Tests {
 
 	[Message(null)]
 	public class NullType : ITestable {
+
 		public void AssertType(Message msg) => Assert.Null(msg.Type);
 
 		[Position(0)]

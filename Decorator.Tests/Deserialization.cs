@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
-using Decorator.Attributes;
+﻿using Decorator.Attributes;
+
 using Xunit;
 
 namespace Decorator.Tests {
 
 	public class Deserialization {
+
 		private bool TestTestable<T>(T test, Message msg)
 			where T : ITestable {
 			test.AssertType(msg);
