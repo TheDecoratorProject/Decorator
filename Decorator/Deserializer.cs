@@ -86,6 +86,39 @@ namespace Decorator {
 			}
 		}
 
+		public static bool InternalDeserializeToEventBest<T>(T eventClass, Message msg)
+			where T : class {
+			var success = false;
+
+			foreach (var i in ReflectionHelper.GetDeserializableHandlers(ReflectionHelper.GetTypeOf(eventClass))) {
+				var args = i.GetParameters();
+
+				if (args?.Length < 1) throw new CustomAttributeFormatException($"Invalid [{nameof(DeserializedHandlerAttribute)}] - must have at least one parameter");
+
+				if(InternalTryDeserializeBestInternal(msg, args[0].ParameterType, out var param, out var _)) {
+					success = true;
+
+					i.Invoke(eventClass, new object[] {
+						param
+					});
+				}
+			}
+
+			return success;
+		}
+
+		public static bool InternalTryDeserializeBestInternal(Message msg, Type desType, out object res, out string failErrMsg) {
+			var args = new object[] { msg, null, null };
+
+			var generic = typeof(Deserializer).GetMethod(nameof(InternalTryDeserializeBest), BindingFlags.Public | BindingFlags.Static).MakeGenericMethod(desType);
+			var gmo = (bool)generic.Invoke(null, args);
+
+			res = args[1];
+			failErrMsg = (string)args[2];
+
+			return gmo;
+		}
+
 		public static bool InternalTryDeserializeBest<T>(Message msg, out T res, out string failErrMsg)
 			where T : class, new() {
 			// ensure some basic things
