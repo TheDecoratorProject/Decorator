@@ -86,17 +86,60 @@ namespace Decorator {
 			}
 		}
 
+		public static bool InternalTryDeserializeBest<T>(Message msg, out T res, out string failErrMsg)
+			where T : class, new() {
+			// ensure some basic things
+
+			res = default;
+			failErrMsg = default;
+
+			ReflectionHelper.CheckNull(msg, nameof(msg));
+
+			var msgAttrib = ReflectionHelper.EnsureAttributeGet<MessageAttribute, T>();
+			if (msgAttrib.Type != msg.Type) return OneLinerFail("The base message types aren't equal.", out failErrMsg);
+
+			// if there's a limit on the amount of arguments set for the item
+
+			if (ReflectionHelper.TryGetAttributeOf<ArgumentLimitAttribute>(typeof(T), out var limit))
+				if (msg?.Args?.Length > limit.ArgLimit)
+					return OneLinerFail($"Surpassed the maximum amount of args bound by the {nameof(ArgumentLimitAttribute)}", out failErrMsg);
+
+			// loop through every property
+
+			res = Activator.CreateInstance<T>();
+
+			foreach (var i in typeof(T).GetProperties())
+
+				// if it has a position
+				if (ReflectionHelper.TryGetAttributeOf<PositionAttribute>(i, out var posAttrib))
+
+					// if there's an argument in the message for it
+					if (posAttrib.Position >= 0 && msg.Args?.Length > posAttrib.Position &&
+						i.PropertyType.IsAssignableFrom(ReflectionHelper.GetTypeOf(msg?.Args?[posAttrib.Position]))) {
+						i.SetValue(res, msg.Args[posAttrib.Position]);
+					} else {
+
+						// if there's no optional attribute, or there's a required attribute
+						if (!ReflectionHelper.TryGetAttributeOf<OptionalAttribute>(i, out var _) ||
+							ReflectionHelper.TryGetAttributeOf<RequiredAttribute>(i, out var __))
+
+							// yell at 'em
+							return OneLinerFail($"Unable to set {i.Name}", out failErrMsg);
+					}
+
+			return true;
+		}
+
 		public static bool TryDeserialize<T>(Message msg, out T result) {
 			var res = InternalTryDeserialize<T>(msg, out var test);
 			result = test.InnerClass;
 			return res;
 		}
-
 		private static MatchClass<T> InternalDeserialize<T>(Message msg) {
 			var t = typeof(T);
 			var item = (T)Activator.CreateInstance(t);
 
-			if (msg == null) throw new ArgumentNullException(nameof(msg), "Message is null.");
+			if (msg == null) throw new ArgumentNullException(nameof(msg));
 
 			//TODO: wrap this in it's own function
 			var msgAttrib = (MessageAttribute)t.GetCustomAttribute(typeof(MessageAttribute), true);
@@ -152,6 +195,10 @@ namespace Decorator {
 			}
 		}
 
+		private static bool OneLinerFail(string amt, out string failErrMsg) {
+			failErrMsg = amt;
+			return false;
+		}
 		private static bool TryDeserializeGenerically(Message msg, Type msgType, out object result) {
 			var args = new object[] { msg, null };
 
@@ -163,32 +210,76 @@ namespace Decorator {
 		}
 	}
 
-	internal static class ReflectionCacher {
-		private static ConcurrentDictionary<Type, IEnumerable<Attribute>> AttributeCache = new ConcurrentDictionary<Type, IEnumerable<Attribute>>();
-		private static ConcurrentDictionary<Type, MethodInfo> DeserializeMethodHandlers = new ConcurrentDictionary<Type, MethodInfo>();
+	internal static class ReflectionHelper {
+		//private static ConcurrentDictionary<Type, IEnumerable<Attribute>> AttributeCache = new ConcurrentDictionary<Type, IEnumerable<Attribute>>();
+		//private static ConcurrentDictionary<Type, MethodInfo> DeserializeMethodHandlers = new ConcurrentDictionary<Type, MethodInfo>();
 
-		public static T GetAttributeOf<T>(Type t) {
+		public static void CheckNull<T>(T item, string paramName)
+			where T : class {
+			if (item == default(T)) throw new ArgumentNullException(paramName);
+		}
+
+		public static T EnsureAttributeGet<T, T2>(T2 itm)
+			where T : Attribute
+			where T2 : class
+			=> GetAttributeOf<T>(GetTypeOf(itm));
+
+		public static T EnsureAttributeGet<T, T2>()
+			where T : Attribute
+			where T2 : class
+			=> GetAttributeOf<T>(typeof(T2));
+
+		public static T GetAttributeOf<T>(Type t)
+			where T : Attribute {
 			foreach (var i in GetAttributesOf(t))
 				if (i is T attrib)
 					return attrib;
-			return default(T);
+			return default;
+		}
+
+		public static T GetAttributeOf<T>(PropertyInfo t)
+			where T : Attribute {
+			foreach (var i in GetAttributesOf(t))
+				if (i is T attrib)
+					return attrib;
+			return default;
 		}
 
 		public static IEnumerable<Attribute> GetAttributesOf(Type t) {
-			if (AttributeCache.TryGetValue(t, out var attribs)) return attribs;
+			//if (AttributeCache.TryGetValue(t, out var attribs)) return attribs;
 
-			attribs = GetFrom(t.GetCustomAttributes(true));
-			AttributeCache.TryAdd(t, attribs.ToArray());
+			var attribs = GetFrom(t.GetCustomAttributes(true));
+			//AttributeCache.TryAdd(t, attribs.ToArray());
 
 			return attribs;
 		}
 
-		public static IEnumerable<T> GetAttributesOf<T>(Type t) {
+		public static IEnumerable<Attribute> GetAttributesOf(PropertyInfo t)
+			=> GetFrom(t.GetCustomAttributes(true));
+
+		public static IEnumerable<T> GetAttributesOf<T>(Type t)
+			where T : Attribute {
 			foreach (var i in GetAttributesOf(t))
 				if (i is T attrib)
 					yield return attrib;
 		}
 
+		public static IEnumerable<MethodInfo> GetDeserializableHandlers(Type t) {
+			foreach (var i in t.GetMethods())
+				if (GetAttributesOf<DeserializedHandlerAttribute>(t).Count() > 0)
+					yield return i;
+		}
+
+		public static Type GetTypeOf<T>(T item)
+																			where T : class
+			=> item == default(T) ? typeof(T) : item.GetType();
+		public static bool TryGetAttributeOf<T>(Type t, out T attrib)
+			where T : Attribute
+			=> (attrib = GetAttributeOf<T>(t)) != default(T);
+
+		public static bool TryGetAttributeOf<T>(PropertyInfo t, out T attrib)
+			where T : Attribute
+			=> (attrib = GetAttributeOf<T>(t)) != default(T);
 		private static IEnumerable<Attribute> GetFrom(object[] attribs) {
 			foreach (var i in attribs)
 				if (i is Attribute attrib)

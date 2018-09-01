@@ -13,6 +13,26 @@ namespace Decorator.Tester {
 	internal class Program {
 
 		private static void Main(string[] args) {
+			var itm = new MessageTypes.Ping {
+				IntegerValue = 1337
+			};
+
+			var data = Serializer.Serialize(itm);
+
+			var des = Deserializer.InternalTryDeserializeBest<MessageTypes.Ping>(data, out var deserialized, out var fail);
+
+			System.Console.WriteLine(fail ?? "n/a");
+			System.Console.WriteLine(des);
+			System.Console.WriteLine(deserialized);
+
+			des = Deserializer.InternalTryDeserializeBest<MessageTypes.Chat>(data, out var deserialized2, out fail);
+
+			System.Console.WriteLine(fail ?? "n/a");
+			System.Console.WriteLine(des);
+			System.Console.WriteLine(deserialized2);
+
+			System.Console.ReadLine();
+
 			var client1 = new Client();
 			var client2 = new Client();
 			var client3 = new Client();

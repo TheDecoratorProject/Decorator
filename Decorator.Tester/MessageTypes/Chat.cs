@@ -2,7 +2,7 @@ using Decorator.Attributes;
 
 namespace Decorator.Tester.MessageTypes {
 
-	[Message("chat")]
+	[Message("ping")]
 	public class Chat {
 
 		[Position(0)]
@@ -10,6 +10,9 @@ namespace Decorator.Tester.MessageTypes {
 
 		[Position(1)]
 		public string ChatMessage { get; set; }
+
+		public override string ToString()
+			=> $"[{nameof(Chat)}]: {nameof(this.PlayerId)}: {this.PlayerId} {nameof(this.ChatMessage)}: {this.ChatMessage}";
 	}
 
 	[Message("chat")]
