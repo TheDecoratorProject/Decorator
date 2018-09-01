@@ -7,7 +7,7 @@ namespace Decorator.Tester {
 
 	public class Server {
 		private uint _counter { get; set; }
-		private Dictionary<uint, Client> _clients { get; set; } = new Dictionary<uint, Client>();
+		private Dictionary<uint, Client> _clients { get; } = new Dictionary<uint, Client>();
 
 		public void Join(Client cli) {
 			var msg = Serializer.Serialize(new ClientEvent {

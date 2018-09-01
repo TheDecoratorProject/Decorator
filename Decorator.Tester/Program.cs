@@ -12,7 +12,7 @@ using System;
 
 namespace Decorator.Tester {
 
-	public class Program {
+	protected static class Program {
 
 		public static void Main() {
 			var client1 = new Client();
