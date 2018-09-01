@@ -7,10 +7,7 @@ using System.Reflection;
 
 namespace Decorator {
 
-	internal interface IMatchClass {
-		object InnerClass { get; }
-		int MatchAmount { get; }
-	}
+	// TODO: use enums instead of strings
 
 	public static class Deserializer {
 
@@ -25,6 +22,8 @@ namespace Decorator {
 
 				if (TryDeserializeGenerically(msg, args[0].ParameterType, out var param, out var _)) {
 					success = true;
+
+					// merge extraParams & the first message together
 
 					var invokeArgs = new object[extraParams.Length + 1];
 					invokeArgs[0] = param;
@@ -100,8 +99,6 @@ namespace Decorator {
 	}
 
 	internal static class ReflectionHelper {
-		//private static ConcurrentDictionary<Type, IEnumerable<Attribute>> AttributeCache = new ConcurrentDictionary<Type, IEnumerable<Attribute>>();
-		//private static ConcurrentDictionary<Type, MethodInfo> DeserializeMethodHandlers = new ConcurrentDictionary<Type, MethodInfo>();
 
 		public static void CheckNull<T>(T item, string paramName)
 			where T : class {
@@ -134,14 +131,8 @@ namespace Decorator {
 			return default;
 		}
 
-		public static IEnumerable<Attribute> GetAttributesOf(Type t) {
-			//if (AttributeCache.TryGetValue(t, out var attribs)) return attribs;
-
-			var attribs = GetFrom(t.GetCustomAttributes(true)).ToArray();
-			//AttributeCache.TryAdd(t, attribs.ToArray());
-
-			return attribs;
-		}
+		public static IEnumerable<Attribute> GetAttributesOf(Type t)
+			=> GetFrom(t.GetCustomAttributes(true)).ToArray();
 
 		public static IEnumerable<Attribute> GetAttributesOf(PropertyInfo t)
 			=> GetFrom(t.GetCustomAttributes(true));
@@ -170,7 +161,7 @@ namespace Decorator {
 		}
 
 		public static Type GetTypeOf<T>(T item)
-																			where T : class
+			where T : class
 			=> item == default(T) ? typeof(T) : item.GetType();
 
 		public static bool TryGetAttributeOf<T>(Type t, out T attrib)
@@ -186,18 +177,5 @@ namespace Decorator {
 				if (i is Attribute attrib)
 					yield return attrib;
 		}
-	}
-
-	internal class MatchClass<T> : IMatchClass {
-
-		public MatchClass(T @class, int matchAmount) {
-			this.InnerClass = @class;
-			this.MatchAmount = matchAmount;
-		}
-
-		public T InnerClass { get; }
-		object IMatchClass.InnerClass => this.InnerClass;
-		public int MatchAmount { get; set; }
-		int IMatchClass.MatchAmount => this.MatchAmount;
 	}
 }
