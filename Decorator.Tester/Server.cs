@@ -20,7 +20,7 @@ namespace Decorator.Tester {
 
 			foreach (var i in this._clients)
 				if (i.Key != this._counter)
-					Deserializer.DeserializeToEvent<Client>(i.Value, msg);
+					Deserializer.TryDeserializeToEvent<Client>(i.Value, msg);
 
 			var initMsg = Serializer.Serialize(new InitEvent {
 				MyId = this._counter
@@ -37,8 +37,8 @@ namespace Decorator.Tester {
 
 			var online = Serializer.SerializeEnumerable(clients);
 
-			Deserializer.DeserializeToEvent<Client>(this._clients[this._counter], initMsg);
-			Deserializer.DeserializeToEvent<Client>(this._clients[this._counter], online);
+			Deserializer.TryDeserializeToEvent<Client>(this._clients[this._counter], initMsg);
+			Deserializer.TryDeserializeToEvent<Client>(this._clients[this._counter], online);
 
 			this._counter += 1;
 		}
@@ -46,20 +46,20 @@ namespace Decorator.Tester {
 		public void Disconnect(uint clientId) {
 			foreach (var i in this._clients)
 				if (i.Key != clientId)
-					Deserializer.DeserializeToEvent<Client>(i.Value, Serializer.Serialize(new ClientEvent {
+					Deserializer.TryDeserializeToEvent<Client>(i.Value, Serializer.Serialize(new ClientEvent {
 						Id = clientId,
 						JoinState = false,
 						Username = null
 					}));
 
-			Deserializer.DeserializeToEvent<Client>(this._clients[clientId], Serializer.Serialize(new SafeDisconnectEvent()));
+			Deserializer.TryDeserializeToEvent<Client>(this._clients[clientId], Serializer.Serialize(new SafeDisconnectEvent()));
 
 			this._clients.Remove(clientId);
 		}
 
 		public void HandleMessage(Message msg, uint clientId) {
 			if (this._clients.TryGetValue(clientId, out var client))
-				Deserializer.DeserializeToEvent<Server>(this, msg, clientId);
+				Deserializer.TryDeserializeToEvent<Server>(this, msg, clientId);
 		}
 
 		[DeserializedHandler]
@@ -72,7 +72,7 @@ namespace Decorator.Tester {
 			var msg = Serializer.Serialize(chat);
 
 			foreach (var i in this._clients) {
-				Deserializer.DeserializeToEvent<Client>(i.Value, msg);
+				Deserializer.TryDeserializeToEvent<Client>(i.Value, msg);
 			}
 		}
 	}
