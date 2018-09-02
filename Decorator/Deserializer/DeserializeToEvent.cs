@@ -28,8 +28,8 @@ namespace Decorator {
 
 				success = DeserializeMessageToIEnumerableAndInvoke(eventClass, desType, msg, i, extraParams) || success;
 
-				if (ReflectionHelper.TryGetAttributeOf<MessageAttribute>(desType, out var msgAttrib)) {
-					if (TryDeserializeGenerically(msg, desType, out var param, out var _)) {
+				if (ReflectionHelper.TryGetAttributeOf<MessageAttribute>(desType, out var msgAttrib) &&
+					TryDeserializeGenerically(msg, desType, out var param, out var _)) {
 						success = true;
 
 						// merge extraParams & the first message together
@@ -40,7 +40,6 @@ namespace Decorator {
 							invokeArgs[k + 1] = extraParams[k];
 
 						i.Invoke(eventClass, invokeArgs);
-					}
 				}
 			}
 

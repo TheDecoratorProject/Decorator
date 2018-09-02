@@ -41,7 +41,6 @@ namespace Decorator.Tester {
 			Deserializer.DeserializeToEvent<Client>(this._clients[this._counter], online);
 
 			this._counter += 1;
-			System.Console.WriteLine("");
 		}
 
 		public void Disconnect(uint clientId) {

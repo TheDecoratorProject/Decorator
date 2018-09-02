@@ -118,8 +118,8 @@ namespace Decorator {
 			var largest = int.MinValue;
 
 			foreach (var k in t.GetProperties())
-				if (TryGetAttributeOf<PositionAttribute>(k, out var posAttrib))
-					if (posAttrib.Position > largest)
+				if (TryGetAttributeOf<PositionAttribute>(k, out var posAttrib) &&
+					posAttrib.Position > largest)
 						largest = posAttrib.Position;
 
 			return largest;

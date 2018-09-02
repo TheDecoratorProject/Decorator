@@ -17,7 +17,6 @@ namespace Decorator {
 			ReflectionHelper.EnsureAttributeGet<RepeatableAttribute, T>();
 
 			var args = new List<object>();
-			var set = false;
 
 			foreach (var i in items) {
 				var k = Serialize(i);
