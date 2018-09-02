@@ -19,7 +19,7 @@ namespace Decorator.Tests {
 			var msg = new Message(type, args);
 
 			var extraData = new bool[] { false };
-			Deserializer.TryDeserializeToEvent(this, msg, msg, extraData);
+			Deserializer.DeserializeToEvent(this, msg, msg, extraData);
 
 			Assert.True(extraData[0]);
 		}

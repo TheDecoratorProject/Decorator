@@ -25,8 +25,6 @@ namespace Decorator.Tester {
 
 			client1.SendChat("Darn, I got chores to do anyways.");
 			client1.Disconnect();
-
-			Console.ReadLine();
 		}
 	}
 }

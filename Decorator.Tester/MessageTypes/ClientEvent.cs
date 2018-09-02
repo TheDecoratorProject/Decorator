@@ -17,7 +17,7 @@ namespace Decorator.Tester {
 		[Position(0)]
 		public uint Id { get; set; }
 
-		[Required]
+		[Optional]
 		[Position(1)]
 		public string Username { get; set; }
 	}

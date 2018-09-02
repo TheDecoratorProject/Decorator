@@ -1,6 +1,8 @@
 ﻿using Decorator.Attributes;
 
+using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Decorator {
 
@@ -41,7 +43,7 @@ namespace Decorator {
 				typeof(T) :
 				item.GetType();
 
-			var msgAttrib = ReflectionHelper.EnsureAttributeGet<MessageAttribute, T>();
+			var msgAttrib = ReflectionHelper.EnsureAttributeGet<MessageAttribute>(t);
 
 			var items = new Dictionary<int, object>();
 
