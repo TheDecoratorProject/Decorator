@@ -2,7 +2,7 @@ using Decorator.Attributes;
 
 namespace Decorator.Tester.MessageTypes {
 
-	[Message("ping")]
+	[Message("chat")]
 	public class Chat {
 
 		[Position(0)]

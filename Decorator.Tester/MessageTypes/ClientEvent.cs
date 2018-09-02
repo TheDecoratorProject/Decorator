@@ -2,8 +2,16 @@ using Decorator.Attributes;
 
 namespace Decorator.Tester {
 
+	public class ClientEvent : ClientExistsEvent {
+
+		[Required]
+		[Position(2)]
+		public bool JoinState { get; set; }
+	}
+
+	[Repeatable]
 	[Message("ce")]
-	public class ClientEvent {
+	public class ClientExistsEvent {
 
 		[Required]
 		[Position(0)]
@@ -12,9 +20,5 @@ namespace Decorator.Tester {
 		[Required]
 		[Position(1)]
 		public string Username { get; set; }
-
-		[Required]
-		[Position(2)]
-		public bool JoinState { get; set; }
 	}
 }

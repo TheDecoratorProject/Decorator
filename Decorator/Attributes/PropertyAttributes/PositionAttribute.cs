@@ -2,7 +2,9 @@
 
 namespace Decorator.Attributes {
 
-	/// <summary>Defines where in an object array this property should get it's value from.</summary>
+	/// <summary>
+	/// Sets where the position of this attribute is in the message
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 	public sealed class PositionAttribute : Attribute {
 

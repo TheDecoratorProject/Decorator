@@ -2,7 +2,9 @@
 
 namespace Decorator.Attributes {
 
-	/// <summary>Limits the amount of arguments a message can have</summary>
+	/// <summary>
+	/// Prevents the message from having any more arguments then the amount specified.
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
 	public sealed class ArgumentLimitAttribute : Attribute {
 

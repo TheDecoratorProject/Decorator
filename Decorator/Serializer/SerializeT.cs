@@ -6,24 +6,14 @@ using System.Reflection;
 
 namespace Decorator {
 
-	public static class Serializer {
+	public static partial class Serializer {
 
-		public static Message Serialize<T>(IEnumerable<T> items) {
-			var msgAttrib = ReflectionHelper.EnsureAttributeGet<MessageAttribute, T>();
-			ReflectionHelper.EnsureAttributeGet<RepeatableAttribute, T>();
-
-			var args = new List<object>();
-			var set = false;
-
-			foreach(var i in items) {
-				var k = Serialize(i);
-
-				args.AddRange(k.Args);
-			}
-
-			return new Message(msgAttrib.Type, args.ToArray());
-		}
-
+		/// <summary>
+		/// Serialize a single T item to a message
+		/// </summary>
+		/// <typeparam name="T">The type of item to serialize</typeparam>
+		/// <param name="item">The item</param>
+		/// <returns>A message with the item serialized</returns>
 		public static Message Serialize<T>(T item) {
 			Type t;
 

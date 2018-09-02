@@ -2,6 +2,7 @@ using Decorator.Attributes;
 using Decorator.Tester.MessageTypes;
 
 using System;
+using System.Collections.Generic;
 
 namespace Decorator.Tester {
 
@@ -36,6 +37,13 @@ namespace Decorator.Tester {
 			var friendlyState = ce.JoinState ? "joined" : "left";
 
 			this.Log($"{ce.Id} has {friendlyState}! {ce.Username}");
+		}
+
+		[DeserializedHandler]
+		public void ClientEvent(IEnumerable<ClientExistsEvent> ces) {
+			foreach(var ce in ces) {
+				this.Log($"{ce.Id} was here before I was here! {ce.Username}");
+			}
 		}
 
 		[DeserializedHandler]

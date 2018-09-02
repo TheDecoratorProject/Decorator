@@ -1,0 +1,39 @@
+﻿
+		ROADMAP		
+	  ===========
+
+	Features that I
+	aim to include.
+
+- Proper s/des. of enums
+
+- Make messages to contain other messages as properties without boxing a Message to an object
+
+- [RestOf] attribute
+	Takes the ending piece of a message, boxes it into an object[], and passes it into that value
+
+- Deserialization events should have an [DeserializeItem] attribute to specify the item it's trying to deserialize
+	instead of hardcoding the first parameter
+
+- IEnumerable<> support as message properties
+
+- Analyzers so the user knows if they're using the attributes correctly
+
+- Use the { get; } and { set; } methods of properties when getting/setting properties, to ensure user code is ran
+	Not sure if that's being done already
+
+- [Minify] attribute to convert an int, uint, or higher, to a smaller value that holds the same thing to "minify"
+	the packet in more primitive serializers
+
+
+
+		CODEBASE	
+	  ============	
+
+- Refactoring to make methods smaller
+
+- Implement attribute code in the attribute, not in the serializer/deserializer
+
+- Cleanup ReflectionHelper
+
+- Cleanup Serializer

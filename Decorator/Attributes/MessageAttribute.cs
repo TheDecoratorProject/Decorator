@@ -2,7 +2,9 @@
 
 namespace Decorator.Attributes {
 
-	/// <summary>Define a class as a message. This will allow the message to be deserialized.</summary>
+	/// <summary>
+	/// Allows a class to be used as a valid Message, ready for serialization/deserialization.
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
 	public sealed class MessageAttribute : Attribute {
 

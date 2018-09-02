@@ -1,4 +1,5 @@
 ﻿using Decorator.Attributes;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace Decorator {
 		public static T EnsureAttributeGet<T, T2>()
 				where T : Attribute {
 			var attrib = GetAttributeOf<T>(typeof(T2));
-			if (attrib == default) throw new CustomAttributeFormatException($"No attribute was found on the item despite it needing the attribute.");
+			if (attrib == default) throw new CustomAttributeFormatException($"No attribute ({typeof(T).FullName}) was found on the item ({typeof(T2).FullName}) despite it needing the attribute.");
 			return attrib;
 		}
 
@@ -116,8 +117,8 @@ namespace Decorator {
 		public static int GetLargestPositionAttribute(Type t) {
 			var largest = int.MinValue;
 
-			foreach(var k in t.GetProperties())
-				if(TryGetAttributeOf<PositionAttribute>(k, out var posAttrib))
+			foreach (var k in t.GetProperties())
+				if (TryGetAttributeOf<PositionAttribute>(k, out var posAttrib))
 					if (posAttrib.Position > largest)
 						largest = posAttrib.Position;
 

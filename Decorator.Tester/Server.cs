@@ -26,9 +26,22 @@ namespace Decorator.Tester {
 				MyId = this._counter
 			});
 
-			Deserializer.DeserializeToEvent<Client>(this._clients[this._counter], initMsg);
+			var clients = new List<ClientExistsEvent>();
 
-			this._counter++;
+			foreach (var i in this._clients)
+				if (i.Key != this._counter)
+					clients.Add(new ClientExistsEvent {
+						Id = i.Key,
+						Username = "//todogg: :)"
+					});
+
+			var online = Serializer.SerializeEnumerable(clients);
+
+			Deserializer.DeserializeToEvent<Client>(this._clients[this._counter], initMsg);
+			Deserializer.DeserializeToEvent<Client>(this._clients[this._counter], online);
+
+			this._counter += 1;
+			System.Console.WriteLine("");
 		}
 
 		public void Disconnect(uint clientId) {

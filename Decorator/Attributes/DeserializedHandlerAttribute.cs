@@ -2,7 +2,9 @@
 
 namespace Decorator.Attributes {
 
-	/// <summary>When a message is successfully deserialized, it will use these attributes to find the proper handler for it.</summary>
+	/// <summary>
+	/// Mark this on a method to say that the method is valid for deserialization.
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
 	public sealed class DeserializedHandlerAttribute : Attribute {
 	}
