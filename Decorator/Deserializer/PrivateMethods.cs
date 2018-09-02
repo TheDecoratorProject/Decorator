@@ -10,56 +10,62 @@ namespace Decorator {
 
 	public static partial class Deserializer {
 
+		public static bool TryDeserializeToIEnumerable<T>(Message msg, out IEnumerable<T> itms, out string failErrMsg)
+			where T : class, new() {
+			itms = default;
+			failErrMsg = default;
+
+			// make sure it supports IEnumerable deserialization
+			ReflectionHelper.EnsureAttributeGet<RepeatableAttribute>(typeof(T));
+			ReflectionHelper.EnsureAttributeGet<MessageAttribute>(typeof(T));
+
+			var msgPosLength = ReflectionHelper.GetLargestPositionAttribute(typeof(T))
+							 + 1;
+
+			// ensure that the message length is just a bunch of the same message
+			if (msg.Args.Length % msgPosLength != 0) return OneLinerFail("Uneven amount of message params", out failErrMsg);
+
+			var innerMessages = msg.Args.Length / msgPosLength;
+
+			var resItms = new List<T>();
+
+			// for every "inner message"
+			for (var i = 0; i < innerMessages; i++) {
+
+				// copy it and try to deserialize it
+				var args = new object[msgPosLength];
+				Array.Copy(msg.Args, i * msgPosLength, args, 0, msgPosLength);
+
+				if (!TryDeserialize<T>(new Message(msg.Type, args), out var res, out var failDes)) return OneLinerFail($"Unable to deserialize the ({i})th message: {failDes}", out failErrMsg);
+
+				resItms.Add(res);
+			}
+
+			itms = resItms;
+			return true;
+		}
+
 		//TODO: split up into smaller pieces
 		
-		private static bool DeserializeMessageToIEnumerableAndInvoke<T>(T eventClass, Type desType, Message msg, MethodInfo method, object[] extraParams) {
+		private static bool InvokeIEnumerableMethod<T>(T eventClass, Type desType, Message msg, MethodInfo meth, object[] extraParams, out string failErrMsg)
+			where T : class, new() {
+			failErrMsg = default;
 			//TODO: check if it is an IEnumerable<> itself and not if it inherits IEnumerable
 
 			if (desType.GetInterfaces().Contains(typeof(System.Collections.IEnumerable))) {
 				var genArg = desType.GenericTypeArguments[0];
-				var genMsgAttrib = ReflectionHelper.EnsureAttributeGet<MessageAttribute>(genArg);
 
-				if (ReflectionHelper.TryGetAttributeOf<RepeatableAttribute>(genArg, out var _) &&
-					genMsgAttrib.Type == msg.Type) {
-					// get the largest position of the attribute
-					//TODO: check int.MinValue
-					var largest = ReflectionHelper.GetLargestPositionAttribute(genArg) + 1;
+				var args = new object[] { msg, null, null };
 
-					// ensure that the repeat amount is fine
-					if (msg.Args.Length % largest != 0) return false;
-
-					// List< desType >, just objects for reflection purposes
-					var itms = new List<object>();
-
-					for (var k = 0; k < msg.Args.Length / largest; k++) {
-
-						// take a specific chunk of the Message into a smaller sized Message to deserialize
-						var msgItms = new List<object>();
-
-						for (var j = 0; j < largest; j++) {
-							msgItms.Add(msg.Args[(k * largest) + j]);
-						}
-
-						// create said above comment
-						var resMsg = new Message(genMsgAttrib.Type, msgItms.ToArray());
-						
-						// des.
-						if (TryDeserializeGenerically(resMsg, genArg, out var result, out var __)) itms.Add(result);
-						else return false;
-					}
-
-					// change List<object> to IEnumerable< desType >
-					var resItms = GenericChangeEnumerable(itms, genArg);
-
-					// invoke
-					var invokeArgs = new object[extraParams.Length + 1];
-					invokeArgs[0] = resItms;
-					for (var k = 0; k < extraParams.Length; k++)
-						invokeArgs[k + 1] = extraParams[k];
-
-					method.Invoke(eventClass, invokeArgs);
+				if ((bool)typeof(Deserializer)
+						.GetMethod(nameof(TryDeserializeToIEnumerable), BindingFlags.Public | BindingFlags.Static)
+						.MakeGenericMethod(genArg)
+						.Invoke(null, args)) {
+					InvokeMethod<T>(eventClass, meth, args[1], extraParams);
 					return true;
 				}
+
+				failErrMsg = (string)args[2];
 			}
 
 			return false;
