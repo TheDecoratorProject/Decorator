@@ -33,7 +33,6 @@ namespace Decorator.Tester {
 
 		[DeserializedHandler]
 		public void ClientEvent(ClientEvent ce) {
-			Console.WriteLine($"rec CE");
 			var friendlyState = ce.JoinState ? "joined" : "left";
 
 			this.Log($"{ce.Id} has {friendlyState}! {ce.Username}");

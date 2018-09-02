@@ -8,6 +8,22 @@ namespace Decorator {
 
 	public static class Serializer {
 
+		public static Message Serialize<T>(IEnumerable<T> items) {
+			var msgAttrib = ReflectionHelper.EnsureAttributeGet<MessageAttribute, T>();
+			ReflectionHelper.EnsureAttributeGet<RepeatableAttribute, T>();
+
+			var args = new List<object>();
+			var set = false;
+
+			foreach(var i in items) {
+				var k = Serialize(i);
+
+				args.AddRange(k.Args);
+			}
+
+			return new Message(msgAttrib.Type, args.ToArray());
+		}
+
 		public static Message Serialize<T>(T item) {
 			Type t;
 
@@ -15,8 +31,7 @@ namespace Decorator {
 				typeof(T) :
 				item.GetType();
 
-			var msgAttrib = (MessageAttribute)t.GetCustomAttribute(typeof(MessageAttribute), true);
-			if (msgAttrib == default(MessageAttribute)) throw new CustomAttributeFormatException($"The type {t} doesn't have a [{nameof(MessageAttribute)}] attribute modifier defined on it.");
+			var msgAttrib = ReflectionHelper.EnsureAttributeGet<MessageAttribute, T>();
 
 			var items = new Dictionary<int, object>();
 

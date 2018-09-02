@@ -1,6 +1,8 @@
 ﻿using Decorator.Attributes;
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Decorator {
@@ -17,21 +19,93 @@ namespace Decorator {
 
 				if (args?.Length < 1) throw new CustomAttributeFormatException($"Invalid [{nameof(DeserializedHandlerAttribute)}] - must have at least one parameter");
 
-				if (TryDeserializeGenerically(msg, args[0].ParameterType, out var param, out var _)) {
-					success = true;
+				var desType = args[0].ParameterType;
 
-					// merge extraParams & the first message together
 
-					var invokeArgs = new object[extraParams.Length + 1];
-					invokeArgs[0] = param;
-					for (var k = 0; k < extraParams.Length; k++)
-						invokeArgs[k + 1] = extraParams[k];
+				//TODO: this is super gay, refactor it smh
 
-					i.Invoke(eventClass, invokeArgs);
+				// if it's an IEnumerable<> as a param
+				if (desType.GetInterfaces().Contains(typeof(System.Collections.IEnumerable))) {
+					var genArg = desType.GenericTypeArguments[0];
+					var genMsgAttrib = ReflectionHelper.EnsureAttributeGet<MessageAttribute>(genArg);
+
+					if (ReflectionHelper.TryGetAttributeOf<RepeatableAttribute>(genArg, out var _)) {
+
+						// get the largest position of the attribute
+						//TODO: check int.MaxValue
+						var largest = ReflectionHelper.GetLargestPositionAttribute(genArg);
+
+						// ensure that the repeat amount is fine
+						if (msg.Args.Length % (largest + 1) != 0) return false;
+
+						var itms = new List<object>();
+
+						for (var k = 0; k < msg.Args.Length / (largest + 1); k++) {
+							var msgItms = new List<object>();
+
+							for (var j = 0; j <= largest; j++) {
+								msgItms.Add(msg.Args[(k * (largest + 1)) + j]);
+							}
+
+							var resMsg = new Message(genMsgAttrib.Type, msgItms.ToArray());
+
+							if (TryDeserializeGenerically(resMsg, genArg, out var result, out var __)) itms.Add(result);
+							else {
+								//TODO: holy gosh i need refactoring
+								itms = null;
+								break;
+							}
+						}
+
+						if (itms == null) break;
+
+						var resItms = GenericChangeEnumerable(itms, genArg);
+
+						success = true;
+
+						var invokeArgs = new object[extraParams.Length + 1];
+						invokeArgs[0] = resItms;
+						for (var k = 0; k < extraParams.Length; k++)
+							invokeArgs[k + 1] = extraParams[k];
+
+						i.Invoke(eventClass, invokeArgs);
+					}
+				}
+
+				if (ReflectionHelper.TryGetAttributeOf<MessageAttribute>(desType, out var msgAttrib)) {
+					if (TryDeserializeGenerically(msg, desType, out var param, out var _)) {
+						success = true;
+
+						// merge extraParams & the first message together
+
+						var invokeArgs = new object[extraParams.Length + 1];
+						invokeArgs[0] = param;
+						for (var k = 0; k < extraParams.Length; k++)
+							invokeArgs[k + 1] = extraParams[k];
+
+						i.Invoke(eventClass, invokeArgs);
+					}
 				}
 			}
 
 			return success;
+		}
+
+		private static object GenericChangeEnumerable(IEnumerable<object> itms, Type conv) {
+			var generic = typeof(Deserializer).GetMethod(nameof(ChangeEnumerable), BindingFlags.NonPublic | BindingFlags.Static).MakeGenericMethod(conv);
+			var gmo = generic.Invoke(null, new object[] { itms });
+
+			return gmo;
+		}
+
+		private static IEnumerable<T> ChangeEnumerable<T>(IEnumerable<object> ine) {
+			var objs = new List<T>();
+
+			foreach (var i in ine) {
+				objs.Add((T)Convert.ChangeType(i, typeof(T)));
+			}
+
+			return objs;
 		}
 
 		public static bool TryDeserialize<T>(Message msg, out T res, out string failErrMsg)

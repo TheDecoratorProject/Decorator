@@ -47,7 +47,7 @@ namespace Decorator.Tester {
 
 		public void HandleMessage(Message msg, uint clientId) {
 			if (this._clients.TryGetValue(clientId, out var client))
-				Deserializer.DeserializeToEvent<Server>(this, msg, clientId, client);
+				Deserializer.DeserializeToEvent<Server>(this, msg, clientId);
 		}
 
 		[DeserializedHandler]

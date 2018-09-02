@@ -33,6 +33,6 @@ namespace Decorator.Tests {
 
 		[Fact(DisplayName = "SerializeNull")]
 		public void _5()
-			=> Assert.Throws<CustomAttributeFormatException>(() => Serializer.Serialize<ITestable>(null));
+			=> Assert.Throws<CustomAttributeFormatException>(() => Serializer.Serialize<ITestable>((ITestable)null));
 	}
 }
