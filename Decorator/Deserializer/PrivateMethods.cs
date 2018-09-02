@@ -71,10 +71,10 @@ namespace Decorator {
 		/// <param name="itms">The IEnumerable of objects</param>
 		/// <param name="conv">The Type to convert it to</param>
 		private static object GenericChangeEnumerable(IEnumerable<object> itms, Type conv) {
-			var generic = typeof(Deserializer).GetMethod(nameof(ChangeEnumerable), BindingFlags.NonPublic | BindingFlags.Static).MakeGenericMethod(conv);
-			var gmo = generic.Invoke(null, new object[] { itms });
-
-			return gmo;
+			return typeof(Deserializer)
+					.GetMethod(nameof(ChangeEnumerable), BindingFlags.NonPublic | BindingFlags.Static)
+					.MakeGenericMethod(conv)
+					.Invoke(null, new object[] { itms });
 		}
 
 		/// <summary>
@@ -82,15 +82,8 @@ namespace Decorator {
 		/// </summary>
 		/// <typeparam name="T">The type</typeparam>
 		/// <param name="ine">the input enumerable</param>
-		private static IEnumerable<T> ChangeEnumerable<T>(IEnumerable<object> ine) {
-			var objs = new List<T>();
-
-			foreach (var i in ine) {
-				objs.Add((T)Convert.ChangeType(i, typeof(T)));
-			}
-
-			return objs;
-		}
+		private static IEnumerable<T> ChangeEnumerable<T>(IEnumerable<object> ine)
+			=> ine.Select(x => (T)Convert.ChangeType(x, typeof(T)));
 
 		/// <summary>
 		/// Small helper method to prevent repeating code.

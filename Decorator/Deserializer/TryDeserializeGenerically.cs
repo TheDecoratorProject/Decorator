@@ -17,8 +17,10 @@ namespace Decorator {
 		public static bool TryDeserializeGenerically(Message msg, Type desType, out object res, out string failErrMsg) {
 			var args = new object[] { msg, null, null };
 
-			var generic = typeof(Deserializer).GetMethod(nameof(TryDeserialize), BindingFlags.Public | BindingFlags.Static).MakeGenericMethod(desType);
-			var gmo = (bool)generic.Invoke(null, args);
+			var gmo = (bool)typeof(Deserializer)
+							.GetMethod(nameof(TryDeserialize), BindingFlags.Public | BindingFlags.Static)
+							.MakeGenericMethod(desType)
+							.Invoke(null, args);
 
 			res = args[1];
 			failErrMsg = (string)args[2];
