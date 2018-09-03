@@ -24,7 +24,7 @@ namespace Decorator {
 		public static T EnsureAttributeGet<T>(Type t)
 				where T : Attribute {
 			var attrib = GetAttributeOf<T>(t);
-			if (attrib == default) throw new CustomAttributeFormatException($"No attribute was found on the item despite it needing the attribute.");
+			if (attrib == default) throw new CustomAttributeFormatException($"No attribute ({typeof(T).FullName}) was found on the item ({t.FullName}) despite it needing the attribute.");
 			return attrib;
 		}
 
@@ -120,7 +120,7 @@ namespace Decorator {
 			foreach (var k in t.GetProperties())
 				if (TryGetAttributeOf<PositionAttribute>(k, out var posAttrib) &&
 					posAttrib.Position > largest)
-						largest = posAttrib.Position;
+					largest = posAttrib.Position;
 
 			return largest;
 		}

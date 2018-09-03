@@ -41,7 +41,7 @@ namespace Decorator.Tester {
 
 		[DeserializedHandler]
 		public void ClientEvent(IEnumerable<ClientExistsEvent> ces) {
-			foreach(var ce in ces) {
+			foreach (var ce in ces) {
 				this.Log($"{ce.Id} was here before I was here! {ce.Username}");
 			}
 		}

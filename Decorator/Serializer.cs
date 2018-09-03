@@ -29,7 +29,6 @@ namespace Decorator {
 			return new Message(msgAttrib.Type, args.ToArray());
 		}
 
-
 		/// <summary>
 		/// Serialize a single T item to a message
 		/// </summary>
