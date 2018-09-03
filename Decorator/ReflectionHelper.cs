@@ -8,12 +8,7 @@ using System.Reflection;
 namespace Decorator {
 
 	internal static class ReflectionHelper {
-
-		public static void CheckNull<T>(T item, string paramName)
-			where T : class {
-			if (item == default(T)) throw new ArgumentNullException(paramName);
-		}
-
+		
 		public static T EnsureAttributeGet<T, T2>()
 				where T : Attribute {
 			var attrib = GetAttributeOf<T>(typeof(T2));

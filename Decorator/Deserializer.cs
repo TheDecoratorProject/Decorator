@@ -42,11 +42,12 @@ namespace Decorator {
 
 		internal static FastException<int> InternalDeserializeToEvent<T>(T eventClass, Message msg, params object[] extraParams)
 							where T : class, new() {
+			if (msg == default(T))
+				return new FastException<int>(new ArgumentNullException(nameof(msg)));
+
 			var exceptions = new List<Exception>();
 
 			var methodInvokes = 0;
-
-			ReflectionHelper.CheckNull(msg, nameof(msg));
 
 			// loop through every deserializable handler
 			foreach (var method in ReflectionHelper.GetMethodsWithAttribute<DeserializedHandlerAttribute>(eventClass?.GetType() ?? typeof(T))) {
@@ -65,7 +66,8 @@ namespace Decorator {
 
 		internal static FastException<IEnumerable<T>> InternalDeserializeToIEnumerable<T>(Message msg)
 			where T : class, new() {
-			ReflectionHelper.CheckNull(msg, nameof(msg));
+			if (msg == default(T))
+				return new FastException<IEnumerable<T>>(new ArgumentNullException(nameof(msg)));
 
 			// make sure it supports IEnumerable deserialization
 			//TODO: helper functions
@@ -79,7 +81,7 @@ namespace Decorator {
 							 + 1;
 
 			// ensure that the message length is just a bunch of the same message
-			if (msg.Args.Length % msgPosLength != 0) return new FastException<IEnumerable<T>>(new Exception("Uneven amount of message params"));
+			if (msg.Args.Length % msgPosLength != 0) return new FastException<IEnumerable<T>>(new BaseMessageInequalityException("Uneven amount of message params"));
 
 			var innerMessages = msg.Args.Length / msgPosLength;
 
@@ -91,8 +93,6 @@ namespace Decorator {
 				var args = new object[msgPosLength];
 				Array.Copy(msg.Args, i * msgPosLength, args, 0, msgPosLength);
 
-				// throw new Exception($"Unable to deserialize the ({i})th message: {failDes}");
-
 				resultingMessages.Add(Deserialize<T>(new Message(msg.Type, args)));
 			}
 
@@ -101,13 +101,14 @@ namespace Decorator {
 
 		internal static FastException<T> InternalDeserialize<T>(Message msg)
 							where T : class, new() {
-			ReflectionHelper.CheckNull(msg, nameof(msg));
+			if (msg == default(T))
+				return new FastException<T>(new ArgumentNullException(nameof(msg)));
 
 			var msgAttrib = ReflectionHelper.GetAttributeOf<MessageAttribute>(typeof(T));
 			if (msgAttrib == default)
 				return new FastException<T>(new CustomAttributeFormatException($"Could not find a {nameof(MessageAttribute)} on {typeof(T).FullName}"));
 
-			if (msgAttrib.Type != msg.Type) return new FastException<T>(new Exception("The base message types aren't equal."));
+			if (msgAttrib.Type != msg.Type) return new FastException<T>(new BaseMessageInequalityException("The base message types aren't equal."));
 
 			// if there's a limit on the amount of arguments set for the item
 
@@ -133,10 +134,10 @@ namespace Decorator {
 							if (!ReflectionHelper.TryGetAttributeOf<OptionalAttribute>(property, out var _) ||
 								ReflectionHelper.TryGetAttributeOf<RequiredAttribute>(property, out var __)) {
 								// yell at 'em
-								return new FastException<T>(new Exception($"Unable to set the value of ({property.Name}) to the value ({msg?.Args[posAttrib.Position]})"));
+								return new FastException<T>(new InabilityToSetValueException($"Unable to set the value of ({property.Name}) to the value ({msg?.Args[posAttrib.Position]}) - consider putting an [{nameof(OptionalAttribute)}] on the property!"));
 							}
 						}
-					} else return new FastException<T>(new Exception($"The message doesn't match the position attributes"));
+					} else return new FastException<T>(new InvalidMessageCountException($"The message doesn't match the position attributes"));
 			}
 
 			return new FastException<T>(res);
@@ -159,6 +160,9 @@ namespace Decorator {
 							where T : class, new() {
 			// get the args
 			var parameters = method.GetParameters();
+
+			if (parameters == null)
+				return new FastException<bool>(new ArgumentNullException(nameof(parameters), $"Parameters was null"));
 
 			if (parameters?.Length < 1)
 				return new FastException<bool>(new CustomAttributeFormatException($"Invalid [{nameof(DeserializedHandlerAttribute)}] - must have at least one parameter"));

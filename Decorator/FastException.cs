@@ -22,7 +22,7 @@ namespace Decorator {
 			this.Result = result;
 		}
 
-		private bool _state;
+		private readonly bool _state;
 
 		public bool ThrownException => !this._state;
 		public TResult Result { get; }
