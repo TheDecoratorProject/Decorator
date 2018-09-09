@@ -28,7 +28,7 @@ namespace Decorator {
 			if (this.Cache.TryGetValue(key, out var val)) {
 				return val;
 			} else {
-				var result = lacksKey.Invoke();
+				var result = lacksKey();
 
 				if (this.Cache.TryAdd(key, result))
 					return result;

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace Decorator {
 
@@ -39,7 +40,14 @@ namespace Decorator {
 		public Deserializer() {
 			this.TypeManager = new MessageManager();
 			this.DeserializableHandlerManager = new DeserializableHandlerManager<TClass>();
+			this._objToArrays = new CacheManager<Type, Func<object, object[], object>>();
+			this._objToArray = this.GetType()
+								.GetMethod(nameof(FromObjToArray), BindingFlags.Static | BindingFlags.NonPublic);
 		}
+
+		private MethodInfo _objToArray;
+
+		private ICache<Type, Func<object, object[], object>> _objToArrays { get; }
 
 		public IMessageManager TypeManager { get; }
 		public IDeserializableHandlerManager<TClass> DeserializableHandlerManager { get; }
@@ -79,26 +87,28 @@ namespace Decorator {
 
 		public void DeserializeMessageToMethod(TClass instance, BaseMessage msg) {
 			foreach (var i in this.DeserializableHandlerManager.Cache) {
-				if (CanDeserialize(i.Key, msg)) {
-					var des = Deserialize(i.Key, msg);
+				if (this.TypeManager.QualifiesAsType(i.Key, msg)) {
+					dynamic des = this.TypeManager.DeserializeToType(i.Key, msg);
 
 					foreach (var k in i.Value)
 						this.DeserializableHandlerManager.InvokeMethod(k, instance, des);
 				}
 
-				if (i.Key.GenericTypeArguments.Length > 0)
-					if (i.Key == typeof(IEnumerable<>).MakeGenericType(i.Key.GenericTypeArguments[0]))
-						if (CanDeserializeRepeats(i.Key.GenericTypeArguments[0], msg)) {
-							var des = this.DeserializeRepeats(i.Key.GenericTypeArguments[0], msg);
+				if (i.Key.GenericTypeArguments.Length > 0) {
+					var genArg = i.Key.GenericTypeArguments[0];
 
-							var result = this.GetType()
-											.GetMethod(nameof(FromObjToArray), BindingFlags.Static | BindingFlags.NonPublic)
-											.MakeGenericMethod(i.Key.GenericTypeArguments[0])
-											.Invoke(null, new[] { des });
+					if (i.Key == typeof(IEnumerable<>).MakeGenericType(genArg) &&
+						this.TypeManager.QualifiesAsRepeatableType(genArg, msg)) {
+							var des = this.TypeManager.DeserializeRepeatableToType(genArg, msg);
+
+							dynamic result = this._objToArrays.Retrieve(genArg, () =>
+								IL.Wrap(this._objToArray.MakeGenericMethod(genArg)))
+												(null, new[] { des });
 
 							foreach (var k in i.Value)
 								this.DeserializableHandlerManager.InvokeMethod(k, (object)instance, result);
 						}
+				}
 			}
 		}
 
@@ -115,5 +125,6 @@ namespace Decorator {
 			foreach (var i in objs)
 				yield return (T)i;
 		}
+
 	}
 }

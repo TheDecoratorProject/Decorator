@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace Decorator {
 
@@ -19,7 +20,7 @@ namespace Decorator {
 
 		void InvokeMethod<TItem>(MethodInfo method, TClass instance, TItem item);
 
-		void InvokeMethod(MethodInfo method, object instance, object item);
+		void InvokeMethod<TItem>(MethodInfo method, object instance, TItem item);
 	}
 
 	public class DeserializableHandlerManager<TClass> : IDeserializableHandlerManager<TClass>
@@ -28,9 +29,13 @@ namespace Decorator {
 		public DeserializableHandlerManager() {
 			this.Cache = new CacheManager<Type, MethodInfo[]>();
 
+			this.MethodInfoCache = new CacheManager<MethodInfo, Func<object, object[], object>>();
+
 			//TODO: clean
 			// with like a reflection helper class
 			// or something
+
+			this._cast = this.GetType().GetMethod(nameof(CastObj), BindingFlags.NonPublic | BindingFlags.Static);
 
 			var dict = new Dictionary<Type, List<MethodInfo>>();
 
@@ -43,7 +48,11 @@ namespace Decorator {
 				this.Cache.Store(i.Key, i.Value.ToArray());
 		}
 
+		private MethodInfo _cast;
+
 		public ICache<Type, MethodInfo[]> Cache { get; }
+
+		public ICache<MethodInfo, Func<object, object[], object>> MethodInfoCache { get; }
 
 		public MethodInfo[] GetHandlers() => this.Cache.SelectMany(x => x.Value).ToArray();
 
@@ -58,10 +67,25 @@ namespace Decorator {
 		public TItem[] GetItemTypes<TItem>() => throw new NotImplementedException();
 
 		public void InvokeMethod<TItem>(MethodInfo method, TClass instance, TItem item)
-			=> InvokeMethod(method, (object)instance, (object)item);
+			=> InvokeMethod(method, (object)instance, item);
 
-		public void InvokeMethod(MethodInfo method, object instance, object item) {
-			method.Invoke(instance, new object[] { item });
+		public void InvokeMethod<TItem>(MethodInfo method, object instance, TItem item) {
+
+			//method.Invoke(instance, new object[] { item });
+
+			var d = this.MethodInfoCache.Retrieve(method, () =>
+				IL.Wrap(method));
+
+			d(instance, new object[] { item });
+
+			//Delegate.CreateDelegate(typeof(Action<>).MakeGenericType(item?.GetType()), instance, method)
+			//	.DynamicInvoke(item);
+
+			//method.Invoke(instance, new object[] { item });
 		}
+
+		private static T CastObj<T>(object input)
+			=> (T)input;
+		
 	}
 }

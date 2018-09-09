@@ -6,6 +6,15 @@ namespace Decorator.Tests {
 
 	public class DesHandlers {
 
+		[Fact]
+		[Trait("Category", "HandlerDeserialization")]
+		public void DesLotsLotsLOTS() {
+			var setup = Setup.GetSetup();
+
+			for(int i = 0; i < 100_000; i++)
+				setup.Deserializer.DeserializeMessageToMethod(setup.Instance, Setup.Correct);
+		}
+
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "HandlerDeserialization")]
 		public void DeserializesToHandlerTestMessage() {
