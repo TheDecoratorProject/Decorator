@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
 
 namespace Decorator {
 
@@ -99,15 +98,15 @@ namespace Decorator {
 
 					if (i.Key == typeof(IEnumerable<>).MakeGenericType(genArg) &&
 						this.TypeManager.QualifiesAsRepeatableType(genArg, msg)) {
-							var des = this.TypeManager.DeserializeRepeatableToType(genArg, msg);
+						var des = this.TypeManager.DeserializeRepeatableToType(genArg, msg);
 
-							dynamic result = this._objToArrays.Retrieve(genArg, () =>
-								IL.Wrap(this._objToArray.MakeGenericMethod(genArg)))
-												(null, new[] { des });
+						dynamic result = this._objToArrays.Retrieve(genArg, () =>
+							IL.Wrap(this._objToArray.MakeGenericMethod(genArg)))
+											(null, new[] { des });
 
-							foreach (var k in i.Value)
-								this.DeserializableHandlerManager.InvokeMethod(k, (object)instance, result);
-						}
+						foreach (var k in i.Value)
+							this.DeserializableHandlerManager.InvokeMethod(k, (object)instance, result);
+					}
 				}
 			}
 		}
@@ -125,6 +124,5 @@ namespace Decorator {
 			foreach (var i in objs)
 				yield return (T)i;
 		}
-
 	}
 }

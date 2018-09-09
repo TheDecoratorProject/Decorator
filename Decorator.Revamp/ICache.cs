@@ -8,8 +8,6 @@ namespace Decorator {
 	public interface ICache<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>> {
 		ConcurrentDictionary<TKey, TValue> Cache { get; }
 
-		void Store(TKey key, TValue value);
-
 		TValue Retrieve(TKey key, Func<TValue> lacksKey);
 	}
 
@@ -37,11 +35,6 @@ namespace Decorator {
 
 				return val;
 			}
-		}
-
-		public void Store(TKey key, TValue value) {
-			if (!this.Cache.TryAdd(key, value))
-				this.Cache[key] = value;
 		}
 	}
 }

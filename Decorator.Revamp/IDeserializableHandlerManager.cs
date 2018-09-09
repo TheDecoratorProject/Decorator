@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
 
 namespace Decorator {
 
@@ -70,7 +69,6 @@ namespace Decorator {
 			=> InvokeMethod(method, (object)instance, item);
 
 		public void InvokeMethod<TItem>(MethodInfo method, object instance, TItem item) {
-
 			//method.Invoke(instance, new object[] { item });
 
 			var d = this.MethodInfoCache.Retrieve(method, () =>
@@ -86,6 +84,5 @@ namespace Decorator {
 
 		private static T CastObj<T>(object input)
 			=> (T)input;
-		
 	}
 }

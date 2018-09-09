@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
 
-namespace Decorator
-{
+namespace Decorator {
+
 	public static class IL {
-
 		// https://stackoverflow.com/a/7478557
 
 		public static Func<object, object[], object> Wrap(MethodInfo method) {
