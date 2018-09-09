@@ -5,7 +5,8 @@ namespace Decorator.Tests {
 
 	public class DesHandlers {
 
-		[Fact]
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", "HandlerDeserialization")]
 		public void DeserializesToHandlerTestMessage() {
 			var setup = Setup.GetSetup();
 
@@ -17,7 +18,8 @@ namespace Decorator.Tests {
 			Assert.True(setup.Instance.Invoked);
 		}
 
-		[Fact]
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", "HandlerDeserialization")]
 		public void DeserializeToHandlerMessage() {
 			var setup = Setup.GetSetup();
 
@@ -26,7 +28,8 @@ namespace Decorator.Tests {
 			Assert.True(setup.Instance.Invoked);
 		}
 
-		[Fact]
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", "HandlerDeserialization")]
 		public void DeserializesEnumerable() {
 			var setup = Setup.GetSetup();
 
