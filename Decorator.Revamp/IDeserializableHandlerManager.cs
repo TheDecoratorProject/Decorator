@@ -34,13 +34,10 @@ namespace Decorator {
 
 			var dict = new Dictionary<Type, List<MethodInfo>>();
 
-			foreach (var i in typeof(TClass).GetMethods())
-				if (i.GetCustomAttributes(typeof(Attributes.DeserializedHandlerAttribute), true).Length > 0)
-					if (dict.TryGetValue(i.GetParameters()[0].ParameterType, out var val))
-						val.Add(i);
-					else dict[i.GetParameters()[0].ParameterType] = new List<MethodInfo> {
-						i
-					};
+			foreach (var i in typeof(TClass).GetMethods().Where(x => x.HasAttribute<Attributes.DeserializedHandlerAttribute>(out var _)))
+				if (dict.TryGetValue(i.GetParameters()[0].ParameterType, out var val))
+					val.Add(i);
+				else dict[i.GetParameters()[0].ParameterType] = new List<MethodInfo> { i };
 
 			foreach (var i in dict)
 				this.Cache.Store(i.Key, i.Value.ToArray());

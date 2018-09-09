@@ -1,7 +1,7 @@
 ﻿using Decorator.Attributes;
 
 using System.Collections.Generic;
-
+using System.Linq;
 using Xunit;
 
 namespace Decorator.Tests {
@@ -12,6 +12,11 @@ namespace Decorator.Tests {
 
 		public void IgnoredMethod(TestMessage m) {
 			Assert.False(true, $"Shouldn't be invoked D:");
+		}
+
+		[DeserializedHandler]
+		public void NullHandler(NullType n) {
+			Assert.True(false);
 		}
 
 		[DeserializedHandler]
@@ -30,16 +35,12 @@ namespace Decorator.Tests {
 
 		[DeserializedHandler]
 		public void EnumerableHandler(IEnumerable<TestMessage> m) {
+			if(m.Count() == 1) return;
+
 			var c = 0;
 
-			foreach (var i in m) c++;
-
-			if (c == 1) Assert.False(true, "The Enumerable method shouldn't be selected if there is only one message and there are alternative single handlers.");
-
-			c = 0;
-
 			foreach (var i in m) {
-				Assert.Equal("floss", i.PositionZeroItem);
+				Assert.Equal("just right", i.PositionZeroItem);
 				Assert.Equal(c++, i.PositionOneItem);
 			}
 

@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Decorator {
 
@@ -27,9 +28,9 @@ namespace Decorator {
 
 		object Deserialize(Type t, BaseMessage m);
 
-		void DeserializeToMethod(TClass instance, BaseMessage msg);
+		void DeserializeMessageToMethod(TClass instance, BaseMessage msg);
 
-		void DeserializeToMethod<T>(TClass instance, T item);
+		void DeserializeItemToMethod<T>(TClass instance, T item);
 	}
 
 	public class Deserializer<TClass> : IDeserializer<TClass>
@@ -76,19 +77,39 @@ namespace Decorator {
 			throw new DecoratorException("nooo");
 		}
 
-		public void DeserializeToMethod(TClass instance, BaseMessage msg) {
+		public void DeserializeMessageToMethod(TClass instance, BaseMessage msg) {
 			foreach (var i in this.DeserializableHandlerManager.Cache) {
-				if (CanDeserialize(i.Key, msg))
+				if (CanDeserialize(i.Key, msg)) {
+					var des = Deserialize(i.Key, msg);
+
 					foreach (var k in i.Value)
-						this.DeserializableHandlerManager.InvokeMethod(k, instance, Deserialize(i.Key, msg));
+						this.DeserializableHandlerManager.InvokeMethod(k, instance, des);
+				}
+
+				if(i.Key.GenericTypeArguments.Length > 0)
+					if (i.Key == typeof(IEnumerable<>).MakeGenericType(i.Key.GenericTypeArguments[0]))
+						if (CanDeserializeRepeats(i.Key.GenericTypeArguments[0], msg)) {
+							var des = this.DeserializeRepeats(i.Key.GenericTypeArguments[0], msg);
+
+							var result = this.GetType()
+											.GetMethod(nameof(FromObjToArray), BindingFlags.Static | BindingFlags.NonPublic)
+											.MakeGenericMethod(i.Key.GenericTypeArguments[0])
+											.Invoke(null, new [] { des });
+
+							foreach (var k in i.Value)
+								this.DeserializableHandlerManager.InvokeMethod(k, (object)instance, result);
+						}
 			}
 		}
 
-		public void DeserializeToMethod<TItem>(TClass instance, TItem item) {
+		public void DeserializeItemToMethod<TItem>(TClass instance, TItem item) {
 			foreach (var i in this.DeserializableHandlerManager.GetHandlersFor<TItem>()) {
 				this.DeserializableHandlerManager.InvokeMethod<TItem>(i, instance, item);
 			}
 		}
+
+		private static IEnumerable<T> FromObjToArray<T>(IEnumerable<object> objs)
+			=> FromObj<T>(objs).ToArray();
 
 		private static IEnumerable<T> FromObj<T>(IEnumerable<object> objs) {
 			foreach (var i in objs)
