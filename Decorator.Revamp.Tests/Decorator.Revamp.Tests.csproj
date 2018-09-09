@@ -4,6 +4,8 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <RootNamespace>Decorator.Tests</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -22,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Decorator\Decorator.csproj" />
+    <ProjectReference Include="..\Decorator.Revamp\Decorator.Revamp.csproj" />
   </ItemGroup>
 
 </Project>
