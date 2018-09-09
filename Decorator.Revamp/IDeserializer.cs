@@ -8,7 +8,7 @@ namespace Decorator {
 
 	public interface IDeserializer<TClass>
 		where TClass : class {
-		ITypeManager TypeManager { get; }
+		IMessageManager TypeManager { get; }
 		IDeserializableHandlerManager<TClass> DeserializableHandlerManager { get; }
 
 		bool CanDeserialize<TItem>(BaseMessage m);
@@ -36,11 +36,11 @@ namespace Decorator {
 		where TClass : class {
 
 		public Deserializer() {
-			this.TypeManager = new TypeManager();
+			this.TypeManager = new MessageManager();
 			this.DeserializableHandlerManager = new DeserializableHandlerManager<TClass>();
 		}
 
-		public ITypeManager TypeManager { get; }
+		public IMessageManager TypeManager { get; }
 		public IDeserializableHandlerManager<TClass> DeserializableHandlerManager { get; }
 
 		public bool CanDeserialize<TItem>(BaseMessage m)
@@ -63,63 +63,17 @@ namespace Decorator {
 		public bool CanDeserializeRepeats<TItem>(BaseMessage m)
 			=> CanDeserializeRepeats(typeof(TItem), m);
 
-		public bool CanDeserializeRepeats(Type t, BaseMessage m) {
-			var positions = t.GetPositions();
-
-			//NOTE: copied, so may want to not reinvent the wheel here
-			var maxPos = positions.Length > 0
-				? positions
-					.Max(x => x.GetPosition()) + 1
-				: 0;
-
-			if (m.Count % maxPos != 0) return false;
-
-			for (uint i = 0; i < m.Count / maxPos; i++) {
-				var args = new object[maxPos];
-
-				Array.Copy(m.Arguments, i * (maxPos), args, 0, args.Length);
-
-				var msg = new BasicMessage(m.Type, args);
-
-				if (!CanDeserialize(t, msg)) return false;
-			}
-
-			return true;
-		}
+		public bool CanDeserializeRepeats(Type t, BaseMessage m)
+			=> this.TypeManager.QualifiesAsRepeatableType(t, m);
 
 		public IEnumerable<TItem> DeserializeRepeats<TItem>(BaseMessage m) where TItem : new()
 			=> FromObj<TItem>(DeserializeRepeats(typeof(TItem), m)).ToArray();
 
 		public IEnumerable<object> DeserializeRepeats(Type t, BaseMessage m) {
-			if (!CanDeserializeRepeats(t, m))
-				throw new DecoratorException("noOOO");
+			if (this.TypeManager.QualifiesAsRepeatableType(t, m))
+				return this.TypeManager.DeserializeRepeatableToType(t, m).ToArray();
 
-			var positions = t.GetPositions();
-
-			//NOTE: copied, so may want to not reinvent the wheel here
-			var maxPos = positions.Length > 0
-				? positions
-					.Max(x => x.GetPosition()) + 1
-				: 0;
-
-			if (m.Count % maxPos != 0)
-
-				//TODO: exceptions, or CanDeserialize, or something /shrug
-				return default;
-
-			var results = new List<object>();
-
-			for (uint i = 0; i < m.Count / maxPos; i++) {
-				var args = new object[maxPos];
-
-				Array.Copy(m.Arguments, i * (maxPos), args, 0, args.Length);
-
-				var msg = new BasicMessage(m.Type, args);
-
-				results.Add(Deserialize(t, msg));
-			}
-
-			return results;
+			throw new DecoratorException("nooo");
 		}
 
 		public void DeserializeToMethod(TClass instance, BaseMessage msg) {
@@ -136,7 +90,7 @@ namespace Decorator {
 			}
 		}
 
-		private IEnumerable<T> FromObj<T>(IEnumerable<object> objs) {
+		private static IEnumerable<T> FromObj<T>(IEnumerable<object> objs) {
 			foreach (var i in objs)
 				yield return (T)i;
 		}
