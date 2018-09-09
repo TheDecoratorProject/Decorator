@@ -1,12 +1,11 @@
 ﻿using Decorator.Attributes;
-using System;
-using System.Collections.Generic;
+
 using System.Linq;
-using System.Text;
+
 using Xunit;
 
-namespace Decorator.Tests
-{
+namespace Decorator.Tests {
+
 	[Message("ee")]
 	[Repeatable]
 	public class Stuff {
@@ -21,7 +20,7 @@ namespace Decorator.Tests
 		public uint Coins { get; set; }
 
 		public override bool Equals(object obj) {
-			if(obj is Stuff s) {
+			if (obj is Stuff s) {
 				return s.Username.Equals(this.Username) &&
 						s.Id.Equals(this.Id) &&
 						s.Coins.Equals(this.Coins);
@@ -33,7 +32,6 @@ namespace Decorator.Tests
 	public class EEHE {
 
 		private Stuff[] GetEnumerable() {
-
 			var itms = new Stuff[] {
 				new Stuff {
 					Username = "john",

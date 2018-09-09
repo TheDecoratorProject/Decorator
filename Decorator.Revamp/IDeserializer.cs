@@ -86,7 +86,7 @@ namespace Decorator {
 						this.DeserializableHandlerManager.InvokeMethod(k, instance, des);
 				}
 
-				if(i.Key.GenericTypeArguments.Length > 0)
+				if (i.Key.GenericTypeArguments.Length > 0)
 					if (i.Key == typeof(IEnumerable<>).MakeGenericType(i.Key.GenericTypeArguments[0]))
 						if (CanDeserializeRepeats(i.Key.GenericTypeArguments[0], msg)) {
 							var des = this.DeserializeRepeats(i.Key.GenericTypeArguments[0], msg);
@@ -94,7 +94,7 @@ namespace Decorator {
 							var result = this.GetType()
 											.GetMethod(nameof(FromObjToArray), BindingFlags.Static | BindingFlags.NonPublic)
 											.MakeGenericMethod(i.Key.GenericTypeArguments[0])
-											.Invoke(null, new [] { des });
+											.Invoke(null, new[] { des });
 
 							foreach (var k in i.Value)
 								this.DeserializableHandlerManager.InvokeMethod(k, (object)instance, result);

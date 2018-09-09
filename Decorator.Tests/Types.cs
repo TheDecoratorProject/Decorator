@@ -1,7 +1,7 @@
 ﻿using Decorator.Attributes;
+
 using System;
-using System.Collections.Generic;
-using System.Text;
+
 using Xunit;
 
 namespace Decorator.Tests {
@@ -150,60 +150,54 @@ namespace Decorator.Tests {
 	}
 
 	public class CEvent {
+
 		[DeserializedHandler]
 		public static void HandleTest1(Test1 test) {
-
 		}
 	}
 
 	public class DEvent {
+
 		[DeserializedHandler]
 		public static void HandleTest2(Test2 test) {
-
 		}
 	}
 
 	public class EEvent {
+
 		[DeserializedHandler]
 		public static void HandleTest1_1(Test1 test) {
-
 		}
 
 		[DeserializedHandler]
 		public static void HandleTest1_2(Test1 test) {
-
 		}
 
 		[DeserializedHandler]
 		public static void HandleTest2_1(Test2 test) {
-
 		}
 
 		[DeserializedHandler]
 		public static void HandleTest2_2(Test2 test) {
-
 		}
 
 		[DeserializedHandler]
 		public static void HandleTest2_3(Test2 test) {
-
 		}
 	}
-	
+
 	public class FEvent {
+
 		[DeserializedHandler]
 		public static void HandleTest1(Test1 test) {
-
 		}
 
 		[DeserializedHandler]
 		public static void HandleTest3(Test3 test) {
-
 		}
 
 		[DeserializedHandler]
 		public static void HandleTest3_(Test3 test) {
-
 		}
 	}
 }

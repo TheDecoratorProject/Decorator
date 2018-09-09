@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+
 using Xunit;
 
 namespace Decorator.Tests {
@@ -35,7 +36,7 @@ namespace Decorator.Tests {
 
 		[DeserializedHandler]
 		public void EnumerableHandler(IEnumerable<TestMessage> m) {
-			if(m.Count() == 1) return;
+			if (m.Count() == 1) return;
 
 			var c = 0;
 

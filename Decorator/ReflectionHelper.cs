@@ -8,7 +8,7 @@ using System.Reflection;
 namespace Decorator {
 
 	internal static class ReflectionHelper {
-		
+
 		public static T EnsureAttributeGet<T, T2>()
 				where T : Attribute {
 			var attrib = GetAttributeOf<T>(typeof(T2));

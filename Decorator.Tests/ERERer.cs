@@ -1,11 +1,11 @@
 ﻿using Decorator.Attributes;
+
 using System;
-using System.Collections.Generic;
-using System.Text;
+
 using Xunit;
 
-namespace Decorator.Tests
-{
+namespace Decorator.Tests {
+
 	[Message("base")]
 	[ArgumentLimit(1)]
 	public class BaseClass {
@@ -16,7 +16,6 @@ namespace Decorator.Tests
 
 	[Message("child")]
 	public class ChildClass : BaseClass {
-
 	}
 
 	public class Teststs {
@@ -115,6 +114,7 @@ namespace Decorator.Tests
 	}
 
 	public class AClass {
+
 		[DeserializedHandler]
 		public static void BC(BaseClass bc) { }
 
