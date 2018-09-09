@@ -1,6 +1,6 @@
 ﻿namespace Decorator {
 
-	public abstract class Message {
+	public abstract class BaseMessage {
 		public abstract string Type { get; }
 		public abstract object[] Arguments { get; }
 
@@ -8,8 +8,9 @@
 		public object this[uint index] => this.Arguments[index];
 	}
 
-	public class MessageImplementation : Message {
-		public MessageImplementation(string type, params object[] args) {
+	public class BasicMessage : BaseMessage {
+
+		public BasicMessage(string type, params object[] args) {
 			this.Type = type;
 			this.Arguments = args;
 		}

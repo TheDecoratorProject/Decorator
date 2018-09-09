@@ -1,21 +1,20 @@
 ﻿using Decorator.Exceptions;
-using System;
+
 using System.Collections.Generic;
-using System.Text;
+
 using Xunit;
 
-namespace Decorator.Tests
-{
+namespace Decorator.Tests {
 
-    public class Deserialize
-    {
-		private static void Verify(Message m, TestMessage t) {
+	public class Deserialize {
+
+		private static void Verify(BaseMessage m, TestMessage t) {
 			Assert.Equal("test", m.Type);
 			Assert.Equal(m.Arguments[0], t.PositionZeroItem);
 			Assert.Equal(m.Arguments[1], t.PositionOneItem);
 		}
 
-		private static void AttemptDeserialize(Message msg) {
+		private static void AttemptDeserialize(BaseMessage msg) {
 			var setup = Setup.GetSetup();
 
 			var result = setup.Deserializer.Deserialize<TestMessage>(msg);
@@ -23,7 +22,7 @@ namespace Decorator.Tests
 			Verify(msg, result);
 		}
 
-		private static void AttemptDeserializeRepeated(Message msg, int repeatAmt) {
+		private static void AttemptDeserializeRepeated(BaseMessage msg, int repeatAmt) {
 			var setup = Setup.GetSetup();
 
 			var args = new List<object>();
@@ -33,10 +32,10 @@ namespace Decorator.Tests
 				args.AddRange(msg.Arguments);
 			}
 
-			var result = setup.Deserializer.DeserializeRepeats<TestMessage>(new MessageImplementation("test", args.ToArray()));
+			var result = setup.Deserializer.DeserializeRepeats<TestMessage>(new BasicMessage("test", args.ToArray()));
 
 			var c = 0;
-			foreach(var i in result) {
+			foreach (var i in result) {
 				Assert.Equal("just right", i.PositionZeroItem);
 				Assert.Equal(c, i.PositionOneItem);
 

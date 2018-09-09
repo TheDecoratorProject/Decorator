@@ -1,7 +1,7 @@
-using System;
 using Xunit;
 
 namespace Decorator.Tests {
+
 	public class CanDeserializeProperly {
 
 		[Fact]

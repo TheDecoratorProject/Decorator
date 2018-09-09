@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Reflection;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace Decorator {
+
 	public interface IDeserializableHandlerManager<TClass>
 		where TClass : class {
 		ICache<Type, MethodInfo[]> Cache { get; }
@@ -13,14 +14,17 @@ namespace Decorator {
 		TItem[] GetItemTypes<TItem>();
 
 		MethodInfo[] GetHandlersFor<TItem>();
+
 		MethodInfo[] GetHandlersFor(Type item);
 
 		void InvokeMethod<TItem>(MethodInfo method, TClass instance, TItem item);
+
 		void InvokeMethod(MethodInfo method, object instance, object item);
 	}
 
 	public class DeserializableHandlerManager<TClass> : IDeserializableHandlerManager<TClass>
 		where TClass : class {
+
 		public DeserializableHandlerManager() {
 			this.Cache = new CacheManager<Type, MethodInfo[]>();
 

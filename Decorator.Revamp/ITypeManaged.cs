@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 namespace Decorator {
+
 	public interface IManagedType {
 		uint Position { get; }
 
@@ -15,6 +16,7 @@ namespace Decorator {
 	}
 
 	public class ManagedType : IManagedType {
+
 		public ManagedType(uint pos, bool req) {
 			this.Position = pos;
 

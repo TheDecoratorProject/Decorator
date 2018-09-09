@@ -1,13 +1,13 @@
 ﻿using Decorator.Attributes;
+
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
-namespace Decorator
-{
-    public static class ReflectionHelper
-    {
+namespace Decorator {
+
+	public static class ReflectionHelper {
+
 		public static bool HasAttribute<T>(this MemberInfo t, out T attrib)
 			where T : Attribute {
 			var attribs = t.GetCustomAttributes(typeof(T), true);
@@ -45,5 +45,5 @@ namespace Decorator
 				return attrib.Position;
 			else return default;
 		}
-    }
+	}
 }

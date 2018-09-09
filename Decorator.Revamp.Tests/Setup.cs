@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Decorator.Tests {
 
-namespace Decorator.Tests
-{
-    public static class Setup {
+	public static class Setup {
+
 		public static (Deserializer<HandlerClass> Deserializer, HandlerClass Instance) GetSetup() {
 			var des = new Deserializer<HandlerClass>();
 			var inst = new HandlerClass();
@@ -12,54 +9,54 @@ namespace Decorator.Tests
 			return (des, inst);
 		}
 
-		public static Message TooShort => new MessageImplementation(
+		public static BaseMessage TooShort => new BasicMessage(
 					"test",
 					"too short"
 				);
 
-		public static Message TooLong => new MessageImplementation(
+		public static BaseMessage TooLong => new BasicMessage(
 					"test",
 					"too long",
 					1337,
 					3f
 				);
 
-		public static Message InvalidBase => new MessageImplementation(
+		public static BaseMessage InvalidBase => new BasicMessage(
 					"invalidBase",
 					"just right",
 					1337
 				);
 
-		public static Message IncorrectTypes => new MessageImplementation(
+		public static BaseMessage IncorrectTypes => new BasicMessage(
 					"test",
 					1337,
 					"ohoopsies"
 				);
 
-		public static Message NullValues => new MessageImplementation(
+		public static BaseMessage NullValues => new BasicMessage(
 					"test",
 					null,
 					null
 				);
 
-		public static Message NullType => new MessageImplementation(
+		public static BaseMessage NullType => new BasicMessage(
 					null,
 					"just right",
 					1337
 				);
 
-		public static Message AllNull => new MessageImplementation(
+		public static BaseMessage AllNull => new BasicMessage(
 					null,
 					null,
 					null
 				);
 
-		public static Message Correct => new MessageImplementation(
+		public static BaseMessage Correct => new BasicMessage(
 					"test",
 					"just right",
 					1337
 				);
 
-		public static Message OnlyNullType => new MessageImplementation(null);
+		public static BaseMessage OnlyNullType => new BasicMessage(null);
 	}
 }

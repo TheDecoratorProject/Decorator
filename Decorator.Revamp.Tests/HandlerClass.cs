@@ -1,8 +1,11 @@
 ﻿using Decorator.Attributes;
+
 using System.Collections.Generic;
+
 using Xunit;
 
 namespace Decorator.Tests {
+
 	public class HandlerClass {
 		public bool Invoked { get; private set; }
 		public int InvokedCount { get; private set; }
@@ -39,7 +42,7 @@ namespace Decorator.Tests {
 				Assert.Equal("floss", i.PositionZeroItem);
 				Assert.Equal(c++, i.PositionOneItem);
 			}
-			
+
 			this.Invoked = true;
 			this.InvokedCount++;
 		}
@@ -56,7 +59,7 @@ namespace Decorator.Tests {
 				Assert.Equal("floss", i.PositionZeroItem);
 				Assert.Equal(c++, i.PositionOneItem);
 			}
-			
+
 			this.Invoked = true;
 			this.InvokedCount++;
 		}

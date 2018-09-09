@@ -1,8 +1,10 @@
 ﻿using Decorator.Attributes;
 
 namespace Decorator.Tests {
+
 	[Message("test"), Repeatable]
 	public class TestMessage {
+
 		[Position(0)]
 		public string PositionZeroItem { get; set; }
 
@@ -14,6 +16,5 @@ namespace Decorator.Tests {
 
 	[Message(null)]
 	public class NullType {
-
 	}
 }

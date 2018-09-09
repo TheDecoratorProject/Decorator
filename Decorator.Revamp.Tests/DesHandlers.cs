@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Xunit;
+﻿using Xunit;
 
-namespace Decorator.Tests
-{
-    public class DesHandlers
-    {
+namespace Decorator.Tests {
+
+	public class DesHandlers {
+
 		[Fact]
 		public void DeserializesToHandlerTestMessage() {
 			var setup = Setup.GetSetup();
@@ -27,5 +24,5 @@ namespace Decorator.Tests
 
 			Assert.True(setup.Instance.Invoked);
 		}
-    }
+	}
 }
