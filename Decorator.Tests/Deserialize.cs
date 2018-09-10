@@ -47,7 +47,7 @@ namespace Decorator.Tests {
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "Deserialization")]
 		public void DeserializesIncorrectValuesCorrectly()
-			=> Assert.Throws<DecoratorException>(() => AttemptDeserialize(Setup.IncorrectTypes));
+			=> Assert.Throws<InvalidDeserializationAttemptException>(() => AttemptDeserialize(Setup.IncorrectTypes));
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "Deserialization")]
@@ -57,6 +57,6 @@ namespace Decorator.Tests {
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "Deserialization")]
 		public void DeserializesIncorrectRepeatsCorrectly()
-			=> Assert.Throws<DecoratorException>(() => AttemptDeserializeRepeated(Setup.IncorrectTypes, 3));
+			=> Assert.Throws<InvalidDeserializationAttemptException>(() => AttemptDeserializeRepeated(Setup.IncorrectTypes, 3));
 	}
 }
