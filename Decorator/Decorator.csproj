@@ -3,6 +3,14 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
     <RootNamespace>Decorator</RootNamespace>
+    <Description>Decorate classes with attributes and parse an array of objects and a string type into a class - forget about handling bad input forever.</Description>
+    <Copyright>SirJosh3917 MIT 2018</Copyright>
+    <PackageLicenseUrl>https://github.com/SirJosh3917/Decorator/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/SirJosh3917/Decorator/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SirJosh3917/Decorator/</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.1</Version>
+    <PackageId>SirJosh3917.Decorator</PackageId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Decorator
 {
-    public static class ListHelper
+    internal static class ListHelper
     {
 		public static void MagicInsert<T>(this List<T> list, int pos, T item) {
 			while (list.Count <= pos)
