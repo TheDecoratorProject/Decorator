@@ -5,30 +5,13 @@ using System.Reflection;
 
 namespace Decorator {
 
-	public interface IDeserializableHandlerManager<TClass>
-		where TClass : class {
-		ICache<Type, MethodInfo[]> Cache { get; }
-
-		MethodInfo[] GetHandlers();
-
-		TItem[] GetItemTypes<TItem>();
-
-		MethodInfo[] GetHandlersFor<TItem>();
-
-		MethodInfo[] GetHandlersFor(Type item);
-
-		void InvokeMethod<TItem>(MethodInfo method, TClass instance, TItem item);
-
-		void InvokeMethod<TItem>(MethodInfo method, object instance, TItem item);
-	}
-
-	public class DeserializableHandlerManager<TClass> : IDeserializableHandlerManager<TClass>
+	public class MethodDeserializerManager<TClass>
 		where TClass : class {
 
-		public DeserializableHandlerManager() {
-			this.Cache = new CacheManager<Type, MethodInfo[]>();
+		public MethodDeserializerManager() {
+			this.Cache = new Cache<Type, MethodInfo[]>();
 
-			this.MethodInfoCache = new CacheManager<MethodInfo, Func<object, object[], object>>();
+			this.MethodInfoCache = new Cache<MethodInfo, Func<object, object[], object>>();
 
 			//TODO: clean
 			// with like a reflection helper class
@@ -49,9 +32,9 @@ namespace Decorator {
 
 		private MethodInfo _cast;
 
-		public ICache<Type, MethodInfo[]> Cache { get; }
+		public Cache<Type, MethodInfo[]> Cache { get; }
 
-		public ICache<MethodInfo, Func<object, object[], object>> MethodInfoCache { get; }
+		public Cache<MethodInfo, Func<object, object[], object>> MethodInfoCache { get; }
 
 		public MethodInfo[] GetHandlers() => this.Cache.SelectMany(x => x.Value).ToArray();
 
@@ -62,8 +45,6 @@ namespace Decorator {
 			=> this.Cache.Retrieve(item, () => {
 				throw new Exceptions.DecoratorException("Type doesn't exist.");
 			});
-
-		public TItem[] GetItemTypes<TItem>() => throw new NotImplementedException();
 
 		public void InvokeMethod<TItem>(MethodInfo method, TClass instance, TItem item)
 			=> InvokeMethod(method, (object)instance, item);

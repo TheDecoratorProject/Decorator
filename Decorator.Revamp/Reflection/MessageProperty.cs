@@ -5,19 +5,9 @@ using System.Reflection;
 
 namespace Decorator {
 
-	public interface IMessageDefinition {
-		bool Repeatable { get; }
+	public class MessageDefinition {
 
-		string Type { get; }
-
-		uint MaxCount { get; }
-
-		IMessageProperty[] Properties { get; }
-	}
-
-	public class MessageDefinition : IMessageDefinition {
-
-		public MessageDefinition(string type, IEnumerable<IMessageProperty> props, bool rep) {
+		public MessageDefinition(string type, IEnumerable<MessageProperty> props, bool rep) {
 			this.Repeatable = rep;
 			this.Type = type;
 			this.Properties = props.ToArray();
@@ -30,28 +20,17 @@ namespace Decorator {
 			this.MaxCount = maxPos;
 		}
 
-		public bool Repeatable { get; }
-
 		public string Type { get; }
-
+		public MessageProperty[] Properties { get; }
 		public uint MaxCount { get; }
-
-		public IMessageProperty[] Properties { get; }
-	}
-
-	public interface IMessageProperty {
-		uint Position { get; }
-		TypeRequiredness State { get; }
-		Type PropertyType { get; }
-		//PropertyInfo PropertyInfo { get; }
-		void Set(object instance, object value);
+		public bool Repeatable { get; }
 	}
 
 	public enum TypeRequiredness {
 		Required, Optional
 	}
 
-	public class MessageProperty : IMessageProperty {
+	public class MessageProperty {
 
 		public MessageProperty(uint pos, bool req, Type propType, PropertyInfo propInf) {
 			this.Position = pos;
@@ -62,18 +41,15 @@ namespace Decorator {
 			this._propSet = IL.Wrap(this.PropertyInfo.GetSetMethod());
 		}
 
+		private Func<object, object[], object> _propSet;
 		public uint Position { get; }
-
 		public TypeRequiredness State { get; }
-
 		public Type PropertyType { get; }
 
 		public PropertyInfo PropertyInfo { get; }
 
-		private Func<object, object[], object> _propSet;
-
 		public void Set(object instance, object value) {
-			this._propSet(instance, new [] { value });
+			this._propSet(instance, new[] { value });
 		}
 	}
 }

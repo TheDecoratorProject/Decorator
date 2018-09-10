@@ -4,13 +4,13 @@ using System.Reflection.Emit;
 
 namespace Decorator {
 
-	public static class IL {
+	internal static class IL {
 		// https://stackoverflow.com/a/7478557
 
 		public static Func<object, object[], object> Wrap(MethodInfo method) {
 			var dm = new DynamicMethod(method.Name, typeof(object), new Type[] {
-		typeof(object), typeof(object[])
-	}, method.DeclaringType, true);
+					typeof(object), typeof(object[])
+				}, method.DeclaringType, true);
 			var il = dm.GetILGenerator();
 
 			if (!method.IsStatic) {
