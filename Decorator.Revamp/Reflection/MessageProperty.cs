@@ -37,16 +37,37 @@ namespace Decorator {
 			this.State = req ? TypeRequiredness.Required : TypeRequiredness.Optional;
 			this.PropertyType = propType;
 			this.PropertyInfo = propInf;
-
-			this._propSet = IL.Wrap(this.PropertyInfo.GetSetMethod());
 		}
 
-		private readonly Func<object, object[], object> _propSet;
+		private Func<object, object[], object> _propSetRaw;
+		private Func<object, object[], object> _propGetRaw;
+
+		private Func<object, object[], object> _propSet {
+			get {
+				if (this._propSetRaw == default)
+					this._propSetRaw = IL.Wrap(this.PropertyInfo.GetSetMethod());
+
+				return this._propSetRaw;
+			}
+		}
+
+		private Func<object, object[], object> _propGet {
+			get {
+				if (this._propGetRaw == default)
+					this._propGetRaw = IL.Wrap(this.PropertyInfo.GetGetMethod());
+
+				return this._propGetRaw;
+			}
+		}
+
 		public uint Position { get; }
 		public TypeRequiredness State { get; }
 		public Type PropertyType { get; }
 
 		public PropertyInfo PropertyInfo { get; }
+
+		public object Get(object instance)
+			=> this._propGet(instance, new object[] { });
 
 		public void Set(object instance, object value)
 			=> this._propSet(instance, new[] { value });

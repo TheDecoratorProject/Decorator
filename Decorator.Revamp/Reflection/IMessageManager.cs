@@ -30,7 +30,6 @@ namespace Decorator {
 
 		public MessageDefinition GetDefinitionFor(Type t)
 							=> this.Cache.Retrieve(t, () => {
-
 								if (!t.HasAttribute<MessageAttribute>(out var msgAttrib)) throw new Exceptions.DecoratorException("unable 2 find");
 
 								var type = msgAttrib.Type;
@@ -91,7 +90,8 @@ namespace Decorator {
 			var def = this.GetDefinitionFor(t);
 
 			foreach (var i in def.Properties) {
-				i.Set(instance, m.Arguments[i.Position]);
+				if(PropertyQualifies(i, m))
+					i.Set(instance, m.Arguments[i.Position]);
 			}
 
 			return instance;
@@ -114,15 +114,19 @@ namespace Decorator {
 		private bool QualifiesAsTypeWithoutMessageAttributeCheck(Type t, BaseMessage m) {
 			var def = this.GetDefinitionFor(t);
 
+			//TODO: optional attributes at the end of a message shouldn't have to check MaxCount
 			if (m?.Type != def.Type ||
 				m?.Count != def.MaxCount) return false;
 
 			foreach (var i in def.Properties)
-				if (i.PropertyType != m?.Arguments[i.Position]?.GetType())
-					return false;
+				if (i.State == TypeRequiredness.Required &&
+					!PropertyQualifies(i, m)) return false;
 
 			return true;
 		}
+
+		private bool PropertyQualifies(MessageProperty prop, BaseMessage m)
+			=> (prop.PropertyType == m?.Arguments[prop.Position]?.GetType());
 
 		private static IEnumerable<T> CastFrom<T>(IEnumerable<object> objs) {
 			foreach (var i in objs)

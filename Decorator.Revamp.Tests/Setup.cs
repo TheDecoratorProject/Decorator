@@ -2,13 +2,6 @@
 
 	public static class Setup {
 
-		public static (Deserializer<HandlerClass> Deserializer, HandlerClass Instance) GetSetup() {
-			var des = new Deserializer<HandlerClass>();
-			var inst = new HandlerClass();
-
-			return (des, inst);
-		}
-
 		public static BaseMessage TooShort => new BasicMessage(
 					"test",
 					"too short"

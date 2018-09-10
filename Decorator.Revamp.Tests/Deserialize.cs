@@ -15,16 +15,12 @@ namespace Decorator.Tests {
 		}
 
 		private static void AttemptDeserialize(BaseMessage msg) {
-			var setup = Setup.GetSetup();
-
-			var result = setup.Deserializer.Deserialize<TestMessage>(msg);
+			var result = Deserializer.Deserialize<TestMessage>(msg);
 
 			Verify(msg, result);
 		}
 
 		private static void AttemptDeserializeRepeated(BaseMessage msg, int repeatAmt) {
-			var setup = Setup.GetSetup();
-
 			var args = new List<object>();
 
 			for (var i = 0; i < repeatAmt; i++) {
@@ -32,7 +28,7 @@ namespace Decorator.Tests {
 				args.AddRange(msg.Arguments);
 			}
 
-			var result = setup.Deserializer.DeserializeRepeats<TestMessage>(new BasicMessage("test", args.ToArray()));
+			var result = Deserializer.DeserializeRepeats<TestMessage>(new BasicMessage("test", args.ToArray()));
 
 			var c = 0;
 			foreach (var i in result) {

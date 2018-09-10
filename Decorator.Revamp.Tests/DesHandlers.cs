@@ -9,38 +9,38 @@ namespace Decorator.Tests {
 		[Fact]
 		[Trait("Category", "HandlerDeserialization")]
 		public void DesLotsLotsLOTS() {
-			var setup = Setup.GetSetup();
+			var instance = new HandlerClass();
 			for (var i = 0; i < 100_000; i++)
-				setup.Deserializer.DeserializeMessageToMethod(setup.Instance, Setup.Correct);
+				Deserializer<HandlerClass>.DeserializeMessageToMethod(instance, Setup.Correct);
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "HandlerDeserialization")]
 		public void DeserializesToHandlerTestMessage() {
-			var setup = Setup.GetSetup();
+			var instance = new HandlerClass();
 
-			setup.Deserializer.DeserializeItemToMethod(setup.Instance, new TestMessage {
+			Deserializer<HandlerClass>.DeserializeItemToMethod(instance, new TestMessage {
 				PositionZeroItem = "",
 				PositionOneItem = 1337
 			});
 
-			Assert.True(setup.Instance.Invoked);
+			Assert.True(instance.Invoked);
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "HandlerDeserialization")]
 		public void DeserializeToHandlerMessage() {
-			var setup = Setup.GetSetup();
+			var instance = new HandlerClass();
 
-			setup.Deserializer.DeserializeMessageToMethod(setup.Instance, Setup.Correct);
+			Deserializer<HandlerClass>.DeserializeMessageToMethod(instance, Setup.Correct);
 
-			Assert.True(setup.Instance.Invoked);
+			Assert.True(instance.Invoked);
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "HandlerDeserialization")]
 		public void DeserializesEnumerable() {
-			var setup = Setup.GetSetup();
+			var instance = new HandlerClass();
 
 			var args = new List<object>();
 
@@ -52,15 +52,15 @@ namespace Decorator.Tests {
 				args.AddRange(msg.Arguments);
 			}
 
-			setup.Deserializer.DeserializeMessageToMethod(setup.Instance, new BasicMessage("test", args.ToArray()));
+			Deserializer<HandlerClass>.DeserializeMessageToMethod(instance, new BasicMessage("test", args.ToArray()));
 
-			Assert.True(setup.Instance.Invoked);
+			Assert.True(instance.Invoked);
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "HandlerDeserialization")]
 		public void DoesntDeserializesNonEnumerable() {
-			var setup = Setup.GetSetup();
+			var instance = new HandlerClass();
 
 			var args = new List<object>();
 
@@ -74,7 +74,7 @@ namespace Decorator.Tests {
 
 			var t = args.ToArray();
 
-			Assert.False(setup.Deserializer.CanDeserializeRepeats<NonRepeatable>(new BasicMessage("rep", t)));
+			Assert.False(Deserializer.CanDeserializeRepeats<NonRepeatable>(new BasicMessage("rep", t)));
 		}
 	}
 }
