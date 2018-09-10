@@ -84,7 +84,7 @@ namespace Decorator {
 		public static void DeserializeMessageToMethod(TClass instance, BaseMessage msg) {
 			foreach (var i in MethodDeserializerManager.Cache) {
 				if (Deserializer.TypeManager.QualifiesAsType(i.Key, msg)) {
-					dynamic des = Deserializer.TypeManager.DeserializeToType(i.Key, msg);
+					var des = Deserializer.TypeManager.DeserializeToType(i.Key, msg);
 
 					foreach (var k in i.Value)
 						MethodDeserializerManager.InvokeMethod(k, instance, des);
@@ -100,7 +100,7 @@ namespace Decorator {
 						Deserializer.TypeManager.QualifiesAsRepeatableType(genArg, msg)) {
 						var des = Deserializer.TypeManager.DeserializeRepeatableToType(genArg, msg);
 
-						dynamic result = _objToArrays.Retrieve(genArg, () =>
+						var result = _objToArrays.Retrieve(genArg, () =>
 							IL.Wrap(_objToArray.MakeGenericMethod(genArg)))
 							(null, new[] { des });
 

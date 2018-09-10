@@ -16,6 +16,13 @@ namespace Decorator.Tests
 			Assert.Equal(default, res.OptionalValue);
 		}
 
+		/*
+		 * THIS WAS DECIDED AGAINST
+		 * due to the fact that there are repeatable messages, sometimes omitting an optional at the end and sometimes not omitting it
+		 * could lead to heavy confusion.
+		 *
+		 * as such, it is decided against.
+		 *
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", nameof(OptionalDeserialization))]
 		public void MessageCountDoesntMatterAtTheEnd() {
@@ -25,5 +32,6 @@ namespace Decorator.Tests
 			Assert.Equal("required", res.RequiredString);
 			Assert.Equal(default, res.OptionalValue);
 		}
+		*/
 	}
 }
