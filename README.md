@@ -124,6 +124,10 @@ public class Example {
 
 Example exmp = Deserializer.Deserialize<Example>(new BasicMessage("test"));
 
+//the above line of code will throw an exception, the message count must be 1
+
+Example exmp = Deserializer.Deserialize<Example>(new BasicMessage("test", null));
+
 //exmp.Value is 'default(string)', a.k.a. 'null'
 
 Example exmp = Deserializer.Deserialize<Example>(new BasicMessage("test", 1929495));
