@@ -16,9 +16,9 @@ namespace Decorator.Tester {
 		}
 
 		public void Disconnect() {
-			if (this._server != default(Server)) {
+			if (this._server != default) {
 				this._server.Disconnect(this._id);
-				this._server = default(Server);
+				this._server = default;
 			}
 		}
 

@@ -1,6 +1,7 @@
 ﻿using Decorator.Exceptions;
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -23,9 +24,9 @@ namespace Decorator {
 								.GetMethod(nameof(FromObjToArray), BindingFlags.Static | BindingFlags.NonPublic);
 		}
 
-		private MethodInfo _objToArray;
+		private readonly MethodInfo _objToArray;
 
-		private Cache<Type, Func<object, object[], object>> _objToArrays;
+		private readonly Cache<Type, Func<object, object[], object>> _objToArrays;
 
 		public MessageManager TypeManager { get; }
 
@@ -85,7 +86,7 @@ namespace Decorator {
 					if (i.Key.GenericTypeArguments.Length > 0) {
 					var genArg = i.Key.GenericTypeArguments[0];
 
-					if (i.Key == typeof(IEnumerable<>).MakeGenericType(genArg) &&
+					if (typeof(IEnumerable).IsAssignableFrom(i.Key) &&
 						this.TypeManager.QualifiesAsRepeatableType(genArg, msg)) {
 						var des = this.TypeManager.DeserializeRepeatableToType(genArg, msg);
 

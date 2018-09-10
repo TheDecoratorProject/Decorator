@@ -41,15 +41,14 @@ namespace Decorator {
 			this._propSet = IL.Wrap(this.PropertyInfo.GetSetMethod());
 		}
 
-		private Func<object, object[], object> _propSet;
+		private readonly Func<object, object[], object> _propSet;
 		public uint Position { get; }
 		public TypeRequiredness State { get; }
 		public Type PropertyType { get; }
 
 		public PropertyInfo PropertyInfo { get; }
 
-		public void Set(object instance, object value) {
-			this._propSet(instance, new[] { value });
-		}
+		public void Set(object instance, object value)
+			=> this._propSet(instance, new[] { value });
 	}
 }

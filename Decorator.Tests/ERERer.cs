@@ -26,7 +26,7 @@ namespace Decorator.Tests {
 				TestString = "anaibf"
 			});
 
-			Assert.Equal(msg.Type, "base");
+			Assert.Equal("base", msg.Type);
 		}
 
 		[Fact]
@@ -35,7 +35,7 @@ namespace Decorator.Tests {
 				TestString = "anaibf"
 			});
 
-			Assert.Equal(msg.Type, "child");
+			Assert.Equal("child", msg.Type);
 		}
 
 		[Fact]

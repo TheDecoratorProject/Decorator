@@ -7,9 +7,8 @@ namespace Decorator {
 
 	public class MessageManager {
 
-		public MessageManager() {
-			this.Cache = new Cache<Type, MessageDefinition>();
-		}
+		public MessageManager()
+			=> this.Cache = new Cache<Type, MessageDefinition>();
 
 		public Cache<Type, MessageDefinition> Cache { get; }
 
@@ -31,26 +30,24 @@ namespace Decorator {
 
 		public MessageDefinition GetDefinitionFor(Type t)
 							=> this.Cache.Retrieve(t, () => {
-								string type;
-								var msgProps = new List<MessageProperty>();
 
 								if (!t.HasAttribute<MessageAttribute>(out var msgAttrib)) throw new Exceptions.DecoratorException("unable 2 find");
 
-								type = msgAttrib.Type;
+								var type = msgAttrib.Type;
 
 								var repAttribs = t.GetAttributesOf<RepeatableAttribute>();
 
-								foreach (var i in t.GetPositions()) {
-									var pos = i.GetAttributesOf<PositionAttribute>()[0];
-									var required = i.GetAttributesOf<RequiredAttribute>().Length > 0;
-									if (i.GetAttributesOf<OptionalAttribute>().Length > 0) required = false;
+								var msgProps = new List<MessageProperty>();
 
-									msgProps.Add(new MessageProperty(pos.Position, required, i.PropertyType, i));
-								}
+								foreach (var i in t.GetPositions())
+									msgProps.Add(new MessageProperty(
+										i.GetAttributesOf<PositionAttribute>()[0].Position, // pos
+										i.GetAttributesOf<RequiredAttribute>().Length > 0 || // required
+										!(i.GetAttributesOf<OptionalAttribute>().Length > 0),
+										i.PropertyType,
+										i));
 
-								var repeatable = repAttribs.Length > 0;
-
-								return new MessageDefinition(type, msgProps, repeatable);
+								return new MessageDefinition(type, msgProps, repAttribs.Length > 0);
 							});
 
 		public bool QualifiesAsType(Type t, BaseMessage m) {
@@ -89,7 +86,7 @@ namespace Decorator {
 		public object DeserializeToType(Type t, BaseMessage m) {
 			// we assume that QualifiesAsType has already been called
 
-			var instance = Activator.CreateInstance(t);
+			var instance = ReflectionHelper.Create(t)();
 
 			var def = this.GetDefinitionFor(t);
 

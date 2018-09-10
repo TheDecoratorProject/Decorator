@@ -33,8 +33,6 @@ namespace Decorator {
 		/// </summary>
 		/// <typeparam name="T">The class to be deserializing the Message to</typeparam>
 		/// <param name="msg">The Message needing deserialization</param>
-		/// <param name="res">The result, T</param>
-		/// <param name="failErrMsg">A reason for failure.</param>
 		/// <returns>If it succeeded.</returns>
 		public static T Deserialize<T>(Message msg)
 			where T : class, new()

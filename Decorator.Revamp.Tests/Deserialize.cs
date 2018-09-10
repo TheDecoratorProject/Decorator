@@ -27,7 +27,7 @@ namespace Decorator.Tests {
 
 			var args = new List<object>();
 
-			for (int i = 0; i < repeatAmt; i++) {
+			for (var i = 0; i < repeatAmt; i++) {
 				msg.Arguments[1] = i;
 				args.AddRange(msg.Arguments);
 			}

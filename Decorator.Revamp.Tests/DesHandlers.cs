@@ -10,7 +10,7 @@ namespace Decorator.Tests {
 		[Trait("Category", "HandlerDeserialization")]
 		public void DesLotsLotsLOTS() {
 			var setup = Setup.GetSetup();
-			for (int i = 0; i < 100_000; i++)
+			for (var i = 0; i < 100_000; i++)
 				setup.Deserializer.DeserializeMessageToMethod(setup.Instance, Setup.Correct);
 		}
 
@@ -47,7 +47,7 @@ namespace Decorator.Tests {
 			var msg = Setup.Correct;
 
 			// 4 is arbitrary here
-			for (int i = 0; i < 4; i++) {
+			for (var i = 0; i < 4; i++) {
 				msg.Arguments[1] = i;
 				args.AddRange(msg.Arguments);
 			}
@@ -67,12 +67,10 @@ namespace Decorator.Tests {
 			var msg = Setup.NonRepeatable;
 
 			// 4 is arbitrary here
-			for (int i = 0; i < 4; i++) {
+			for (var i = 0; i < 4; i++) {
 				msg.Arguments[0] = i;
 				args.AddRange(msg.Arguments);
 			}
-
-			//msg.Arguments = args.ToArray();
 
 			var t = args.ToArray();
 

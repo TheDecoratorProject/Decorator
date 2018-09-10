@@ -1,5 +1,5 @@
 ﻿using Decorator.Attributes;
-
+using System;
 using System.Linq;
 
 using Xunit;
@@ -27,6 +27,8 @@ namespace Decorator.Tests {
 			}
 			return false;
 		}
+
+		public override int GetHashCode() => HashCode.Combine(this.Username, this.Id, this.Coins);
 	}
 
 	public class EEHE {

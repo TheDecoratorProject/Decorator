@@ -8,7 +8,7 @@ namespace Decorator {
 		// https://stackoverflow.com/a/7478557
 
 		public static Func<object, object[], object> Wrap(MethodInfo method) {
-			var dm = new DynamicMethod(method.Name, typeof(object), new Type[] {
+			var dm = new DynamicMethod(method.Name, typeof(object), new [] {
 					typeof(object), typeof(object[])
 				}, method.DeclaringType, true);
 			var il = dm.GetILGenerator();
@@ -18,7 +18,7 @@ namespace Decorator {
 				il.Emit(OpCodes.Unbox_Any, method.DeclaringType);
 			}
 			var parameters = method.GetParameters();
-			for (int i = 0; i < parameters.Length; i++) {
+			for (var i = 0; i < parameters.Length; i++) {
 				il.Emit(OpCodes.Ldarg_1);
 				il.Emit(OpCodes.Ldc_I4, i);
 				il.Emit(OpCodes.Ldelem_Ref);

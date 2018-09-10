@@ -30,7 +30,7 @@ namespace Decorator {
 				this.Cache.Retrieve(i.Key, () => i.Value.ToArray());
 		}
 
-		private MethodInfo _cast;
+		private readonly MethodInfo _cast;
 
 		public Cache<Type, MethodInfo[]> Cache { get; }
 
@@ -50,17 +50,10 @@ namespace Decorator {
 			=> InvokeMethod(method, (object)instance, item);
 
 		public void InvokeMethod<TItem>(MethodInfo method, object instance, TItem item) {
-			//method.Invoke(instance, new object[] { item });
-
 			var d = this.MethodInfoCache.Retrieve(method, () =>
 				IL.Wrap(method));
 
 			d(instance, new object[] { item });
-
-			//Delegate.CreateDelegate(typeof(Action<>).MakeGenericType(item?.GetType()), instance, method)
-			//	.DynamicInvoke(item);
-
-			//method.Invoke(instance, new object[] { item });
 		}
 
 		private static T CastObj<T>(object input)

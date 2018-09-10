@@ -11,14 +11,12 @@ namespace Decorator.Tests {
 		public bool Invoked { get; private set; }
 		public int InvokedCount { get; private set; }
 
-		public void IgnoredMethod(TestMessage m) {
-			Assert.False(true, $"Shouldn't be invoked D:");
-		}
+		public void IgnoredMethod(TestMessage m)
+			=> Assert.False(true, $"Shouldn't be invoked D:");
 
 		[DeserializedHandler]
-		public void NullHandler(NullType n) {
-			Assert.True(false);
-		}
+		public void NullHandler(NullType n)
+			=> Assert.True(false);
 
 		[DeserializedHandler]
 		public void TestMessageHandler(TestMessage m) {

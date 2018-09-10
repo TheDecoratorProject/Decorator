@@ -3,7 +3,7 @@
 	internal static class Program {
 
 		public static void Main() {
-			for (int x = 0; x < 1000; x++) {
+			for (var x = 0; x < 1000; x++) {
 				var client1 = new Client();
 				var client2 = new Client();
 				var client3 = new Client();
