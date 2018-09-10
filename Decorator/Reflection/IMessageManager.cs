@@ -1,5 +1,5 @@
 ﻿using Decorator.Attributes;
-
+using Decorator.Exceptions;
 using System;
 using System.Collections.Generic;
 
@@ -30,7 +30,7 @@ namespace Decorator {
 
 		public MessageDefinition GetDefinitionFor(Type t)
 							=> this.Cache.Retrieve(t, () => {
-								if (!t.HasAttribute<MessageAttribute>(out var msgAttrib)) throw new Exceptions.DecoratorException("unable 2 find");
+								if (!t.HasAttribute<MessageAttribute>(out var msgAttrib)) throw new MissingAttributeException(typeof(MessageAttribute), t);
 
 								var type = msgAttrib.Type;
 

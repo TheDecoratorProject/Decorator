@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Decorator.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -36,14 +37,14 @@ namespace Decorator {
 
 		public Cache<MethodInfo, Func<object, object[], object>> MethodInfoCache { get; }
 
-		public MethodInfo[] GetHandlers() => this.Cache.SelectMany(x => x.Value).ToArray();
+		public MethodInfo[] GetMethods() => this.Cache.SelectMany(x => x.Value).ToArray();
 
-		public MethodInfo[] GetHandlersFor<TItem>()
-			=> GetHandlersFor(typeof(TItem));
+		public MethodInfo[] GetMethodsFor<TItem>()
+			=> GetMethodsFor(typeof(TItem));
 
-		public MethodInfo[] GetHandlersFor(Type item)
+		public MethodInfo[] GetMethodsFor(Type item)
 			=> this.Cache.Retrieve(item, () => {
-				throw new Exceptions.DecoratorException("Type doesn't exist.");
+				throw new LackingMethodsException(item);
 			});
 
 		public void InvokeMethod<TItem>(MethodInfo method, TClass instance, TItem item)

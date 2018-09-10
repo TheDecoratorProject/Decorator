@@ -9,14 +9,16 @@ namespace Decorator {
 	public static class Serializer<TClass>
 		where TClass : class {
 		static Serializer() {
-			if (!typeof(TClass).HasAttribute<MessageAttribute>(out var _)) throw new DecoratorException("lmao u should fhave an atrib");
+			if (!typeof(TClass).HasAttribute<MessageAttribute>(out var _)) throw new MissingAttributeException(typeof(MessageAttribute), typeof(TClass));
 		}
 
+		#region imitate Serializer
 		public static BaseMessage Serialize(TClass itm)
 			=> Serializer.Serialize<TClass>(itm);
 
 		public static BaseMessage Serialize(IEnumerable<TClass> items)
 			=> Serializer.Serialize<TClass>(items);
+		#endregion
 	}
 
 	/// <summary>

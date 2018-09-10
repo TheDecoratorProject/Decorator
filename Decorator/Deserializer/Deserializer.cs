@@ -22,7 +22,7 @@ namespace Decorator {
 			=> CanDeserialize(typeof(TItem), m);
 
 		public static bool CanDeserializeRepeats<TItem>(BaseMessage m)
-					=> CanDeserializeRepeats(typeof(TItem), m);
+			=> CanDeserializeRepeats(typeof(TItem), m);
 
 		public static TItem Deserialize<TItem>(BaseMessage m)
 					where TItem : new()
@@ -31,8 +31,28 @@ namespace Decorator {
 		public static IEnumerable<TItem> DeserializeRepeats<TItem>(BaseMessage m) where TItem : new()
 			=> FromObj<TItem>(DeserializeRepeats(typeof(TItem), m)).ToArray();
 
+		public static bool TryDeserialize<TItem>(BaseMessage m, out TItem result) {
+			var pass = TryDeserialize(typeof(TItem), m, out var tryDesRes);
+
+			result = pass ?
+				(TItem)tryDesRes
+				: default;
+
+			return pass;
+		}
+
+		public static bool TryDeserializeRepeats<TItem>(BaseMessage m, out IEnumerable<TItem> result) {
+			var pass = TryDeserializeRepeats(typeof(TItem), m, out var tryDesRes);
+
+			result = pass ?
+				FromObj<TItem>(tryDesRes)
+				: default;
+
+			return pass;
+		}
+
 		public static bool CanDeserialize(Type t, BaseMessage m)
-							=> TypeManager.QualifiesAsType(t, m);
+			=> TypeManager.QualifiesAsType(t, m);
 
 		public static bool CanDeserializeRepeats(Type t, BaseMessage m)
 			=> TypeManager.QualifiesAsRepeatableType(t, m);
@@ -41,14 +61,32 @@ namespace Decorator {
 			if (CanDeserialize(t, m))
 				return TypeManager.DeserializeToType(t, m);
 
-			throw new DecoratorException("no");
+			throw new InvalidDeserializationAttemptException();
 		}
 
 		public static IEnumerable<object> DeserializeRepeats(Type t, BaseMessage m) {
 			if (TypeManager.QualifiesAsRepeatableType(t, m))
 				return TypeManager.DeserializeRepeatableToType(t, m).ToArray();
 
-			throw new DecoratorException("nooo");
+			throw new InvalidDeserializationAttemptException();
+		}
+
+		public static bool TryDeserialize(Type t, BaseMessage m, out object result) {
+			if (TypeManager.QualifiesAsType(t, m)) {
+				result = TypeManager.DeserializeToType(t, m);
+				return true;
+			}
+			result = default;
+			return false;
+		}
+
+		public static bool TryDeserializeRepeats(Type t, BaseMessage m, out IEnumerable<object> result) {
+			if (TypeManager.QualifiesAsRepeatableType(t, m)) {
+				result = TypeManager.DeserializeRepeatableToType(t, m).ToArray();
+				return true;
+			}
+			result = default;
+			return false;
 		}
 
 		private static IEnumerable<T> FromObj<T>(IEnumerable<object> objs) {
@@ -75,8 +113,47 @@ namespace Decorator {
 
 		public static MethodDeserializerManager<TClass> MethodDeserializerManager { get; }
 
+		#region imitate Deserializer
+		public static bool CanDeserialize<TItem>(BaseMessage m)
+			=> Deserializer.CanDeserialize<TItem>(m);
+
+		public static bool CanDeserializeRepeats<TItem>(BaseMessage m)
+			=> Deserializer.CanDeserializeRepeats<TItem>(m);
+
+		public static TItem Deserialize<TItem>(BaseMessage m)
+					where TItem : new()
+			=> Deserializer.Deserialize<TItem>(m);
+
+		public static IEnumerable<TItem> DeserializeRepeats<TItem>(BaseMessage m) where TItem : new()
+			=> Deserializer.DeserializeRepeats<TItem>(m);
+
+		public static bool TryDeserialize<TItem>(BaseMessage m, out TItem result)
+			=> Deserializer.TryDeserialize<TItem>(m, out result);
+
+		public static bool TryDeserializeRepeats<TItem>(BaseMessage m, out IEnumerable<TItem> result)
+			=> Deserializer.TryDeserializeRepeats<TItem>(m, out result);
+
+		public static bool CanDeserialize(Type t, BaseMessage m)
+			=> Deserializer.CanDeserialize(t, m);
+
+		public static bool CanDeserializeRepeats(Type t, BaseMessage m)
+			=> Deserializer.CanDeserializeRepeats(t, m);
+
+		public static object Deserialize(Type t, BaseMessage m)
+			=> Deserializer.Deserialize(t, m);
+
+		public static IEnumerable<object> DeserializeRepeats(Type t, BaseMessage m)
+			=> Deserializer.DeserializeRepeats(t, m);
+
+		public static bool TryDeserialize(Type t, BaseMessage m, out object result)
+			=> Deserializer.TryDeserialize(t, m, out result);
+
+		public static bool TryDeserializeRepeats(Type t, BaseMessage m, out IEnumerable<object> result)
+			=> Deserializer.TryDeserializeRepeats(t, m, out result);
+		#endregion
+
 		public static void DeserializeItemToMethod<TItem>(TClass instance, TItem item) {
-			foreach (var i in MethodDeserializerManager.GetHandlersFor<TItem>()) {
+			foreach (var i in MethodDeserializerManager.GetMethodsFor<TItem>()) {
 				MethodDeserializerManager.InvokeMethod<TItem>(i, instance, item);
 			}
 		}
