@@ -58,5 +58,9 @@
 				);
 
 		public static BaseMessage OnlyNullType => new BasicMessage(null);
+
+		public static BaseMessage NonRepeatable => new BasicMessage(
+			"rep",
+			4646);
 	}
 }

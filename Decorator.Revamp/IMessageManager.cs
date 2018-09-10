@@ -44,17 +44,19 @@ namespace Decorator {
 
 				type = msgAttrib.Type;
 
+				var repAttribs = t.GetAttributesOf<RepeatableAttribute>();
+
 				foreach (var i in t.GetPositions()) {
 					var pos = i.GetAttributesOf<PositionAttribute>()[0];
 					var required = i.GetAttributesOf<RequiredAttribute>().Length > 0;
-					var repAttribs = i.GetAttributesOf<RepeatableAttribute>();
-					var repeatable = repAttribs.Length > 0;
 					if (i.GetAttributesOf<OptionalAttribute>().Length > 0) required = false;
 
-					msgProps.Add(new MessageProperty(repeatable, pos.Position, required, i.PropertyType, i));
+					msgProps.Add(new MessageProperty(pos.Position, required, i.PropertyType, i));
 				}
 
-				return new MessageDefinition(type, msgProps);
+				var repeatable = repAttribs.Length > 0;
+
+				return new MessageDefinition(type, msgProps, repeatable);
 			});
 
 		public T DeserializeToType<T>(BaseMessage m)
@@ -69,7 +71,7 @@ namespace Decorator {
 			var def = this.GetDefinitionFor(t);
 
 			foreach (var i in def.Properties) {
-				i.PropertyInfo.SetValue(instance, m?.Arguments[i.Position]);
+				i.Set(instance, m.Arguments[i.Position]);
 			}
 
 			return instance;
@@ -101,11 +103,16 @@ namespace Decorator {
 			if (!t.HasAttribute<MessageAttribute>(out var _)) return false;
 
 			var def = this.GetDefinitionFor(t);
+			
+			if (def.Type != m.Type ||
 
-			if (def.Type != m.Type) return false;
+				!def.Repeatable ||
 
-			if (m.Count % def.MaxCount != 0) return false;
+			// prevent divide by zero exceptions lol
+				def.MaxCount == 0 ||
 
+				m.Count % def.MaxCount != 0) return false;
+			
 			for (uint i = 0; i < m.Count / def.MaxCount; i++) {
 				var args = new object[def.MaxCount];
 

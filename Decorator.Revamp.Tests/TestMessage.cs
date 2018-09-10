@@ -17,4 +17,11 @@ namespace Decorator.Tests {
 	[Message(null)]
 	public class NullType {
 	}
+
+	[Message("rep")]
+	public class NonRepeatable {
+
+		[Position(0)]
+		public int SomeValue { get; set; }
+	}
 }

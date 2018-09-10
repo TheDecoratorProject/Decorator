@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Decorator {
 
 	public interface ICache<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>> {
-		ConcurrentDictionary<TKey, TValue> Cache { get; }
+		Dictionary<TKey, TValue> CacheStorage { get; }
 
 		TValue Retrieve(TKey key, Func<TValue> lacksKey);
 	}
@@ -14,27 +14,20 @@ namespace Decorator {
 	public class CacheManager<TKey, TValue> : ICache<TKey, TValue> {
 
 		public CacheManager()
-			=> this.Cache = new ConcurrentDictionary<TKey, TValue>();
+			=> this.CacheStorage = new Dictionary<TKey, TValue>();
 
-		public ConcurrentDictionary<TKey, TValue> Cache { get; }
+		public Dictionary<TKey, TValue> CacheStorage { get; }
 
-		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => ((IEnumerable<KeyValuePair<TKey, TValue>>)this.Cache).GetEnumerator();
+		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => ((IEnumerable<KeyValuePair<TKey, TValue>>)this.CacheStorage).GetEnumerator();
 
-		IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable<KeyValuePair<TKey, TValue>>)this.Cache).GetEnumerator();
+		IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable<KeyValuePair<TKey, TValue>>)this.CacheStorage).GetEnumerator();
 
 		public TValue Retrieve(TKey key, Func<TValue> lacksKey) {
-			if (this.Cache.TryGetValue(key, out var val)) {
+			if (this.CacheStorage.TryGetValue(key, out var val))
 				return val;
-			} else {
-				var result = lacksKey();
-
-				if (this.Cache.TryAdd(key, result))
-					return result;
-				else if (!this.Cache.TryGetValue(key, out val))
-					throw new Exception("what the waht D:");
-
-				return val;
-			}
+			val = lacksKey();
+			this.CacheStorage[key] = val;
+			return val;
 		}
 	}
 }

@@ -44,7 +44,7 @@ namespace Decorator {
 				else dict[i.GetParameters()[0].ParameterType] = new List<MethodInfo> { i };
 
 			foreach (var i in dict)
-				this.Cache.Store(i.Key, i.Value.ToArray());
+				this.Cache.Retrieve(i.Key, () => i.Value.ToArray());
 		}
 
 		private MethodInfo _cast;

@@ -86,6 +86,8 @@ namespace Decorator {
 
 		public void DeserializeMessageToMethod(TClass instance, BaseMessage msg) {
 			foreach (var i in this.DeserializableHandlerManager.Cache) {
+
+				
 				if (this.TypeManager.QualifiesAsType(i.Key, msg)) {
 					dynamic des = this.TypeManager.DeserializeToType(i.Key, msg);
 
@@ -93,7 +95,10 @@ namespace Decorator {
 						this.DeserializableHandlerManager.InvokeMethod(k, instance, des);
 				}
 
-				if (i.Key.GenericTypeArguments.Length > 0) {
+					// if it works as whatevever the key is, it ***certainly*** won't work as an IEnuemrable<>
+					else
+					
+					if (i.Key.GenericTypeArguments.Length > 0) {
 					var genArg = i.Key.GenericTypeArguments[0];
 
 					if (i.Key == typeof(IEnumerable<>).MakeGenericType(genArg) &&
@@ -102,7 +107,7 @@ namespace Decorator {
 
 						dynamic result = this._objToArrays.Retrieve(genArg, () =>
 							IL.Wrap(this._objToArray.MakeGenericMethod(genArg)))
-											(null, new[] { des });
+							(null, new[] { des });
 
 						foreach (var k in i.Value)
 							this.DeserializableHandlerManager.InvokeMethod(k, (object)instance, result);
