@@ -10,7 +10,7 @@ namespace Decorator.Tester {
 		private Dictionary<uint, Client> _clients { get; } = new Dictionary<uint, Client>();
 
 		public void Join(Client cli) {
-			var msg = Serializer.Serialize(new ClientEvent {
+			var msg = Serializer<ClientEvent>.Serialize(new ClientEvent {
 				Id = this._counter,
 				Username = "//todo: :)",
 				JoinState = true
@@ -20,9 +20,9 @@ namespace Decorator.Tester {
 
 			foreach (var i in this._clients)
 				if (i.Key != this._counter)
-					Deserializer.DeserializeToEvent<Client>(i.Value, msg);
+					Deserializer<Client>.DeserializeMessageToMethod(i.Value, msg);
 
-			var initMsg = Serializer.Serialize(new InitEvent {
+			var initMsg = Serializer<InitEvent>.Serialize(new InitEvent {
 				MyId = this._counter
 			});
 
@@ -35,10 +35,10 @@ namespace Decorator.Tester {
 						Username = "//todogg: :)"
 					});
 
-			var online = Serializer.SerializeEnumerable(clients);
+			var online = Serializer<ClientExistsEvent>.Serialize(clients);
 
-			Deserializer.DeserializeToEvent<Client>(this._clients[this._counter], initMsg);
-			Deserializer.DeserializeToEvent<Client>(this._clients[this._counter], online);
+			Deserializer<Client>.DeserializeMessageToMethod(this._clients[this._counter], initMsg);
+			Deserializer<Client>.DeserializeMessageToMethod(this._clients[this._counter], online);
 
 			this._counter += 1;
 		}
@@ -46,33 +46,32 @@ namespace Decorator.Tester {
 		public void Disconnect(uint clientId) {
 			foreach (var i in this._clients)
 				if (i.Key != clientId)
-					Deserializer.DeserializeToEvent<Client>(i.Value, Serializer.Serialize(new ClientEvent {
+					Deserializer<Client>.DeserializeMessageToMethod(i.Value, Serializer<ClientEvent>.Serialize(new ClientEvent {
 						Id = clientId,
 						JoinState = false,
 						Username = null
 					}));
 
-			Deserializer.DeserializeToEvent<Client>(this._clients[clientId], Serializer.Serialize(new SafeDisconnectEvent()));
+			Deserializer<Client>.DeserializeMessageToMethod(this._clients[clientId], Serializer<SafeDisconnectEvent>.Serialize(new SafeDisconnectEvent()));
 
 			this._clients.Remove(clientId);
 		}
 
-		public void HandleMessage(Message msg, uint clientId) {
-			if (this._clients.TryGetValue(clientId, out var client))
-				Deserializer.DeserializeToEvent<Server>(this, msg, clientId);
+		public void HandleMessage(BaseMessage msg, uint clientId) {
+			Deserializer<Server>.DeserializeMessageToMethod(this, msg);
 		}
 
 		[DeserializedHandler]
-		public void ChatMessage(SendChat schat, uint clientId) {
+		public void ChatMessage(SendChat schat) {
 			var chat = new Chat {
-				PlayerId = clientId,
+				PlayerId = schat.ClientId,
 				ChatMessage = schat.ChatMessage
 			};
 
-			var msg = Serializer.Serialize(chat);
+			var msg = Serializer<Chat>.Serialize(chat);
 
 			foreach (var i in this._clients) {
-				Deserializer.DeserializeToEvent<Client>(i.Value, msg);
+				Deserializer<Client>.DeserializeMessageToMethod(i.Value, msg);
 			}
 		}
 	}
