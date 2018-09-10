@@ -3,7 +3,6 @@
 	internal static class Program {
 
 		public static void Main() {
-			//for (var x = 0; x < 1000; x++) {
 				var client1 = new Client();
 				var client2 = new Client();
 				var client3 = new Client();
@@ -25,7 +24,6 @@
 				client1.SendChat("Darn, I got chores to do anyways.");
 				client1.Disconnect();
 			System.Console.ReadLine();
-			//}
 		}
 	}
 }

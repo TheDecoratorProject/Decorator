@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Decorator {
 
 	/// <summary>An abstract class that has the minimim required for you to classify a custom class as a message.</summary>
-	public abstract class BaseMessage {
+	public abstract class BaseMessage : IEquatable<BaseMessage> {
 
 		/// <summary>Gets the type.</summary>
 		/// <value>The type.</value>
@@ -39,15 +39,7 @@ namespace Decorator {
 
 			if (obj is BaseMessage bm &&
 				this.Type == bm.Type) {
-
-				if (this.Arguments == bm.Arguments) return true;
-
-				if ((this.Arguments == null && bm.Arguments != null) ||
-					(this.Arguments != null && bm.Arguments == null)) return false;
-
-				if (bm.Arguments.Length != this.Arguments.Length) return false;
-
-				return ValueEquals(this.Arguments, bm.Arguments);
+				return this.Equals(bm);
 			}
 
 			return false;
@@ -69,6 +61,17 @@ namespace Decorator {
 			hashCode = hashCode * -1521134295 + EqualityComparer<object[]>.Default.GetHashCode(this.Arguments);
 			hashCode = hashCode * -1521134295 + this.Count.GetHashCode();
 			return hashCode;
+		}
+
+		public bool Equals(BaseMessage other) {
+			if (this.Arguments == other.Arguments) return true;
+
+			if ((this.Arguments == null && other.Arguments != null) ||
+				(this.Arguments != null && other.Arguments == null)) return false;
+
+			if (other.Arguments.Length != this.Arguments.Length) return false;
+
+			return ValueEquals(this.Arguments, other.Arguments);
 		}
 	}
 

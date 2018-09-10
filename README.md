@@ -87,7 +87,7 @@ foreach(var i in chats) {
 ## Serializing stuff
 Serializing is easier then deserialization, and it's simple enough.
 
-```
+```cs
 [Message("chat"), Repeatable]
 public class Chat {
     [Position(0), Required]

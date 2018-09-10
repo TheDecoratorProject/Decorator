@@ -67,7 +67,7 @@ namespace Decorator {
 									msgProps.Add(new MessageProperty(
 										i.GetAttributesOf<PositionAttribute>()[0].Position, // pos
 										i.GetAttributesOf<RequiredAttribute>().Length > 0 || // required
-										!(i.GetAttributesOf<OptionalAttribute>().Length > 0),
+										i.GetAttributesOf<OptionalAttribute>().Length <= 0,
 										i.PropertyType,
 										i));
 
@@ -150,7 +150,7 @@ namespace Decorator {
 			return true;
 		}
 
-		private bool PropertyQualifies(MessageProperty prop, BaseMessage m)
+		private static bool PropertyQualifies(MessageProperty prop, BaseMessage m)
 			=> (prop.PropertyType == m?.Arguments[prop.Position]?.GetType());
 
 		private static IEnumerable<T> CastFrom<T>(IEnumerable<object> objs) {
