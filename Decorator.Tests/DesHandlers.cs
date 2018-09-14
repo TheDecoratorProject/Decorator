@@ -52,9 +52,7 @@ namespace Decorator.Tests {
 				args.AddRange(msg.Arguments);
 			}
 
-			Deserializer<HandlerClass>.DeserializeMessageToMethod(instance, new BasicMessage("test", args.ToArray()));
-
-			Assert.True(instance.Invoked);
+			Assert.True(Deserializer.TryDeserializeMultiple<TestMessage>(msg, out var _));
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
@@ -74,7 +72,7 @@ namespace Decorator.Tests {
 
 			var t = args.ToArray();
 
-			Assert.False(Deserializer.CanDeserializeRepeats<NonRepeatable>(new BasicMessage("rep", t)));
+			Assert.False(Deserializer.TryDeserializeMultiple<NonRepeatable>(new BasicMessage("rep", t), out var _));
 		}
 	}
 }

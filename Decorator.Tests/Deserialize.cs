@@ -15,7 +15,8 @@ namespace Decorator.Tests {
 		}
 
 		private static void AttemptDeserialize(BaseMessage msg) {
-			var result = Deserializer.Deserialize<TestMessage>(msg);
+			if (!Deserializer.TryDeserialize<TestMessage>(msg, out var result))
+				throw new InvalidDeserializationAttemptException();
 
 			Verify(msg, result);
 		}
@@ -28,7 +29,8 @@ namespace Decorator.Tests {
 				args.AddRange(msg.Arguments);
 			}
 
-			var result = Deserializer.DeserializeRepeats<TestMessage>(new BasicMessage("test", args.ToArray()));
+			if (!Deserializer.TryDeserializeMultiple<TestMessage>(new BasicMessage("test", args.ToArray()), out var result))
+				throw new InvalidDeserializationAttemptException();
 
 			var c = 0;
 			foreach (var i in result) {

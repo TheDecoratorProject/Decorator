@@ -7,4 +7,5 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CC0057:Unused parameters", Justification = "<Pending>", Scope = "member", Target = "~M:Decorator.Attributes.MessageAttribute.#ctor(System.String)")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CC0057:Unused parameters", Justification = "<Pending>", Scope = "member", Target = "~M:Decorator.Attributes.PositionAttribute.#ctor(System.UInt32)")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CC0031:Check for null before calling a delegate", Justification = "<Pending>", Scope = "member", Target = "~M:Decorator.Cache`2.Retrieve(`0,System.Func{`1})~`1")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CC0031:Check for null before calling a delegate", Justification = "<Pending>", Scope = "member", Target = "~M:Decorator.InstanceOf`1.Create~`0")]
 

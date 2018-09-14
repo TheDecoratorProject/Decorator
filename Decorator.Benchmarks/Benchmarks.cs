@@ -1,6 +1,10 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Decorator.Attributes;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Decorator.Benchmarks {
 
@@ -12,18 +16,17 @@ namespace Decorator.Benchmarks {
 		[Position(1), Required]
 		public string Message { get; set; }
 
-		[Position(2), Optional]
-		public int Colour { get; set; } = 28;
-
 		public Chat() {
 		}
 	}
 
 	public class Benchmarks {
 
-		private object[] _args = new object[] { 10, "hello world", 5 };
+		private object[] _args = new object[] { 10, "hello world" };
 		private BaseMessage _bm;
 		private ProtocolMessage.ProtocolMessageManager _pm;
+
+		private Type _type = typeof(Decorator.Benchmarks.Chat);
 
 		[GlobalSetup]
 		public void Setup() {
@@ -35,17 +38,23 @@ namespace Decorator.Benchmarks {
 			for(var i = 0; i < 5; i++) {
 				Decorator();
 				ProtocolMessage();
+				DecoratorType();
 			}
 		}
-
+		
 		[Benchmark(Baseline = true)]
-		public void Decorator() {
-			var res = Deserializer.Deserialize<Decorator.Benchmarks.Chat>(this._bm);
+		public ProtocolMessage.Chat ProtocolMessage() {
+			return this._pm.Convert<ProtocolMessage.Chat>(this._args);
+		}
+		
+		[Benchmark]
+		public bool Decorator() {
+			return Deserializer.TryDeserialize<Chat>(this._bm, out var _);
 		}
 
-		[Benchmark]
-		public void ProtocolMessage() {
-			var res = this._pm.Convert<ProtocolMessage.Chat>(this._args);
+		[Benchmark(Description = "Decorator via Type")]
+		public bool DecoratorType() {
+			return Deserializer.GruntWorker.TryDeserializeType(this._type, this._bm, out var _);
 		}
 	}
 }
