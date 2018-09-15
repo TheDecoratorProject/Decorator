@@ -15,9 +15,6 @@ namespace Decorator.Benchmarks {
 
 		[Position(1), Required]
 		public string Message { get; set; }
-
-		public Chat() {
-		}
 	}
 
 	public class Benchmarks {
@@ -95,7 +92,7 @@ namespace Decorator.Benchmarks {
 
 		[DeserializedHandler]
 		public void HandleItem(Chat chat) {
-
+			// Allow the deserializer to discover this method
 		}
 	}
 }

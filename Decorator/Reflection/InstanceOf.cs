@@ -8,8 +8,8 @@ namespace Decorator {
 		public static T Create()
 			=> Constructor();
 
-		public static Func<T> Constructor = Expression.Lambda<Func<T>>(
-												Expression.New(typeof(T))
-											).Compile();
+		private static readonly Func<T> Constructor = Expression.Lambda<Func<T>>(
+															Expression.New(typeof(T))
+														).Compile();
 	}
 }

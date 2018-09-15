@@ -27,8 +27,6 @@ namespace Decorator {
 			// with like a reflection helper class
 			// or something
 
-			this._cast = this.GetType().GetMethod(nameof(CastObj), BindingFlags.NonPublic | BindingFlags.Static);
-
 			var dict = new Dictionary<Type, List<MethodInfo>>();
 
 			foreach (var i in this._tclassType.GetMethods().Where(x => AttributeCache<DeserializedHandlerAttribute>.HasAttribute(x)))
@@ -40,8 +38,6 @@ namespace Decorator {
 				this.Cache.TryAdd(i.Key, i.Value.ToArray());
 			}
 		}
-
-		private readonly MethodInfo _cast;
 
 		/// <summary>Gets the cache.</summary>
 		/// <value>The cache.</value>

@@ -48,14 +48,8 @@ namespace Decorator {
 					.GetMethod(nameof(TryDeserializeRepeatable))
 			);
 
-		private static readonly FunctionWrapper _getDefinitionFor = new FunctionWrapper(
-				typeof(DeserializationGrunt)
-					.GetMethod(nameof(GetDefinitionFor))
-			);
-
 		public bool TryDeserialize<T>(BaseMessage m, out T result) {
 			if (m == default) throw new ArgumentNullException(nameof(m));
-			var args = m.Arguments ?? this._emptyObjArr;
 
 			var def = this.GetDefinitionFor<T>();
 
@@ -75,7 +69,6 @@ namespace Decorator {
 
 		public bool TryDeserializeRepeatable<T>(BaseMessage m, out IEnumerable<T> result) {
 			if (m == default) throw new ArgumentNullException(nameof(m));
-			var args = m.Arguments ?? this._emptyObjArr;
 
 			var def = this.GetDefinitionFor<T>();
 
@@ -107,13 +100,13 @@ namespace Decorator {
 			if (this.Definitions.TryGetValue(type, out var res)) return res;
 
 			// if it is a message
-			if (!AttributeCache<MessageAttribute>.HasAttribute(type, out var msgAttrib)) {
+			if (!AttributeCache<MessageAttribute>.TryHasAttribute(type, out var msgAttrib)) {
 				res = default;
 				this.Definitions.TryAdd(type, res);
 				return res;
 			}
 
-			var repeatable = AttributeCache<RepeatableAttribute>.HasAttribute(type, out var _);
+			var repeatable = AttributeCache<RepeatableAttribute>.TryHasAttribute(type, out var _);
 
 			// store properties
 			var props = type.GetProperties();
@@ -207,7 +200,7 @@ namespace Decorator {
 			return true;
 		}
 
-		private bool TryDeserializeRepeatableValues<T>(BaseMessage m, MessageDefinition def, out IEnumerable<T> result) {
+		private static bool TryDeserializeRepeatableValues<T>(BaseMessage m, MessageDefinition def, out IEnumerable<T> result) {
 			var max = m.Count / def.IntMaxCount;
 
 			var itms = new T[max];
@@ -230,9 +223,9 @@ namespace Decorator {
 		}
 
 		private static bool HandleItem(PropertyInfo i, out MessageProperty prop) {
-			if (AttributeCache<PositionAttribute>.HasAttribute(i, out var posAttrib)) {
-				var required = AttributeCache<RequiredAttribute>.HasAttribute(i, out var _);
-				var optional = AttributeCache<OptionalAttribute>.HasAttribute(i, out var _);
+			if (AttributeCache<PositionAttribute>.TryHasAttribute(i, out var posAttrib)) {
+				var required = AttributeCache<RequiredAttribute>.TryHasAttribute(i, out var _);
+				var optional = AttributeCache<OptionalAttribute>.TryHasAttribute(i, out var _);
 
 				if (!required && !optional)
 					required = true;
