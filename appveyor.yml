@@ -32,3 +32,4 @@ artifacts:
    name: Decorator_netstandard2.0
  - path: 'bin\Release\net45\'
    name: Decorator_net45
+   
