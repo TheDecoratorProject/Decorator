@@ -11,21 +11,24 @@ init:
 
 before_build:
     - cmd: dotnet restore
+    
+configuration:
+  - Release
 
 build_script:
   - cmd: dotnet --version
   - cmd: dotnet restore -v q
   - cmd: dotnet build -c Release -f net45 "Decorator\Decorator.csproj"
   - cmd: dotnet build -c Release -f netstandard2.0 "Decorator\Decorator.csproj"
-
+  
 test_script:
- - .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"%xunit20%\xunit.console.x86.exe" -targetargs:"Decorator.Tests/bin/Release/netcoreapp2.1/Decorator.Tests.dll -noshadow" -output:"coverage.xml" -filter:"+[Decorator*]* -[Decorator.Tests*]*"
-
-after_test:
+  - cmd: dotnet test /p:CollectCoverage=true
   - ps: |
-      $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
-      Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
-      bash codecov.sh -f "coverage.xml" -t $env:CODECOV_TOKEN
+      if ($env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Ubuntu" -and $env:CONFIGURATION -eq "Release") {
+        curl -s https://codecov.io/bash > codecov
+        chmod +x codecov
+        ./codecov -f ./Decorator/Decorator.Tests/coverage.json
+      }
 
 artifacts:
  - path: 'bin\Release\netstandard2.0\'
