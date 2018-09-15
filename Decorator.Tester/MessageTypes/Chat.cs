@@ -20,7 +20,7 @@ namespace Decorator.Tester.MessageTypes {
 
 		[Position(0)]
 		public string ChatMessage { get; set; }
-		
+
 		[Position(1)]
 		public uint ClientId { get; set; }
 	}

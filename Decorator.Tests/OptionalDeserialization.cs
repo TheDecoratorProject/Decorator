@@ -11,7 +11,7 @@ namespace Decorator.Tests
 		public void OptionalBehavior() {
 			var bm = new BasicMessage("opt", "required", "should default to int value 0");
 			Deserializer.TryDeserialize<OptionalMsg>(bm, out var res);
-			
+
 			Assert.Equal("required", res.RequiredString);
 			Assert.Equal(default, res.OptionalValue);
 		}

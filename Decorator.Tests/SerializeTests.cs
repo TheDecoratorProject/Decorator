@@ -6,7 +6,7 @@ using Xunit;
 namespace Decorator.Tests
 {
     public class SerializeTests {
-		
+
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "CanSerialize")]
 		public void SerializeExample() {
@@ -18,9 +18,7 @@ namespace Decorator.Tests
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "CanSerialize")]
-		public void SerializeEmpty() {
-			Assert.Equal(new BasicMessage(null), Serializer<NullType>.Serialize(new NullType()));
-		}
+		public void SerializeEmpty() => Assert.Equal(new BasicMessage(null), Serializer<NullType>.Serialize(new NullType()));
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "CanSerialize")]

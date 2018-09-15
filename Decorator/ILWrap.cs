@@ -6,13 +6,15 @@ namespace Decorator {
 
 	public delegate object ILFunc(object instance, object[] args);
 
+	// magic class that nobody really knows what it does :D
+
 	internal static class IL {
 		// https://stackoverflow.com/a/7478557
 
-		private static Type _ilfuncTypeCache = typeof(ILFunc);
+		private static readonly Type _ilfuncTypeCache = typeof(ILFunc);
 
 		public static ILFunc ILWrap(this MethodInfo method) {
-			var dm = new DynamicMethod(method.Name, typeof(object), new [] {
+			var dm = new DynamicMethod(method.Name, typeof(object), new[] {
 					typeof(object), typeof(object[])
 				}, method.DeclaringType, true);
 			var il = dm.GetILGenerator();
@@ -53,10 +55,9 @@ namespace Decorator {
 			}
 
 			var parameters = method.GetParameters();
-			LocalBuilder[] locals = new LocalBuilder[parameters.Length];
+			var locals = new LocalBuilder[parameters.Length];
 
 			for (var i = 0; i < parameters.Length; i++) {
-
 				if (!parameters[i].IsOut) {
 					il.Emit(OpCodes.Ldarg_1);
 					il.Emit(OpCodes.Ldc_I4, i);
@@ -78,8 +79,7 @@ namespace Decorator {
 			il.EmitCall(method.IsStatic || method.DeclaringType.IsValueType ?
 				OpCodes.Call : OpCodes.Callvirt, method, null);
 
-
-			for (int idx = 0; idx < parameters.Length; ++idx) {
+			for (var idx = 0; idx < parameters.Length; ++idx) {
 				if (parameters[idx].IsOut || parameters[idx].ParameterType.IsByRef) {
 					il.Emit(OpCodes.Ldarg_1);
 					il.Emit(OpCodes.Ldc_I4, idx);
@@ -91,7 +91,6 @@ namespace Decorator {
 					il.Emit(OpCodes.Stelem_Ref);
 				}
 			}
-
 
 			if (method.ReturnType == null || method.ReturnType == typeof(void)) {
 				il.Emit(OpCodes.Ldnull);

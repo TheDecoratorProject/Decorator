@@ -57,9 +57,8 @@ namespace Decorator.Tester {
 			this._clients.Remove(clientId);
 		}
 
-		public void HandleMessage(BaseMessage msg, uint clientId) {
-			Deserializer<Server>.DeserializeMessageToMethod(this, msg);
-		}
+		public void HandleMessage(BaseMessage msg, uint clientId)
+			=> Deserializer<Server>.DeserializeMessageToMethod(this, msg);
 
 		[DeserializedHandler]
 		public void ChatMessage(SendChat schat) {

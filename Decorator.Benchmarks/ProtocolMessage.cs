@@ -1,7 +1,12 @@
-﻿using System;
-using System.Diagnostics;
+﻿namespace ProtocolMessage {
+	using System;
+	using System.Collections.Concurrent;
+	using System.Collections.Generic;
 
-namespace ProtocolMessage {
+	using System.Linq;
+	using System.Linq.Expressions;
+
+	using System.Reflection;
 
 	[Message("say")]
 	public class Chat {
@@ -12,34 +17,20 @@ namespace ProtocolMessage {
 		public string Message { get; set; }
 
 		public Chat() {
-
 		}
 	}
-
-}
-
-namespace ProtocolMessage {
-	using System.Collections.Concurrent;
-	using System.Collections.Generic;
-	using System.Reflection;
-	using System.Reflection.Emit;
 
 	public class ProtocolMessageManager {
 		internal Dictionary<int, ProtocolMessage> ProtocolMessages { get; }
 			= new Dictionary<int, ProtocolMessage>();
 
 		public ProtocolMessageManager() {
-			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-			foreach (var assembly in assemblies) {
-				var types = assembly.GetTypes();
-
-				foreach (var type in types) {
-					if (type.IsDefined(typeof(Message), true)) {
-						this.ProtocolMessages.Add(type.GetHashCode(), new ProtocolMessage(type));
-					}
-				}
-			}
+			this.ProtocolMessages =
+				AppDomain.CurrentDomain.GetAssemblies()
+				.Select(assembly => assembly.GetTypes())
+				.SelectMany(type => type)
+				.Where(type => type.IsDefined(typeof(Message), true))
+				.ToDictionary(kvp => kvp.GetHashCode(), kvp => new ProtocolMessage(kvp));
 		}
 
 		public T Convert<T>(object[] array) {
@@ -52,7 +43,7 @@ namespace ProtocolMessage {
 			var instance = (T)InstanceCache.CreateInstance<object>(type);
 
 			if (this.ProtocolMessages.TryGetValue(type.GetHashCode(), out var message)) {
-				foreach (var property in message.Properties) {
+				foreach (var property in message.Members) {
 					var position = property.Position;
 
 					var required = property.Required;
@@ -62,7 +53,7 @@ namespace ProtocolMessage {
 						if (property.Required)
 							throw new ProtocolMessageException(
 								string.Format("The message could not be converted as the specified array does not contain index {0} for the required property '{1}'",
-								position.Index, property.PropertyInfo.Name));
+								position.Index, property.MemberInfo.Name));
 
 						if (property.Optional)
 							continue;
@@ -82,54 +73,79 @@ namespace ProtocolMessage {
 	internal class ProtocolMessage {
 		internal string MessageType { get; }
 
-		internal List<ProtocolProperty> Properties { get; }
-			= new List<ProtocolProperty>();
+		internal List<ProtocolMember> Members
+			= new List<ProtocolMember>();
 
 		internal ProtocolMessage(Type type) {
 			this.MessageType = type.GetAttribute<Message>().MessageType;
 
-			foreach (var property in PropertyCache.GetCachedProperties(type)) {
-				var position = property.GetCustomAttribute<Position>();
-				var required = property.GetCustomAttribute<Required>();
-				var optional = property.GetCustomAttribute<Optional>();
+			foreach (var member in new List<MemberInfo>(PropertyCache.Get(type)).Union(FieldCache.Get(type))) {
+				var position = member.GetCustomAttribute<Position>();
+				var required = member.GetCustomAttribute<Required>();
+				var optional = member.GetCustomAttribute<Optional>();
 
 				if (position == null)
-					throw new ProtocolMessageException(string.Format("The required position attribute missing on property '{0}' of type '{1}'",
-						property.Name, type.FullName));
+					throw new ProtocolMessageException(string.Format("The required position attribute missing on property or field '{0}' of type '{1}'",
+						member.Name, type.FullName));
 
 				if (required != null && optional != null)
-					throw new ProtocolMessageException(string.Format("The property '{0}' of type '{1}' cannot simultaneously be required and optional.",
-						property.Name, type.FullName));
+					throw new ProtocolMessageException(string.Format("The property or field '{0}' of type '{1}' cannot simultaneously be required and optional.",
+						member.Name, type.FullName));
 
 				if (required == null && optional == null)
-					throw new ProtocolMessageException(string.Format("The property '{0}' of type '{1}' must contain either tbe required or optional attribute.",
-						property.Name, type.FullName));
+					throw new ProtocolMessageException(string.Format("The property or field '{0}' of type '{1}' must contain either tbe required or optional attribute.",
+						member.Name, type.FullName));
 
-				this.Properties.Add(new ProtocolProperty(property, type) {
-					Position = position,
-					Optional = optional != null,
-					Required = required != null
-				});
+				ProtocolMember entry = null;
+
+				switch (member.MemberType) {
+					case MemberTypes.Property:
+					entry = new ProtocolProperty(member, type) {
+						Position = position,
+						Optional = optional != null,
+						Required = required != null
+					};
+					break;
+					case MemberTypes.Field:
+					entry = new ProtocolField(member, type) {
+						Position = position,
+						Optional = optional != null,
+						Required = required != null
+					};
+					break;
+				}
+
+				this.Members.Add(entry);
 			}
 		}
 	}
+	
+	internal abstract class ProtocolMember {
+		public MemberInfo MemberInfo { get; set; }
+		public Position Position { get; set; }
 
-	internal class ProtocolProperty {
-		internal PropertyInfo PropertyInfo { get; set; }
-		internal Position Position { get; set; }
+		public bool Required { get; set; }
+		public bool Optional { get; set; }
 
-		internal bool Required { get; set; } = false;
-		internal bool Optional { get; set; } = false;
+		public Action<object, object> SetMemberValue { get; protected set; }
 
-		internal Func<object, object[], object> GetSetMethod { get; set; }
-
-		internal void SetValue(object instance, object value) {
-			this.GetSetMethod(instance, new[] { value });
+		protected ProtocolMember(MemberInfo property) {
+			this.MemberInfo = property;
 		}
 
-		internal ProtocolProperty(PropertyInfo property, Type type) {
-			this.PropertyInfo = property;
-			this.GetSetMethod = ILHelpers.Wrap(this.PropertyInfo.GetSetMethod());
+		public void SetValue(object instance, object value) =>
+			this.SetMemberValue(instance, value);
+	}
+
+	internal class ProtocolProperty : ProtocolMember {
+		public ProtocolProperty(MemberInfo property, Type type) : base(property) {
+			this.SetMemberValue = ((PropertyInfo)property).GetSetMethodByExpression();
+		}
+	}
+
+	internal class ProtocolField : ProtocolMember {
+		public ProtocolField(MemberInfo property, Type type) : base(property) {
+			this.SetMemberValue = ((FieldInfo)property).GetSetMethodByExpression();
 		}
 	}
 
@@ -140,63 +156,62 @@ namespace ProtocolMessage {
 		}
 	}
 
-	internal static class ILHelpers {
-		internal static Func<object, object[], object> Wrap(MethodInfo method) {
-			var dm = new DynamicMethod(method.Name, typeof(object), new[] { typeof(object), typeof(object[]) }, method.DeclaringType, true);
-			var il = dm.GetILGenerator();
+	internal static class PropertyInfoExtensions {
+		internal static Action<object, object> GetSetMethodByExpression(this PropertyInfo propertyInfo) {
+			var setMethodInfo = propertyInfo.GetSetMethod(true);
+			var instance = Expression.Parameter(typeof(object), "instance");
+			var value = Expression.Parameter(typeof(object), "value");
+			var instanceCast = (!(propertyInfo.DeclaringType).GetTypeInfo().IsValueType) ? Expression.TypeAs(instance, propertyInfo.DeclaringType) : Expression.Convert(instance, propertyInfo.DeclaringType);
+			var valueCast = (!(propertyInfo.PropertyType).GetTypeInfo().IsValueType) ? Expression.TypeAs(value, propertyInfo.PropertyType) : Expression.Convert(value, propertyInfo.PropertyType);
+			var compiled = Expression.Lambda<Action<object, object>>(Expression.Call(instanceCast, setMethodInfo, valueCast), new ParameterExpression[] { instance, value }).Compile();
 
-			if (!method.IsStatic) {
-				il.Emit(OpCodes.Ldarg_0);
-				il.Emit(OpCodes.Unbox_Any, method.DeclaringType);
-			}
+			return compiled;
+		}
 
-			var parameters = method.GetParameters();
-			for (var i = 0; i < parameters.Length; i++) {
-				il.Emit(OpCodes.Ldarg_1);
-				il.Emit(OpCodes.Ldc_I4, i);
-				il.Emit(OpCodes.Ldelem_Ref);
-				il.Emit(OpCodes.Unbox_Any, parameters[i].ParameterType);
-			}
+		internal static Action<object, object> GetSetMethodByExpression(this FieldInfo fieldInfo) {
+			var instance = Expression.Parameter(typeof(object), "instance");
+			var value = Expression.Parameter(typeof(object), "value");
+			var compiled = Expression.Lambda<Action<object, object>>(Expression.Assign(
+				Expression.Field(Expression.Convert(instance, fieldInfo.DeclaringType), fieldInfo),
+				Expression.Convert(value, fieldInfo.FieldType)), instance, value)
+				.Compile();
 
-			il.EmitCall(method.IsStatic || method.DeclaringType.IsValueType ?
-				OpCodes.Call : OpCodes.Callvirt, method, null);
-
-			if (method.ReturnType == null || method.ReturnType == typeof(void))
-				il.Emit(OpCodes.Ldnull);
-			else if (method.ReturnType.IsValueType)
-				il.Emit(OpCodes.Box, method.ReturnType);
-
-			il.Emit(OpCodes.Ret);
-
-			return (Func<object, object[], object>)dm.CreateDelegate(typeof(Func<object, object[], object>));
+			return compiled;
 		}
 	}
 
 	internal static class PropertyCache {
 		internal static ConcurrentDictionary<int, PropertyInfo[]> Cache = new ConcurrentDictionary<int, PropertyInfo[]>();
 
-		internal static PropertyInfo[] GetCachedProperties(this Type type) {
-			if (Cache.TryGetValue(type.GetHashCode(), out var props))
-				return props;
+		internal static PropertyInfo[] Get(Type type) {
+			if (Cache.TryGetValue(type.GetHashCode(), out var properties))
+				return properties;
 
-			props = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+			properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+			Cache[type.GetHashCode()] = properties;
 
-			Cache[type.GetHashCode()] = props;
+			return properties;
+		}
+	}
 
-			return props;
+	internal static class FieldCache {
+		internal static ConcurrentDictionary<int, FieldInfo[]> Cache = new ConcurrentDictionary<int, FieldInfo[]>();
+
+		internal static FieldInfo[] Get(Type type) {
+			if (Cache.TryGetValue(type.GetHashCode(), out var fields))
+				return fields;
+
+			fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
+			Cache[type.GetHashCode()] = fields;
+
+			return fields;
 		}
 	}
 
 	internal static class InstanceCache {
-		public static T CreateInstance<T>(Type type) where T : class {
+		internal static T CreateInstance<T>(Type type) where T : class {
 			if (!InstanceCacheStorage<T>.Cache.TryGetValue(type.FullName, out var function)) {
-				var dynMethod = new DynamicMethod(type.Name, type, null, type);
-				var ilGen = dynMethod.GetILGenerator();
-
-				ilGen.Emit(OpCodes.Newobj, type.GetConstructor(Type.EmptyTypes));
-				ilGen.Emit(OpCodes.Ret);
-
-				function = (Func<T>)dynMethod.CreateDelegate(typeof(Func<T>));
+				function = Expression.Lambda<Func<T>>(Expression.New(type)).Compile();
 				InstanceCacheStorage<T>.Cache[type.FullName] = function;
 			}
 
@@ -204,28 +219,21 @@ namespace ProtocolMessage {
 		}
 	}
 
-	internal static class InstanceCacheStorage<T> {
-		public static ConcurrentDictionary<string, Func<T>> Cache = new ConcurrentDictionary<string, Func<T>>();
+	internal static class InstanceCacheStorage<T> where T : class {
+		internal static ConcurrentDictionary<string, Func<T>> Cache = new ConcurrentDictionary<string, Func<T>>();
 	}
 
 	[Serializable]
-	public class ProtocolMessageException : Exception {
-		public ProtocolMessageException(string message) : base(message) {
-		}
+	public sealed class ProtocolMessageException : Exception {
+		public ProtocolMessageException(string message) : base(message) { }
 	}
 
 	[AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = false)]
 	public sealed class Optional : Attribute {
-		public Optional() {
-
-		}
 	}
 
 	[AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = false)]
 	public sealed class Required : Attribute {
-		public Required() {
-
-		}
 	}
 
 	[AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = false)]
@@ -239,13 +247,13 @@ namespace ProtocolMessage {
 
 	[AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = false)]
 	public sealed class Message : Attribute {
+		public string MessageType { get; private set; }
+
 		public Message(string messageType) {
 			if (string.IsNullOrEmpty(messageType))
 				throw new ProtocolMessageException("A valid non-empty message type must be specified for messages.");
 
 			this.MessageType = messageType;
 		}
-
-		public string MessageType { get; private set; }
 	}
 }
