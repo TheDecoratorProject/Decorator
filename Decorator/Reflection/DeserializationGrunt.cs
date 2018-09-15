@@ -36,7 +36,6 @@ namespace Decorator {
 	/// <summary>Manages message types and also a good chunk of the internal deserialization code.</summary>
 	public class DeserializationGrunt {
 		public ConcurrentDictionary<Type, MessageDefinition> Definitions { get; } = new ConcurrentDictionary<Type, MessageDefinition>();
-		private readonly object[] _emptyObjArr = new object[] { };
 
 		private static readonly FunctionWrapper _tryDeserialize = new FunctionWrapper(
 				typeof(DeserializationGrunt)

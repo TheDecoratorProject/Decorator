@@ -95,8 +95,5 @@ namespace Decorator {
 
 			invoke(instance, new object[] { item });
 		}
-
-		private static T CastObj<T>(object input)
-			=> (T)input;
 	}
 }
