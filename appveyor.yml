@@ -25,11 +25,11 @@ test_script:
   - cmd: dotnet test -c Release /p:CollectCoverage=true Decorator.Tests\
   - ps: |
         curl -s https://codecov.io/bash > codecov
-        ./codecov -f ./Decorator/Decorator.Tests/coverage.json -t $env:CODECOV_TOKEN
+        ./codecov -f Decorator.Tests\coverage.json -t $env:CODECOV_TOKEN
 
 artifacts:
- - path: 'bin\Release\netstandard2.0\'
+ - path: 'Decorator\bin\Release\netstandard2.0\'
    name: Decorator_netstandard2.0
- - path: 'bin\Release\net45\'
+ - path: 'Decorator\bin\Release\net45\'
    name: Decorator_net45
    
