@@ -22,13 +22,10 @@ build_script:
   - cmd: dotnet build -c Release -f netstandard2.0 "Decorator\Decorator.csproj"
   
 test_script:
-  - cmd: dotnet test /p:CollectCoverage=true
+  - cmd: dotnet test -c Release /p:CollectCoverage=true Decorator.Tests\
   - ps: |
-      if ($env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Ubuntu" -and $env:CONFIGURATION -eq "Release") {
         curl -s https://codecov.io/bash > codecov
-        chmod +x codecov
-        ./codecov -f ./Decorator/Decorator.Tests/coverage.json
-      }
+        ./codecov -f ./Decorator/Decorator.Tests/coverage.json -t $env:CODECOV_TOKEN
 
 artifacts:
  - path: 'bin\Release\netstandard2.0\'
