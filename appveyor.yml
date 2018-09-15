@@ -1,0 +1,18 @@
+image: Visual Studio 2017
+clone_depth: 1
+deploy: off
+branches:
+  only:
+  - master
+init:
+  - cmd: git config --global core.autocrlf true
+build_script:
+  - cmd: dotnet --version
+  - cmd: dotnet restore -v q
+  - cmd: dotnet build -c Release -f net45 "Decorator\Decorator.csproj"
+  - cmd: dotnet build -c Release -f netstandard2.0 "Decorator\Decorator.csproj"
+artifacts:
+ - path: 'bin\Release\netstandard2.0\'
+   name: Decorator_netstandard2.0
+ - path: 'bin\Release\net45\'
+   name: Decorator_net45
