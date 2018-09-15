@@ -1,16 +1,32 @@
 image: Visual Studio 2017
 clone_depth: 1
 deploy: off
+
 branches:
   only:
   - master
+
 init:
   - cmd: git config --global core.autocrlf true
+
+before_build:
+    - cmd: dotnet restore
+
 build_script:
   - cmd: dotnet --version
   - cmd: dotnet restore -v q
   - cmd: dotnet build -c Release -f net45 "Decorator\Decorator.csproj"
   - cmd: dotnet build -c Release -f netstandard2.0 "Decorator\Decorator.csproj"
+
+test_script:
+ - .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"%xunit20%\xunit.console.x86.exe" -targetargs:"Decorator.Tests/bin/Release/netcoreapp2.1/Decorator.Tests.dll -noshadow" -output:"coverage.xml" -filter:"+[Decorator*]* -[Decorator.Tests*]*"
+
+after_build:
+  - ps: |
+      $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
+      Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
+      bash codecov.sh -f "coverage.xml" -t $env:CODECOV_TOKEN
+
 artifacts:
  - path: 'bin\Release\netstandard2.0\'
    name: Decorator_netstandard2.0
