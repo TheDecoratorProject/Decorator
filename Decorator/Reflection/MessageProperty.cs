@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -91,15 +92,14 @@ namespace Decorator {
 
 		internal int IntPos { get; }
 
-		private ILFunc _propSetRaw;
+		private Action<object, object> _propSetRaw;
 		private ILFunc _propGetRaw;
 
-		private ILFunc _propSet {
+		private Action<object, object> _propSet {
 			get {
 				if (this._propSetRaw == default)
 					this._propSetRaw = this.PropertyInfo
-										.GetSetMethod()
-										.ILWrap();
+										.GetSetMethodByExpression();
 
 				return this._propSetRaw;
 			}
@@ -126,6 +126,6 @@ namespace Decorator {
 		/// <param name="instance">The instance to use</param>
 		/// <param name="value">The new value to set it to</param>
 		public void Set(object instance, object value)
-			=> this._propSet(instance, new[] { value });
+			=> this._propSet(instance, value);
 	}
 }
