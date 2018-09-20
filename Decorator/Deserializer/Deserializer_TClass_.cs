@@ -44,14 +44,17 @@ namespace Decorator {
 						Deserializer.TryDeserializeItems(genArg, msg, out var enumerable)) {
 						var result = _objToArray.GetMethodFor(genArg)(null, new object[] { enumerable });
 
-						foreach (var k in i.Value)
-							MethodInvoker<TClass>.InvokeMethod(k, instanceObj, result);
+						InvokeMethods(instanceObj, result, i.Value);
 					}
 				} else if (Deserializer.TryDeserializeItem(i.Key, msg, out var itm)) {
-					foreach (var k in i.Value)
-						MethodInvoker<TClass>.InvokeMethod(k, instanceObj, itm);
+					InvokeMethods(instanceObj, itm, i.Value);
 				}
 			}
+		}
+		
+		private static void InvokeMethods(object instance, object result, IEnumerable<MethodInfo> methods) {
+			foreach (var method in methods)
+				MethodInvoker<TClass>.InvokeMethod(method, instance, result);
 		}
 
 		private static IEnumerable<T> FromObjToArray<T>(IEnumerable<object> objs)

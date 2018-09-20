@@ -31,10 +31,6 @@ namespace Decorator {
 		// https://stackoverflow.com/questions/20491162/create-expression-function-from-methodinfo-with-unknown-signature
 
 		public static Action<object, object> GetSingleInvokable(this MethodInfo method) {
-			// Methods with void as return must be cast to Action instead of Function
-			var voidMethod = method.ReturnType == typeof(void);
-			// Methods with ref parameters can be called but the parameters won't work.
-			var refMethod = Array.FindAll(method.GetParameters(), info => info.ParameterType.IsByRef);
 			var paramExprs = GetParamExpr(method);
 			var paramTypes = GetParamTypes(method, paramExprs);
 			var instanceExp = Expression.Convert(paramExprs[0], method.DeclaringType);
