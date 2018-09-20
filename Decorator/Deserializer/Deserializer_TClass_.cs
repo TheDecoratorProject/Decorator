@@ -11,15 +11,10 @@ namespace Decorator {
 	public static class Deserializer<TClass>
 		where TClass : class {
 
-		static Deserializer()
-			=> MethodDeserializerManager = new MethodDeserializerManager<TClass>();
-
 		private static readonly FunctionWrapper _objToArray = new FunctionWrapper(
 				typeof(Deserializer<TClass>)
 					.GetMethod(nameof(FromObjToArray), BindingFlags.Static | BindingFlags.NonPublic)
 			);
-
-		public static MethodDeserializerManager<TClass> MethodDeserializerManager { get; }
 
 		/// <summary>
 		/// Invokes any methods in the <see cref="TClass"/> <paramref name="instance"/> that have the <seealso cref="Attributes.DeserializedHandlerAttribute"/> attribute and accept the <typeparamref name="TItem"/> parameter as input.
@@ -28,8 +23,8 @@ namespace Decorator {
 		/// <param name="instance">The instance of the <typeparamref name="TClass"/> to deserialize it to (use null for static)</param>
 		/// <param name="item">The item to use to invoke stuff</param>
 		public static void DeserializeItemToMethod<TItem>(TClass instance, TItem item) {
-			foreach (var i in MethodDeserializerManager.GetMethodsFor<TItem>()) {
-				MethodDeserializerManager.InvokeMethod<TItem>(i, instance, item);
+			foreach (var i in MethodInvoker<TClass>.GetMethodsFor<TItem>()) {
+				MethodInvoker<TClass>.InvokeMethod<TItem>(i, instance, item);
 			}
 		}
 
@@ -41,7 +36,7 @@ namespace Decorator {
 		public static void DeserializeMessageToMethod(TClass instance, BaseMessage msg) {
 			var instanceObj = (object)instance;
 
-			foreach (var i in MethodDeserializerManager.Cache) {
+			foreach (var i in MethodInvoker<TClass>.Cache) {
 				if (i.Key.GenericTypeArguments.Length > 0) {
 					var genArg = i.Key.GenericTypeArguments[0];
 
@@ -50,11 +45,11 @@ namespace Decorator {
 						var result = _objToArray.GetMethodFor(genArg)(null, new object[] { enumerable });
 
 						foreach (var k in i.Value)
-							MethodDeserializerManager.InvokeMethod(k, instanceObj, result);
+							MethodInvoker<TClass>.InvokeMethod(k, instanceObj, result);
 					}
 				} else if (Deserializer.TryDeserializeItem(i.Key, msg, out var itm)) {
 					foreach (var k in i.Value)
-						MethodDeserializerManager.InvokeMethod(k, instanceObj, itm);
+						MethodInvoker<TClass>.InvokeMethod(k, instanceObj, itm);
 				}
 			}
 		}

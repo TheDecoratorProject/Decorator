@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace Decorator {
 
-	public class FunctionWrapper {
+	internal class FunctionWrapper {
 
 		public FunctionWrapper(MethodInfo method) {
 			this.Method = method;

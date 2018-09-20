@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace Decorator {
 
-	public static class InstanceOf<T> {
+	internal static class InstanceOf<T> {
 
 		public static T Create()
 			=> Constructor();

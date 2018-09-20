@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Decorator {
 
-	public static class AttributeCache<T>
+	internal static class AttributeCache<T>
 		where T : Attribute {
 		private static ConcurrentDictionary<MemberInfo, T[]> _memberInfoCache { get; } = new ConcurrentDictionary<MemberInfo, T[]>();
 

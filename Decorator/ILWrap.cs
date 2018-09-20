@@ -7,7 +7,7 @@ using System.Reflection.Emit;
 
 namespace Decorator {
 
-	public delegate object ILFunc(object instance, object[] args);
+	internal delegate object ILFunc(object instance, object[] args);
 
 	// magic class that nobody really knows what it does :D
 
