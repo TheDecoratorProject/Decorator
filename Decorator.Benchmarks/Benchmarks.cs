@@ -58,7 +58,7 @@ namespace Decorator.Benchmarks {
 
 		[Benchmark(Description = "Simple TryDeserialize", Baseline = true)]
 		public bool BasicDeserialize()
-			=> Deserializer.TryDeserialize<Chat>(this._goodMsg, out var _);
+			=> Deserializer.TryDeserializeItem<Chat>(this._goodMsg, out var _);
 
 		[Benchmark(Description = "ProtocolMessage alternative")]
 		public ProtocolMessage.Chat ProtocolMessage()
@@ -66,19 +66,19 @@ namespace Decorator.Benchmarks {
 
 		[Benchmark(Description = "TryDeserialize with Type")]
 		public bool DeserializeWithType()
-			=> Deserializer.GruntWorker.TryDeserializeType(this._type, this._goodMsg, out var _);
+			=> Deserializer.TryDeserializeItem(this._type, this._goodMsg, out var _);
 
 		[Benchmark(Description = "Invalid @ 0")]
 		public bool InvalidChat_At0()
-			=> Deserializer.TryDeserialize<Chat>(this._badMsgAt0, out var _);
+			=> Deserializer.TryDeserializeItem<Chat>(this._badMsgAt0, out var _);
 
 		[Benchmark(Description = "Invalid @ 1")]
 		public bool InvalidChat_At1()
-			=> Deserializer.TryDeserialize<Chat>(this._badMsgAt1, out var _);
+			=> Deserializer.TryDeserializeItem<Chat>(this._badMsgAt1, out var _);
 
 		[Benchmark(Description = "Invalid Type")]
 		public bool InvalidChat_Type()
-			=> Deserializer.TryDeserialize<Chat>(this._badType, out var _);
+			=> Deserializer.TryDeserializeItem<Chat>(this._badType, out var _);
 
 		[Benchmark(Description = "Deserialize Message to Method")]
 		public void InvokeMethodMessage()

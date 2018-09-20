@@ -52,7 +52,7 @@ namespace Decorator.Tests {
 				args.AddRange(msg.Arguments);
 			}
 
-			Assert.True(Deserializer.TryDeserializeMultiple<TestMessage>(msg, out var _));
+			Assert.True(Deserializer.TryDeserializeItems<TestMessage>(msg, out var _));
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
@@ -72,7 +72,7 @@ namespace Decorator.Tests {
 
 			var t = args.ToArray();
 
-			Assert.False(Deserializer.TryDeserializeMultiple<NonRepeatable>(new BasicMessage("rep", t), out var _));
+			Assert.False(Deserializer.TryDeserializeItems<NonRepeatable>(new BasicMessage("rep", t), out var _));
 		}
 	}
 }

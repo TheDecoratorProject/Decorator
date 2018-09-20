@@ -1,12 +1,14 @@
 ﻿using Xunit;
 
+namespace Decorator.Tests {
+
 	public class OptionalDeserialization {
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", nameof(OptionalDeserialization))]
 		public void OptionalBehavior() {
 			var bm = new BasicMessage("opt", "required", "should default to int value 0");
-			Deserializer.TryDeserialize<OptionalMsg>(bm, out var res);
+			Deserializer.TryDeserializeItem<OptionalMsg>(bm, out var res);
 
 			Assert.Equal("required", res.RequiredString);
 			Assert.Equal(default, res.OptionalValue);
