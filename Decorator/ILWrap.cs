@@ -43,9 +43,10 @@ namespace Decorator {
 		}
 
 		private static List<ParameterExpression> GetParamExpr(MethodInfo method) {
-			var list = new List<ParameterExpression>();
-			list.Add(Expression.Parameter(typeof(object), "obj"));
-			list.AddRange(Array.ConvertAll(method.GetParameters(), input => Expression.Parameter(typeof(object))));
+			var list = new List<ParameterExpression> {
+				Expression.Parameter(_object, "obj")
+			};
+			list.AddRange(Array.ConvertAll(method.GetParameters(), input => Expression.Parameter(_object)));
 			return list;
 		}
 
@@ -62,8 +63,8 @@ namespace Decorator {
 		}
 
 		public static ILFunc ILWrap(this MethodInfo method) {
-			var dm = new DynamicMethod(method.Name, typeof(object), new[] {
-					typeof(object), typeof(object[])
+			var dm = new DynamicMethod(method.Name, _object, new[] {
+					_object, typeof(object[])
 				}, method.DeclaringType, true);
 			var il = dm.GetILGenerator();
 
@@ -92,8 +93,8 @@ namespace Decorator {
 		// https://stackoverflow.com/a/29133510
 
 		public static ILFunc ILWrapRefSupport(this MethodInfo method) {
-			var dm = new DynamicMethod(method.Name, typeof(object), new[] {
-					typeof(object), typeof(object[])
+			var dm = new DynamicMethod(method.Name, _object, new[] {
+					_object, typeof(object[])
 				}, method.DeclaringType, true);
 			var il = dm.GetILGenerator();
 

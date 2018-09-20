@@ -35,7 +35,7 @@ namespace Decorator {
 		/// <param name="result">The result after deserialization</param>
 		/// <returns><c>true</c> if it can deserialize it, <c>false</c> if it can't</returns>
 		public static bool TryDeserializeMultiple<TItem>(BaseMessage m, out IEnumerable<TItem> result)
-			=> GruntWorker.TryDeserializeRepeatable<TItem>(m, out result);
+			=> GruntWorker.TryDeserialize<TItem>(m, out result);
 	}
 
 	/// <summary>Deserializes any message to a method in the TClass</summary>

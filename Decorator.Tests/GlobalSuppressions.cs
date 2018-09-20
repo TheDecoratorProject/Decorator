@@ -7,4 +7,3 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CC0057:Unused parameters", Justification = "<Pending>", Scope = "member", Target = "~M:Decorator.Tests.HandlerClass.NullHandler(Decorator.Tests.NullType)")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CC0091:Use static method", Justification = "<Pending>", Scope = "member", Target = "~M:Decorator.Tests.HandlerClass.NullHandler(Decorator.Tests.NullType)")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CC0091:Use static method", Justification = "<Pending>", Scope = "member", Target = "~M:Decorator.Tests.HandlerClass.IgnoredMethod(Decorator.Tests.TestMessage)")]
-

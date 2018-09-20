@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+
 using Xunit;
 
-namespace Decorator.Tests
-{
-    public class SerializeTests {
+namespace Decorator.Tests {
+
+	public class SerializeTests {
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "CanSerialize")]

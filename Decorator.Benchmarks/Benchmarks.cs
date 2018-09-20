@@ -1,15 +1,14 @@
 ﻿using BenchmarkDotNet.Attributes;
+
 using Decorator.Attributes;
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 
 namespace Decorator.Benchmarks {
 
 	[Message("say")]
 	public class Chat {
+
 		[Position(0), Required]
 		public int PlayerId { get; set; }
 
@@ -18,7 +17,6 @@ namespace Decorator.Benchmarks {
 	}
 
 	public class Benchmarks {
-
 		private readonly object[] _goodArgs = new object[] { 10, "hello world" };
 		private readonly object[] _badArgsAt0 = new object[] { "10", "hello world" };
 		private readonly object[] _badArgsAt1 = new object[] { 10, 3f };
@@ -49,12 +47,12 @@ namespace Decorator.Benchmarks {
 			// dry run, ensure caching in decorator is fine
 
 			for (var i = 0; i < 2; i++) {
-				BasicDeserialize();
-				ProtocolMessage();
-				DeserializeWithType();
-				InvalidChat_At0();
-				InvalidChat_At1();
-				InvalidChat_Type();
+				this.BasicDeserialize();
+				this.ProtocolMessage();
+				this.DeserializeWithType();
+				this.InvalidChat_At0();
+				this.InvalidChat_At1();
+				this.InvalidChat_Type();
 			}
 		}
 

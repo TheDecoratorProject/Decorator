@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Xunit;
+﻿using Xunit;
 
-namespace Decorator.Tests
-{
-    public class OptionalDeserialization {
+	public class OptionalDeserialization {
+
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", nameof(OptionalDeserialization))]
 		public void OptionalBehavior() {

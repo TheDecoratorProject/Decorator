@@ -27,6 +27,7 @@ namespace Decorator.Tests {
 
 	[Message("opt")]
 	public class OptionalMsg {
+
 		[Position(0), Required]
 		public string RequiredString { get; set; }
 

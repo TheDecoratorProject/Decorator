@@ -1,4 +1,5 @@
 ﻿namespace ProtocolMessage {
+
 	using System;
 	using System.Collections.Concurrent;
 	using System.Collections.Generic;
@@ -10,6 +11,7 @@
 
 	[Message("say")]
 	public class Chat {
+
 		[Position(0), Required]
 		public int PlayerId { get; set; }
 
@@ -21,6 +23,7 @@
 	}
 
 	public class ProtocolMessageManager {
+
 		internal Dictionary<int, ProtocolMessage> ProtocolMessages { get; }
 			= new Dictionary<int, ProtocolMessage>();
 
@@ -106,6 +109,7 @@
 						Required = required != null
 					};
 					break;
+
 					case MemberTypes.Field:
 					entry = new ProtocolField(member, type) {
 						Position = position,
@@ -119,7 +123,7 @@
 			}
 		}
 	}
-	
+
 	internal abstract class ProtocolMember {
 		public MemberInfo MemberInfo { get; set; }
 		public Position Position { get; set; }
@@ -138,18 +142,21 @@
 	}
 
 	internal class ProtocolProperty : ProtocolMember {
+
 		public ProtocolProperty(MemberInfo property, Type type) : base(property) {
 			this.SetMemberValue = ((PropertyInfo)property).GetSetMethodByExpression();
 		}
 	}
 
 	internal class ProtocolField : ProtocolMember {
+
 		public ProtocolField(MemberInfo property, Type type) : base(property) {
 			this.SetMemberValue = ((FieldInfo)property).GetSetMethodByExpression();
 		}
 	}
 
 	internal static class ExpressionHelpers {
+
 		internal static T GetAttribute<T>(this ICustomAttributeProvider provider) where T : Attribute {
 			var attributes = provider.GetCustomAttributes(typeof(T), true);
 			return attributes.Length > 0 ? attributes[0] as T : null;
@@ -157,6 +164,7 @@
 	}
 
 	internal static class PropertyInfoExtensions {
+
 		internal static Action<object, object> GetSetMethodByExpression(this PropertyInfo propertyInfo) {
 			var setMethodInfo = propertyInfo.GetSetMethod(true);
 			var instance = Expression.Parameter(typeof(object), "instance");
@@ -209,6 +217,7 @@
 	}
 
 	internal static class InstanceCache {
+
 		internal static T CreateInstance<T>(Type type) where T : class {
 			if (!InstanceCacheStorage<T>.Cache.TryGetValue(type.FullName, out var function)) {
 				function = Expression.Lambda<Func<T>>(Expression.New(type)).Compile();
@@ -225,7 +234,9 @@
 
 	[Serializable]
 	public sealed class ProtocolMessageException : Exception {
-		public ProtocolMessageException(string message) : base(message) { }
+
+		public ProtocolMessageException(string message) : base(message) {
+		}
 	}
 
 	[AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = false)]
