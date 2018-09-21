@@ -1,35 +1,30 @@
-image: Visual Studio 2017
+os: Visual Studio 2017
 clone_depth: 1
 deploy: off
 
-branches:
-  only:
-  - master
+assembly_info:
+    assembly_informational_version: "{version} - CI (AppVeyor, branch: {branch})"
+
+configuration:
+    - Debug
+    - Release
 
 init:
   - cmd: git config --global core.autocrlf true
 
 before_build:
-    - cmd: dotnet restore
-    
-configuration:
-  - Release
+    - dotnet restore
 
 build_script:
-  - cmd: dotnet --version
-  - cmd: dotnet restore -v q
-  - cmd: dotnet build -c Release -f net45 "Decorator\Decorator.csproj"
-  - cmd: dotnet build -c Release -f netstandard2.0 "Decorator\Decorator.csproj"
+  - dotnet build -c $(configuration) "Decorator\Decorator.csproj"
   
 test_script:
-  - cmd: dotnet test -c Release /p:CollectCoverage=true Decorator.Tests\
-  - ps: |
-        curl -s https://codecov.io/bash > codecov
-        ./codecov -f .\Decorator.Tests\coverage.json
+  - nuget install OpenCover -Version 4.6.519 -OutputDirecotry packages
+  - packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user "-target:%ProgramFiles%\dotnet\dotnet.exe" "-targetargs:test Decorator.Tests\Decorator.Tests.csproj" -returntargetcode "-filter:+[Decorator]*" -hideskipped:All -output:./coverage.xml -oldStyle
+  - ps: curl -s https://codecov.io/bash > codecov
+  - ps: ./codecov -f .\coverage.xml
 
 artifacts:
- - path: 'Decorator\bin\Release\netstandard2.0\'
-   name: Decorator_netstandard2.0
- - path: 'Decorator\bin\Release\net45\'
-   name: Decorator_net45
+ - path: 'Decorator\bin\$(configuration)\*.nupkg'
+   name: Decorator.zip
    
