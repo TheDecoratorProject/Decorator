@@ -10,10 +10,12 @@ configuration:
     - Release
 
 init:
-  - cmd: git config --global core.autocrlf true
+  - cmd: echo %CONFIGURATION%
+  - cmd: echo $(configuration)
+  - git config --global core.autocrlf true
 
 before_build:
-    - dotnet restore
+  - dotnet restore
 
 build_script:
   - dotnet build -c $(configuration) "Decorator\Decorator.csproj"
