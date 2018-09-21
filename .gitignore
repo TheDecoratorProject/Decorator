@@ -3,7 +3,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-*/coverage.json
+*.json
+*.sh
+*.xml
+*.bat
 
 # User-specific files
 *.suo
