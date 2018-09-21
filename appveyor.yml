@@ -20,13 +20,13 @@ build_script:
   
 test_script:
     - ps: |
-      if ($env:CONFIGURATION -eq 'Debug')
-      {
-          & nuget install OpenCover -Version 4.6.519 -OutputDirectory packages
-          & packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user "-target:%ProgramFiles%\dotnet\dotnet.exe" "-targetargs:test Decorator.Tests\Decorator.Tests.csproj" -returntargetcode "-filter:+[Decorator]*" -hideskipped:All -output:./coverage.xml -oldStyle
-          & nuget install Codecov -Version 1.0.3 -OutputDirectory packages
-          & packages\Codecov.1.0.3\tools\codecov.exe -f "coverage.xml"
-      }
+        if ($env:CONFIGURATION -eq 'Debug')
+        {
+          nuget install OpenCover -Version 4.6.519 -OutputDirectory packages
+          packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user "-target:%ProgramFiles%\dotnet\dotnet.exe" "-targetargs:test Decorator.Tests\Decorator.Tests.csproj" -returntargetcode "-filter:+[Decorator]*" -hideskipped:All -output:./coverage.xml -oldStyle
+          nuget install Codecov -Version 1.0.3 -OutputDirectory packages
+          packages\Codecov.1.0.3\tools\codecov.exe -f "coverage.xml"
+        }
 
 artifacts:
  - path: 'Decorator\bin\%CONFIGURATION%\*.nupkg'
