@@ -10,15 +10,13 @@ configuration:
     - Release
 
 init:
-  - cmd: echo %CONFIGURATION%
-  - cmd: echo $(configuration)
   - git config --global core.autocrlf true
 
 before_build:
   - dotnet restore
 
 build_script:
-  - dotnet build -c $(configuration) "Decorator\Decorator.csproj"
+  - dotnet build -c %CONFIGURATION% "Decorator\Decorator.csproj"
   
 test_script:
   - nuget install OpenCover -Version 4.6.519 -OutputDirecotry packages
@@ -27,6 +25,6 @@ test_script:
   - ps: ./codecov -f .\coverage.xml
 
 artifacts:
- - path: 'Decorator\bin\$(configuration)\*.nupkg'
+ - path: 'Decorator\bin\%CONFIGURATION%\*.nupkg'
    name: Decorator.zip
    
