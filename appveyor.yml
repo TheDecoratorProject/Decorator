@@ -21,8 +21,8 @@ build_script:
 test_script:
   - nuget install OpenCover -Version 4.6.519 -OutputDirectory packages
   - packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user "-target:%ProgramFiles%\dotnet\dotnet.exe" "-targetargs:test Decorator.Tests\Decorator.Tests.csproj" -returntargetcode "-filter:+[Decorator]*" -hideskipped:All -output:./coverage.xml -oldStyle
-  - ps: curl -s https://codecov.io/bash > codecov
-  - ps: ./codecov -f .\coverage.xml
+  - ps: Invoke-WebRequest -Uri https://codecov.io/bash -OutFile codecov.sh
+  - ps: ./codecov.sh -f .\coverage.xml
 
 artifacts:
  - path: 'Decorator\bin\%CONFIGURATION%\*.nupkg'
