@@ -76,5 +76,17 @@ namespace Decorator.Tests {
 				});
 			});
 		}
+
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", "CanSerialize")]
+		public void NoProperties() {
+			Assert.Equal((BaseMessage)(new BasicMessage("noprop")), Serializer.Serialize(new NoProperties()));
+		}
+
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", "CanSerialize")]
+		public void NoItems() {
+			Assert.Equal((BaseMessage)(new BasicMessage("noprop")), Serializer.Serialize((IEnumerable<NoProperties>)new NoProperties[0] { }));
+		}
 	}
 }

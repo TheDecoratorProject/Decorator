@@ -48,4 +48,8 @@ namespace Decorator.Tests {
 
 	public class ExampleHandlerClass {
 	}
+
+	[Message("noprop")]
+	public class NoProperties {
+	}
 }

@@ -79,5 +79,21 @@ namespace Decorator.Tests {
 			Assert.False(msg.Equals(msg2));
 		}
 
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", nameof(MessageTesting))]
+		public void FalseGenericObject() {
+			var msg = new BasicMessage("test", 992, 0b1010);
+
+			Assert.False(((object)msg).Equals(""));
+		}
+
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", nameof(MessageTesting))]
+		public void TrueExecutesBaseEquals() {
+			var msg = new BasicMessage("test", 992, 0b1010);
+			var msg2 = new BasicMessage("test", 992, 0b1010);
+
+			Assert.True(((object)msg).Equals((object)msg2));
+		}
 	}
 }

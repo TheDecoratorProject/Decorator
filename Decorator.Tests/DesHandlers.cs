@@ -1,4 +1,5 @@
 ﻿using Decorator.Exceptions;
+using System;
 using System.Collections.Generic;
 
 using Xunit;
@@ -92,6 +93,42 @@ namespace Decorator.Tests {
 			Assert.False(
 				Deserializer.TryDeserializeItem<NeedsAttribute>(new BasicMessage("wew lad", "there be humans"), out var _)
 			);
+		}
+
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", "HandlerDeserialization")]
+		public void TryDeserializeItemDefaults() {
+			Assert.Throws<ArgumentNullException>(() => Deserializer.TryDeserializeItem<TestMessage>(default, out var _));
+		}
+
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", "HandlerDeserialization")]
+		public void TryDeserializeItemsDefaults() {
+			Assert.Throws<ArgumentNullException>(() => Deserializer.TryDeserializeItems<TestMessage>(default, out var _));
+		}
+
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", "HandlerDeserialization")]
+		public void TryDeserializeItemDefaultType() {
+			Assert.Throws<ArgumentNullException>(() => Deserializer.TryDeserializeItem(default, default, out var _));
+		}
+
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", "HandlerDeserialization")]
+		public void TryDeserializeItemsDefaultType() {
+			Assert.Throws<ArgumentNullException>(() => Deserializer.TryDeserializeItems(default, default, out var _));
+		}
+
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", "HandlerDeserialization")]
+		public void TryDeserializeItemDefaultMessage() {
+			Assert.Throws<ArgumentNullException>(() => Deserializer.TryDeserializeItem(typeof(TestMessage), default, out var _));
+		}
+
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", "HandlerDeserialization")]
+		public void TryDeserializeItemsDefaultMessage() {
+			Assert.Throws<ArgumentNullException>(() => Deserializer.TryDeserializeItems(typeof(TestMessage), default, out var _));
 		}
 	}
 }
