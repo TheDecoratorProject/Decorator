@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Decorator.Exceptions;
+using System;
+using System.Collections.Generic;
 
 using Xunit;
 
@@ -52,6 +54,27 @@ namespace Decorator.Tests {
 					PositionOneItem = 3
 				}
 			}));
+		}
+
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", "CanSerialize")]
+		public void NeedsAttributes1() {
+			// technically a MissingAttributeException
+			Assert.Throws<TypeInitializationException>(delegate () {
+				Serializer<NeedsAttribute>.Serialize(new NeedsAttribute {
+					WOWOW = "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE no my secret comment EEEEEEEEEEEEEEEE"
+				});
+			});
+		}
+
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", "CanSerialize")]
+		public void NeedsAttributes2() {
+			Assert.Throws<MissingAttributeException>(delegate () {
+				Serializer.Serialize<NeedsAttribute>(new NeedsAttribute {
+					WOWOW = "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE no my secret comment EEEEEEEEEEEEEEEE"
+				});
+			});
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Decorator.Exceptions;
+using System.Collections.Generic;
 
 using Xunit;
 
@@ -73,6 +74,24 @@ namespace Decorator.Tests {
 			var t = args.ToArray();
 
 			Assert.False(Deserializer.TryDeserializeItems<NonRepeatable>(new BasicMessage("rep", t), out var _));
+		}
+
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", "HandlerDeserialization")]
+		public void NonExistantMethod() {
+			var instance = new HandlerClass();
+
+			Assert.Throws<LackingMethodsException>(() => Deserializer<HandlerClass>.DeserializeItemToMethod(instance, new NonExistant {
+				AAA = "roses are red, violets are blue, this is a string comment, woopdy doo"
+			}));
+		}
+
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", "HandlerDeserialization")]
+		public void NeedsAttributes() {
+			Assert.False(
+				Deserializer.TryDeserializeItem<NeedsAttribute>(new BasicMessage("wew lad", "there be humans"), out var _)
+			);
 		}
 	}
 }

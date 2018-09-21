@@ -34,4 +34,18 @@ namespace Decorator.Tests {
 		[Position(1), Optional]
 		public int OptionalValue { get; set; }
 	}
+
+	[Message("non-existant")]
+	public class NonExistant {
+		[Position(0), Required]
+		public string AAA { get; set; }
+	}
+
+	public class NeedsAttribute {
+		[Position(0), Required]
+		public string WOWOW { get; set; }
+	}
+
+	public class ExampleHandlerClass {
+	}
 }

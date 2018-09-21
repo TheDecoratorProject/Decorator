@@ -36,6 +36,8 @@ namespace Decorator {
 										.GetParameters())
 						HandleParam(genericTType, genericIEnumerableTType, method, parameter);
 
+#if THIS_SHOULDNT_HAPPEN
+
 			// exceptions should never *actually* throw
 
 			if (_tryDeserialize == default)
@@ -43,6 +45,8 @@ namespace Decorator {
 
 			if (_tryDeserializeRepeatable == default)
 				throw new ConstructorException("static ctor issue: can't find method correlating to TryDeserialize<T>(out IEnumerable<T>)");
+
+#endif
 		}
 
 		private static void HandleParam(Type genericTType, Type genericIEnumerableTType, MethodInfo method, ParameterInfo parameter) {
@@ -107,7 +111,7 @@ namespace Decorator {
 			return TryDeserializeValues<TItem>(m, def, out result);
 		}
 
-		#region reflectionified
+#region reflectionified
 
 		public static bool TryDeserializeItem(Type t, BaseMessage m, out object result) {
 			var args = new object[] { m, null };
@@ -137,7 +141,7 @@ namespace Decorator {
 			return true;
 		}
 
-		#endregion reflectionified
+#endregion reflectionified
 
 		// TODO: message definitions go in their own class
 
