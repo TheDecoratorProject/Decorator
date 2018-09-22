@@ -66,7 +66,7 @@ namespace Decorator.Benchmarks {
 
 		[Benchmark(Description = "TryDeserialize with Type")]
 		public bool DeserializeWithType()
-			=> Deserializer.TryDeserializeFromItem(this._type, this._goodMsg, out var _);
+			=> Deserializer.TryDeserializeItem(this._type, this._goodMsg, out var _);
 
 		[Benchmark(Description = "Invalid @ 0")]
 		public bool InvalidChat_At0()

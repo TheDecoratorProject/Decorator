@@ -41,12 +41,12 @@ namespace Decorator {
 					var genArg = i.Key.GenericTypeArguments[0];
 
 					if (typeof(IEnumerable).IsAssignableFrom(i.Key) &&
-						Deserializer.TryDeserializeFromItems(genArg, msg, out var enumerable)) {
+						Deserializer.TryDeserializeItems(genArg, msg, out var enumerable)) {
 						var result = _objToArray.GetMethodFor(genArg)(null, new object[] { enumerable });
 
 						InvokeMethods(instanceObj, result, i.Value);
 					}
-				} else if (Deserializer.TryDeserializeFromItem(i.Key, msg, out var itm)) {
+				} else if (Deserializer.TryDeserializeItem(i.Key, msg, out var itm)) {
 					InvokeMethods(instanceObj, itm, i.Value);
 				}
 			}
