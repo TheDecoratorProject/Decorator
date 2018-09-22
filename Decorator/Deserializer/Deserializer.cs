@@ -66,11 +66,11 @@ namespace Decorator {
 		/// <param name="result">The result after deserialization</param>
 		/// <returns><c>true</c> if it can deserialize it, <c>false</c> if it can't</returns>
 		public static bool TryDeserializeItem<TItem>(BaseMessage m, out TItem result) {
-			if (m == default) throw new ArgumentNullException(nameof(m));
+			if (m is null) throw new ArgumentNullException(nameof(m));
 
 			var def = GetDefinitionFor<TItem>();
 
-			if (def == default) {
+			if (def is null) {
 				result = default;
 				return false;
 			}
@@ -92,11 +92,11 @@ namespace Decorator {
 		/// <param name="result">The result after deserialization</param>
 		/// <returns><c>true</c> if it can deserialize it, <c>false</c> if it can't</returns>
 		public static bool TryDeserializeItems<TItem>(BaseMessage m, out IEnumerable<TItem> result) {
-			if (m == default) throw new ArgumentNullException(nameof(m));
+			if (m is null) throw new ArgumentNullException(nameof(m));
 
 			var def = GetDefinitionFor<TItem>();
 
-			if (def == default) {
+			if (def is null) {
 				result = default;
 				return false;
 			}

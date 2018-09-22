@@ -18,7 +18,7 @@ namespace Decorator {
 			where TClass : class {
 			var def = Deserializer.GetDefinitionFor<TClass>();
 
-			if (def == default) throw new MissingAttributeException(typeof(MessageAttribute), typeof(TClass));
+			if (def is null) throw new MissingAttributeException(typeof(MessageAttribute), typeof(TClass));
 
 			var data = new object[def.MaxCount];
 

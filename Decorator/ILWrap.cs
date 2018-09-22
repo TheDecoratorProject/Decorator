@@ -77,7 +77,7 @@ namespace Decorator {
 			}
 			il.EmitCall(method.IsStatic || method.DeclaringType.IsValueType ?
 				OpCodes.Call : OpCodes.Callvirt, method, null);
-			if (method.ReturnType == null || method.ReturnType == typeof(void)) {
+			if (method.ReturnType is null || method.ReturnType == typeof(void)) {
 				il.Emit(OpCodes.Ldnull);
 			} else if (method.ReturnType.IsValueType) {
 				il.Emit(OpCodes.Box, method.ReturnType);
@@ -137,7 +137,7 @@ namespace Decorator {
 				}
 			}
 
-			if (method.ReturnType == null || method.ReturnType == typeof(void)) {
+			if (method.ReturnType is null || method.ReturnType == typeof(void)) {
 				il.Emit(OpCodes.Ldnull);
 			} else if (method.ReturnType.IsValueType) {
 				il.Emit(OpCodes.Box, method.ReturnType);

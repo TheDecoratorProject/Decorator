@@ -97,7 +97,7 @@ namespace Decorator {
 
 		private Action<object, object> _propSet {
 			get {
-				if (this._propSetRaw == default)
+				if (this._propSetRaw is null)
 					this._propSetRaw = this.PropertyInfo
 										.GetSetMethodByExpression();
 
@@ -107,7 +107,7 @@ namespace Decorator {
 
 		private ILFunc _propGet {
 			get {
-				if (this._propGetRaw == default)
+				if (this._propGetRaw is null)
 					this._propGetRaw = this.PropertyInfo
 										.GetGetMethod()
 										.ILWrap();
