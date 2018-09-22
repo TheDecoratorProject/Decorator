@@ -66,7 +66,7 @@ namespace Decorator.Benchmarks {
 
 		[Benchmark(Description = "TryDeserialize with Type")]
 		public bool DeserializeWithType()
-			=> Deserializer.TryDeserializeItem(this._type, this._goodMsg, out var _);
+			=> Deserializer.TryDeserializeFromItem(this._type, this._goodMsg, out var _);
 
 		[Benchmark(Description = "Invalid @ 0")]
 		public bool InvalidChat_At0()
@@ -82,11 +82,11 @@ namespace Decorator.Benchmarks {
 
 		[Benchmark(Description = "Deserialize Message to Method")]
 		public void InvokeMethodMessage()
-			=> Deserializer<Benchmarks>.DeserializeMessageToMethod(this, this._goodMsg);
+			=> Deserializer<Benchmarks>.InvokeMethodFromMessage(this, this._goodMsg);
 
 		[Benchmark(Description = "Deserialize Item to Method")]
 		public void InvokeMethodItem()
-			=> Deserializer<Benchmarks>.DeserializeItemToMethod(this, this._chat);
+			=> Deserializer<Benchmarks>.InvokeMethodFromItem(this, this._chat);
 
 		[DeserializedHandler]
 		public void HandleItem(Chat chat) {

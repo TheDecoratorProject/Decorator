@@ -22,7 +22,7 @@ namespace Decorator {
 		/// <typeparam name="TItem">The item to use</typeparam>
 		/// <param name="instance">The instance of the <typeparamref name="TClass"/> to deserialize it to (use null for static)</param>
 		/// <param name="item">The item to use to invoke stuff</param>
-		public static void DeserializeItemToMethod<TItem>(TClass instance, TItem item) {
+		public static void InvokeMethodFromItem<TItem>(TClass instance, TItem item) {
 			foreach (var i in MethodInvoker<TClass>.GetMethodsFor<TItem>()) {
 				MethodInvoker<TClass>.InvokeMethod<TItem>(i, instance, item);
 			}
@@ -33,7 +33,7 @@ namespace Decorator {
 		/// </summary>
 		/// <param name="instance">The instance of the <typeparamref name="TClass"/> to deserialize it to (use null for static)</param>
 		/// <param name="msg">The message</param>
-		public static void DeserializeMessageToMethod(TClass instance, BaseMessage msg) {
+		public static void InvokeMethodFromMessage(TClass instance, BaseMessage msg) {
 			var instanceObj = (object)instance;
 
 			foreach (var i in MethodInvoker<TClass>.Cache) {
@@ -41,12 +41,12 @@ namespace Decorator {
 					var genArg = i.Key.GenericTypeArguments[0];
 
 					if (typeof(IEnumerable).IsAssignableFrom(i.Key) &&
-						Deserializer.TryDeserializeItems(genArg, msg, out var enumerable)) {
+						Deserializer.TryDeserializeFromItems(genArg, msg, out var enumerable)) {
 						var result = _objToArray.GetMethodFor(genArg)(null, new object[] { enumerable });
 
 						InvokeMethods(instanceObj, result, i.Value);
 					}
-				} else if (Deserializer.TryDeserializeItem(i.Key, msg, out var itm)) {
+				} else if (Deserializer.TryDeserializeFromItem(i.Key, msg, out var itm)) {
 					InvokeMethods(instanceObj, itm, i.Value);
 				}
 			}

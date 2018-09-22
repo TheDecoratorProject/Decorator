@@ -23,7 +23,7 @@ namespace Decorator.Tester {
 		}
 
 		public void SendChat(string msg) {
-			this._server.HandleMessage(Serializer<SendChat>.Serialize(new SendChat {
+			this._server.HandleMessage(Serializer.SerializeItem(new SendChat {
 				ChatMessage = msg,
 				ClientId = this._id
 			}), this._id);

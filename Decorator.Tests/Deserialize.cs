@@ -15,7 +15,7 @@ namespace Decorator.Tests {
 		}
 
 		private static void AttemptDeserialize(BaseMessage msg) {
-			if (!Deserializer.TryDeserializeItem<TestMessage>(msg, out var result))
+			if (!Decorator.Deserializer.TryDeserializeItem<TestMessage>(msg, out var result))
 				throw new InvalidDeserializationAttemptException();
 
 			Verify(msg, result);
@@ -29,7 +29,7 @@ namespace Decorator.Tests {
 				args.AddRange(msg.Arguments);
 			}
 
-			if (!Deserializer.TryDeserializeItems<TestMessage>(new BasicMessage("test", args.ToArray()), out var result))
+			if (!Decorator.Deserializer.TryDeserializeItems<TestMessage>(new BasicMessage("test", args.ToArray()), out var result))
 				throw new InvalidDeserializationAttemptException();
 
 			var c = 0;

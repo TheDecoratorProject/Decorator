@@ -113,7 +113,7 @@ namespace Decorator {
 
 #region reflectionified
 
-		public static bool TryDeserializeItem(Type t, BaseMessage m, out object result) {
+		public static bool TryDeserializeFromItem(Type t, BaseMessage m, out object result) {
 			var args = new object[] { m, null };
 
 			var method = _tryDeserialize.GetMethodFor(t);
@@ -128,7 +128,7 @@ namespace Decorator {
 			return true;
 		}
 
-		public static bool TryDeserializeItems(Type t, BaseMessage m, out IEnumerable<object> result) {
+		public static bool TryDeserializeFromItems(Type t, BaseMessage m, out IEnumerable<object> result) {
 			var args = new object[] { m, null };
 
 			if (!(bool)(_tryDeserializeRepeatable.GetMethodFor(t)(null, args))) {

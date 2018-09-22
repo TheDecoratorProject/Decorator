@@ -26,21 +26,7 @@ namespace Decorator {
 			return result != default && result.Length != 0;
 		}
 
-		public static bool HasAttribute(MemberInfo member) {
-			if (!_memberInfoCache.TryGetValue(member, out var result)) {
-				result = member.GetCustomAttributes<T>().ToArray();
-
-				if (result.Length == 0) {
-					_memberInfoCache.TryAdd(member, result);
-					return false;
-				}
-
-				_memberInfoCache.TryAdd(member, result);
-
-				return true;
-			}
-
-			return result != default && result.Length != 0;
-		}
+		public static bool HasAttribute(MemberInfo member)
+			=> TryHasAttribute(member, out var _);
 	}
 }
