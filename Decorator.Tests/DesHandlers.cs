@@ -8,14 +8,6 @@ namespace Decorator.Tests {
 
 	public class DesHandlers {
 
-		[Fact]
-		[Trait("Category", "HandlerDeserialization")]
-		public void DesLotsLotsLOTS() {
-			var instance = new HandlerClass();
-			for (var i = 0; i < 100_000; i++)
-				Deserializer<HandlerClass>.InvokeMethodFromMessage(instance, Setup.Correct);
-		}
-
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "HandlerDeserialization")]
 		public void DeserializesToHandlerTestMessage() {

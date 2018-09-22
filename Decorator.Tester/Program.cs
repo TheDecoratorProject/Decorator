@@ -3,6 +3,7 @@
 	internal static class Program {
 
 		public static void Main() {
+
 			var client1 = new Client();
 			var client2 = new Client();
 			var client3 = new Client();

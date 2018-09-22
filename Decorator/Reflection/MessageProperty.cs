@@ -6,7 +6,7 @@ using System.Reflection;
 namespace Decorator {
 
 	/// <summary>The definition for a message, does all of the reflection work once and then you can reuse this.</summary>
-	public class MessageDefinition {
+	internal class MessageDefinition {
 
 		/// <summary>Initializes a new instance of the <see cref="MessageDefinition"/> class.</summary>
 		/// <param name="type">The type.</param>
@@ -51,7 +51,7 @@ namespace Decorator {
 	}
 
 	/// <summary>How required a type is</summary>
-	public enum TypeRequiredness {
+	internal enum TypeRequiredness {
 
 		/// <summary>It's required</summary>
 		Required,
@@ -61,7 +61,7 @@ namespace Decorator {
 	}
 
 	/// <summary>Demonstrates a property in a message, which values are fetched via reflection</summary>
-	public class MessageProperty {
+	internal class MessageProperty {
 
 		/// <summary>Initializes a new instance of the <see cref="MessageProperty"/> class.</summary>
 		/// <param name="pos">The position.</param>

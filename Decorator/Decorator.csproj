@@ -9,8 +9,11 @@
     <PackageProjectUrl>https://github.com/SirJosh3917/Decorator/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/SirJosh3917/Decorator/</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.1</Version>
+    <Version>1.1.0</Version>
     <PackageId>SirJosh3917.Decorator</PackageId>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>decorator-sig.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>false</DelaySign>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

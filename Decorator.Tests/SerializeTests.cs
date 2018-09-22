@@ -59,8 +59,7 @@ namespace Decorator.Tests {
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "CanSerialize")]
 		public void NeedsAttributes1() {
-			// technically a MissingAttributeException
-			Assert.Throws<TypeInitializationException>(delegate () {
+			Assert.Throws<MissingAttributeException>(delegate () {
 				Serializer.SerializeItem(new NeedsAttribute {
 					WOWOW = "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE no my secret comment EEEEEEEEEEEEEEEE"
 				});
