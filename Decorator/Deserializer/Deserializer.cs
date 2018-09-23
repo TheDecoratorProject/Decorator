@@ -1,4 +1,5 @@
 ﻿using Decorator.Attributes;
+using Decorator.Caching;
 using Decorator.Exceptions;
 using System;
 using System.Collections;
@@ -21,6 +22,13 @@ namespace Decorator {
 
 		static Deserializer() {
 			Definitions = new HashcodeDictionary<Type, MessageDefinition>();
+
+			foreach (var i in
+				AppDomain.CurrentDomain.GetAssemblies()
+					.Select(assembly => assembly.GetTypes())
+					.SelectMany(type => type)
+					.Where(type => type.IsDefined(typeof(MessageAttribute), true)))
+				GetDefinitionForType(i);
 
 			var methods = typeof(Deserializer)
 							.GetMethods();

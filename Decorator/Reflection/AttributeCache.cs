@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Decorator.Caching;
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
@@ -7,7 +8,7 @@ namespace Decorator {
 
 	internal static class AttributeCache<T>
 		where T : Attribute {
-		private static HashcodeDictionary<MemberInfo, T[]> _memberInfoCache = new HashcodeDictionary<MemberInfo, T[]>();
+		private static ConcurrentHashcodeDictionary<MemberInfo, T[]> _memberInfoCache = new ConcurrentHashcodeDictionary<MemberInfo, T[]>();
 
 		public static bool TryHasAttribute(MemberInfo member, out T[] result) {
 			if (!_memberInfoCache.TryGetValue(member, out result)) {

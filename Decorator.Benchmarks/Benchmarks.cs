@@ -63,7 +63,7 @@ namespace Decorator.Benchmarks {
 		[Benchmark(Description = "ProtocolMessage alternative")]
 		public ProtocolMessage.Chat ProtocolMessage()
 			=> this._pm.Convert<ProtocolMessage.Chat>(this._goodArgs);
-
+		
 		[Benchmark(Description = "TryDeserialize with Type")]
 		public bool DeserializeWithType()
 			=> Deserializer.TryDeserializeItem(this._type, this._goodMsg, out var _);

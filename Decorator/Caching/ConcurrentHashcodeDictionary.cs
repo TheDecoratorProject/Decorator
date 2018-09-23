@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-namespace Decorator {
-	internal class HashcodeDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>> {
-		public HashcodeDictionary() {
+namespace Decorator.Caching {
+	internal class ConcurrentHashcodeDictionary<TKey, TValue> : IHashcodeDictionary<TKey, TValue> {
+		public ConcurrentHashcodeDictionary() {
 			this.Dictionary = new ConcurrentDictionary<int, TValue>();
 			this.DictionaryKeys = new ConcurrentDictionary<int, TKey>();
 		}
@@ -43,23 +43,5 @@ namespace Decorator {
 
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => new HashcodeDictionaryEnumerator<TKey, TValue>(this);
 		IEnumerator IEnumerable.GetEnumerator() => new HashcodeDictionaryEnumerator<TKey, TValue>(this);
-	}
-
-	internal class HashcodeDictionaryEnumerator<TKey, TValue> : IEnumerator<KeyValuePair<TKey, TValue>> {
-		public HashcodeDictionaryEnumerator(HashcodeDictionary<TKey, TValue> hcd) {
-			this._hcd = hcd;
-			this._enumer = this._hcd.GetItems().GetEnumerator();
-		}
-
-		private HashcodeDictionary<TKey, TValue> _hcd;
-		private IEnumerator<KeyValuePair<TKey, TValue>> _enumer;
-
-		public KeyValuePair<TKey, TValue> Current => this._enumer.Current;
-
-		object IEnumerator.Current => this._enumer.Current;
-
-		public bool MoveNext() => this._enumer.MoveNext();
-		public void Reset() => this._enumer.Reset();
-		public void Dispose() => this._enumer.Dispose();
 	}
 }

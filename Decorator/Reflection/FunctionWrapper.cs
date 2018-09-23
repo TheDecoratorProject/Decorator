@@ -1,5 +1,5 @@
 ﻿using Decorator.Attributes;
-
+using Decorator.Caching;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -11,12 +11,12 @@ namespace Decorator {
 
 		public FunctionWrapper(MethodInfo method) {
 			this.Method = method;
-			this._versions = new HashcodeDictionary<Type, ILFunc>();
+			this._versions = new ConcurrentHashcodeDictionary<Type, ILFunc>();
 		}
 
 		public MethodInfo Method;
 
-		private HashcodeDictionary<Type, ILFunc> _versions;
+		private ConcurrentHashcodeDictionary<Type, ILFunc> _versions;
 
 		public ILFunc GetMethodFor(Type type) {
 			if (this._versions.TryGetValue(type, out var res)) return res;
