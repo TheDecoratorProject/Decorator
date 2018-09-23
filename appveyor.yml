@@ -14,6 +14,7 @@ init:
 
 before_build:
   - dotnet restore
+  - cmd: rename "Decorator\travis-ci.snk" "Decorator\decorator-sig.snk"
 
 build_script:
   - dotnet build -c %CONFIGURATION% "Decorator\Decorator.csproj"
