@@ -18,14 +18,15 @@ namespace Decorator {
 		private static readonly Type _object = typeof(object);
 
 		public static Action<object, object> GetSetMethodByExpression(this PropertyInfo propertyInfo) {
+			var _obj = typeof(object);
+
 			var setMethodInfo = propertyInfo.GetSetMethod(true);
-			var instance = Expression.Parameter(_object, "instance");
-			var value = Expression.Parameter(_object, "value");
+			var instance = Expression.Parameter(_obj, "instance");
+			var value = Expression.Parameter(_obj, "value");
 			var instanceCast = (!(propertyInfo.DeclaringType).GetTypeInfo().IsValueType) ? Expression.TypeAs(instance, propertyInfo.DeclaringType) : Expression.Convert(instance, propertyInfo.DeclaringType);
 			var valueCast = (!(propertyInfo.PropertyType).GetTypeInfo().IsValueType) ? Expression.TypeAs(value, propertyInfo.PropertyType) : Expression.Convert(value, propertyInfo.PropertyType);
-			var compiled = Expression.Lambda<Action<object, object>>(Expression.Call(instanceCast, setMethodInfo, valueCast), new ParameterExpression[] { instance, value }).Compile();
 
-			return compiled;
+			return Expression.Lambda<Action<object, object>>(Expression.Call(instanceCast, setMethodInfo, valueCast), new ParameterExpression[] { instance, value }).Compile();
 		}
 
 		// https://stackoverflow.com/questions/20491162/create-expression-function-from-methodinfo-with-unknown-signature

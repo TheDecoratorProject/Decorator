@@ -1,7 +1,5 @@
 ﻿namespace ProtocolMessage {
-
 	using System;
-	using System.Collections.Concurrent;
 	using System.Collections.Generic;
 
 	using System.Linq;
@@ -17,13 +15,9 @@
 
 		[Position(1), Required]
 		public string Message { get; set; }
-
-		public Chat() {
-		}
 	}
 
 	public class ProtocolMessageManager {
-
 		internal Dictionary<int, ProtocolMessage> ProtocolMessages { get; }
 			= new Dictionary<int, ProtocolMessage>();
 
@@ -43,9 +37,10 @@
 			}
 
 			var type = typeof(T);
-			var instance = (T)InstanceCache.CreateInstance<object>(type);
 
 			if (this.ProtocolMessages.TryGetValue(type.GetHashCode(), out var message)) {
+				var instance = (T)InstanceCache.CreateInstance<object>(type);
+
 				foreach (var property in message.Members) {
 					var position = property.Position;
 
@@ -57,27 +52,26 @@
 							throw new ProtocolMessageException(
 								string.Format("The message could not be converted as the specified array does not contain index {0} for the required property '{1}'",
 								position.Index, property.MemberInfo.Name));
-
 						if (property.Optional)
 							continue;
 					}
-
+					
 					property.SetValue(instance, array[position.Index]);
 				}
+
+				return instance;
 			} else {
 				this.ProtocolMessages.Add(type.GetHashCode(), new ProtocolMessage(type));
 				return this.Convert<T>(array);
 			}
-
-			return instance;
 		}
 	}
 
 	internal class ProtocolMessage {
 		internal string MessageType { get; }
 
-		internal List<ProtocolMember> Members
-			= new List<ProtocolMember>();
+		internal List<IProtocolMember> Members
+			= new List<IProtocolMember>();
 
 		internal ProtocolMessage(Type type) {
 			this.MessageType = type.GetAttribute<Message>().MessageType;
@@ -99,7 +93,7 @@
 					throw new ProtocolMessageException(string.Format("The property or field '{0}' of type '{1}' must contain either tbe required or optional attribute.",
 						member.Name, type.FullName));
 
-				ProtocolMember entry = null;
+				IProtocolMember entry = null;
 
 				switch (member.MemberType) {
 					case MemberTypes.Property:
@@ -109,7 +103,6 @@
 						Required = required != null
 					};
 					break;
-
 					case MemberTypes.Field:
 					entry = new ProtocolField(member, type) {
 						Position = position,
@@ -124,72 +117,86 @@
 		}
 	}
 
-	internal abstract class ProtocolMember {
+	internal interface IProtocolMember {
+		MemberInfo MemberInfo { get; set; }
+		Position Position { get; set; }
+
+		bool Required { get; set; }
+		bool Optional { get; set; }
+
+		void SetValue(object instance, object value);
+
+		Action<object, object> SetMemberValue { get; }
+	}
+
+	internal class ProtocolProperty : IProtocolMember {
 		public MemberInfo MemberInfo { get; set; }
 		public Position Position { get; set; }
 
 		public bool Required { get; set; }
 		public bool Optional { get; set; }
 
-		public Action<object, object> SetMemberValue { get; protected set; }
+		public Action<object, object> SetMemberValue { get; }
 
-		protected ProtocolMember(MemberInfo property) {
+		public ProtocolProperty(MemberInfo property, Type type) {
 			this.MemberInfo = property;
+			this.SetMemberValue = ((PropertyInfo)property).GetSetMethodByExpression();
 		}
 
 		public void SetValue(object instance, object value) =>
 			this.SetMemberValue(instance, value);
 	}
 
-	internal class ProtocolProperty : ProtocolMember {
+	internal class ProtocolField : IProtocolMember {
+		public MemberInfo MemberInfo { get; set; }
+		public Position Position { get; set; }
 
-		public ProtocolProperty(MemberInfo property, Type type) : base(property) {
-			this.SetMemberValue = ((PropertyInfo)property).GetSetMethodByExpression();
-		}
-	}
+		public bool Required { get; set; }
+		public bool Optional { get; set; }
 
-	internal class ProtocolField : ProtocolMember {
+		public Action<object, object> SetMemberValue { get; }
 
-		public ProtocolField(MemberInfo property, Type type) : base(property) {
+		public ProtocolField(MemberInfo property, Type type) {
+			this.MemberInfo = property;
 			this.SetMemberValue = ((FieldInfo)property).GetSetMethodByExpression();
 		}
+
+		public void SetValue(object instance, object value) =>
+			this.SetMemberValue(instance, value);
 	}
 
 	internal static class ExpressionHelpers {
-
-		internal static T GetAttribute<T>(this ICustomAttributeProvider provider) where T : Attribute {
-			var attributes = provider.GetCustomAttributes(typeof(T), true);
-			return attributes.Length > 0 ? attributes[0] as T : null;
-		}
+		internal static T GetAttribute<T>(this ICustomAttributeProvider provider) where T : Attribute =>
+			(provider.GetCustomAttributes(typeof(T), true)?[0] as T) ?? null;
 	}
 
 	internal static class PropertyInfoExtensions {
-
 		internal static Action<object, object> GetSetMethodByExpression(this PropertyInfo propertyInfo) {
+			var _obj = typeof(object);
+
 			var setMethodInfo = propertyInfo.GetSetMethod(true);
-			var instance = Expression.Parameter(typeof(object), "instance");
-			var value = Expression.Parameter(typeof(object), "value");
+			var instance = Expression.Parameter(_obj, "instance");
+			var value = Expression.Parameter(_obj, "value");
 			var instanceCast = (!(propertyInfo.DeclaringType).GetTypeInfo().IsValueType) ? Expression.TypeAs(instance, propertyInfo.DeclaringType) : Expression.Convert(instance, propertyInfo.DeclaringType);
 			var valueCast = (!(propertyInfo.PropertyType).GetTypeInfo().IsValueType) ? Expression.TypeAs(value, propertyInfo.PropertyType) : Expression.Convert(value, propertyInfo.PropertyType);
-			var compiled = Expression.Lambda<Action<object, object>>(Expression.Call(instanceCast, setMethodInfo, valueCast), new ParameterExpression[] { instance, value }).Compile();
 
-			return compiled;
+			return Expression.Lambda<Action<object, object>>(Expression.Call(instanceCast, setMethodInfo, valueCast), new ParameterExpression[] { instance, value }).Compile();
 		}
 
 		internal static Action<object, object> GetSetMethodByExpression(this FieldInfo fieldInfo) {
-			var instance = Expression.Parameter(typeof(object), "instance");
-			var value = Expression.Parameter(typeof(object), "value");
-			var compiled = Expression.Lambda<Action<object, object>>(Expression.Assign(
-				Expression.Field(Expression.Convert(instance, fieldInfo.DeclaringType), fieldInfo),
-				Expression.Convert(value, fieldInfo.FieldType)), instance, value)
-				.Compile();
+			var _obj = typeof(object);
 
-			return compiled;
+			var instance = Expression.Parameter(_obj, "instance");
+			var value = Expression.Parameter(_obj, "value");
+
+			return Expression.Lambda<Action<object, object>>(Expression.Assign(Expression.Field(
+				Expression.Convert(instance, fieldInfo.DeclaringType), fieldInfo),
+				Expression.Convert(value, fieldInfo.FieldType)), instance, value).Compile();
 		}
 	}
 
 	internal static class PropertyCache {
-		internal static ConcurrentDictionary<int, PropertyInfo[]> Cache = new ConcurrentDictionary<int, PropertyInfo[]>();
+		internal static Dictionary<int, PropertyInfo[]> Cache = new Dictionary<int, PropertyInfo[]>();
 
 		internal static PropertyInfo[] Get(Type type) {
 			if (Cache.TryGetValue(type.GetHashCode(), out var properties))
@@ -203,7 +210,7 @@
 	}
 
 	internal static class FieldCache {
-		internal static ConcurrentDictionary<int, FieldInfo[]> Cache = new ConcurrentDictionary<int, FieldInfo[]>();
+		internal static Dictionary<int, FieldInfo[]> Cache = new Dictionary<int, FieldInfo[]>();
 
 		internal static FieldInfo[] Get(Type type) {
 			if (Cache.TryGetValue(type.GetHashCode(), out var fields))
@@ -217,11 +224,10 @@
 	}
 
 	internal static class InstanceCache {
-
 		internal static T CreateInstance<T>(Type type) where T : class {
-			if (!InstanceCacheStorage<T>.Cache.TryGetValue(type.FullName, out var function)) {
+			if (!InstanceCacheStorage<T>.Cache.TryGetValue(type.GetHashCode(), out var function)) {
 				function = Expression.Lambda<Func<T>>(Expression.New(type)).Compile();
-				InstanceCacheStorage<T>.Cache[type.FullName] = function;
+				InstanceCacheStorage<T>.Cache[type.GetHashCode()] = function;
 			}
 
 			return function();
@@ -229,31 +235,26 @@
 	}
 
 	internal static class InstanceCacheStorage<T> where T : class {
-		internal static ConcurrentDictionary<string, Func<T>> Cache = new ConcurrentDictionary<string, Func<T>>();
+		internal static Dictionary<int, Func<T>> Cache = new Dictionary<int, Func<T>>();
 	}
 
 	[Serializable]
 	public sealed class ProtocolMessageException : Exception {
-
-		public ProtocolMessageException(string message) : base(message) {
-		}
+		public ProtocolMessageException(string message) : base(message) { }
 	}
 
-	[AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = false)]
-	public sealed class Optional : Attribute {
-	}
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
+	public sealed class Optional : Attribute { }
 
-	[AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = false)]
-	public sealed class Required : Attribute {
-	}
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
+	public sealed class Required : Attribute { }
 
-	[AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = false)]
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
 	public sealed class Position : Attribute {
 		public int Index { get; private set; }
 
-		public Position(int index) {
+		public Position(int index) =>
 			this.Index = index;
-		}
 	}
 
 	[AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = false)]

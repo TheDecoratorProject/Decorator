@@ -7,7 +7,7 @@ namespace Decorator {
 
 	internal static class AttributeCache<T>
 		where T : Attribute {
-		private static ConcurrentDictionary<MemberInfo, T[]> _memberInfoCache { get; } = new ConcurrentDictionary<MemberInfo, T[]>();
+		private static HashcodeDictionary<MemberInfo, T[]> _memberInfoCache = new HashcodeDictionary<MemberInfo, T[]>();
 
 		public static bool TryHasAttribute(MemberInfo member, out T[] result) {
 			if (!_memberInfoCache.TryGetValue(member, out result)) {

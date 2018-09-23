@@ -11,12 +11,12 @@ namespace Decorator {
 
 		public FunctionWrapper(MethodInfo method) {
 			this.Method = method;
-			this._versions = new ConcurrentDictionary<Type, ILFunc>();
+			this._versions = new HashcodeDictionary<Type, ILFunc>();
 		}
 
-		public MethodInfo Method { get; }
+		public MethodInfo Method;
 
-		private ConcurrentDictionary<Type, ILFunc> _versions { get; }
+		private HashcodeDictionary<Type, ILFunc> _versions;
 
 		public ILFunc GetMethodFor(Type type) {
 			if (this._versions.TryGetValue(type, out var res)) return res;
