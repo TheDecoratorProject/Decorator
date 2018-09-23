@@ -1,4 +1,5 @@
 ﻿namespace ProtocolMessage {
+
 	using System;
 	using System.Collections.Generic;
 
@@ -18,6 +19,7 @@
 	}
 
 	public class ProtocolMessageManager {
+
 		internal Dictionary<int, ProtocolMessage> ProtocolMessages { get; }
 			= new Dictionary<int, ProtocolMessage>();
 
@@ -55,7 +57,7 @@
 						if (property.Optional)
 							continue;
 					}
-					
+
 					property.SetValue(instance, array[position.Index]);
 				}
 
@@ -103,6 +105,7 @@
 						Required = required != null
 					};
 					break;
+
 					case MemberTypes.Field:
 					entry = new ProtocolField(member, type) {
 						Position = position,
@@ -166,11 +169,13 @@
 	}
 
 	internal static class ExpressionHelpers {
+
 		internal static T GetAttribute<T>(this ICustomAttributeProvider provider) where T : Attribute =>
 			(provider.GetCustomAttributes(typeof(T), true)?[0] as T) ?? null;
 	}
 
 	internal static class PropertyInfoExtensions {
+
 		internal static Action<object, object> GetSetMethodByExpression(this PropertyInfo propertyInfo) {
 			var _obj = typeof(object);
 
@@ -224,6 +229,7 @@
 	}
 
 	internal static class InstanceCache {
+
 		internal static T CreateInstance<T>(Type type) where T : class {
 			if (!InstanceCacheStorage<T>.Cache.TryGetValue(type.GetHashCode(), out var function)) {
 				function = Expression.Lambda<Func<T>>(Expression.New(type)).Compile();
@@ -240,7 +246,9 @@
 
 	[Serializable]
 	public sealed class ProtocolMessageException : Exception {
-		public ProtocolMessageException(string message) : base(message) { }
+
+		public ProtocolMessageException(string message) : base(message) {
+		}
 	}
 
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]

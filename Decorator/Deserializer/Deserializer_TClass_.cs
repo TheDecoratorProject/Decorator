@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Decorator {
+
 	/// <summary>Deserializes any message to a method in the TClass</summary>
 	/// <typeparam name="TClass">The type of the class.</typeparam>
 	public static class Deserializer<TClass>
@@ -51,7 +50,7 @@ namespace Decorator {
 				}
 			}
 		}
-		
+
 		private static void InvokeMethods(object instance, object result, IEnumerable<MethodInfo> methods) {
 			foreach (var method in methods)
 				MethodInvoker<TClass>.InvokeMethod(method, instance, result);

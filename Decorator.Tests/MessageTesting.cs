@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Xunit;
+﻿using Xunit;
 
 namespace Decorator.Tests {
+
 	public class MessageTesting {
+
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", nameof(MessageTesting))]
 		public void GetsArgument() {
@@ -84,7 +83,7 @@ namespace Decorator.Tests {
 		public void FalseGenericObject() {
 			var msg = new BasicMessage("test", 992, 0b1010);
 
-			Assert.False(((object)msg).Equals(""));
+			Assert.False(msg.Equals(""));
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
@@ -93,7 +92,7 @@ namespace Decorator.Tests {
 			var msg = new BasicMessage("test", 992, 0b1010);
 			var msg2 = new BasicMessage("test", 992, 0b1010);
 
-			Assert.True(((object)msg).Equals((object)msg2));
+			Assert.True(msg.Equals((object)msg2));
 		}
 	}
 }

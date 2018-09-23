@@ -1,5 +1,5 @@
 ﻿using Decorator.Exceptions;
-using System;
+
 using System.Collections.Generic;
 
 using Xunit;
@@ -79,13 +79,13 @@ namespace Decorator.Tests {
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "CanSerialize")]
 		public void NoProperties() {
-			Assert.Equal((BaseMessage)(new BasicMessage("noprop")), Serializer.SerializeItem(new NoProperties()));
+			Assert.Equal(new BasicMessage("noprop"), Serializer.SerializeItem(new NoProperties()));
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "CanSerialize")]
 		public void NoItems() {
-			Assert.Equal((BaseMessage)(new BasicMessage("noprop")), Serializer.SerializeItems(new NoProperties[0] { }));
+			Assert.Equal(new BasicMessage("noprop"), Serializer.SerializeItems(new NoProperties[0] { }));
 		}
 	}
 }

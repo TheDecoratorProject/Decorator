@@ -1,7 +1,6 @@
 ﻿using BenchmarkDotNet.Running;
 
 using System;
-using System.Threading;
 
 namespace Decorator.Benchmarks {
 

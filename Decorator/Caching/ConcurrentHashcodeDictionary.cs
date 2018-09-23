@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 
 namespace Decorator.Caching {
+
 	internal class ConcurrentHashcodeDictionary<TKey, TValue> : IHashcodeDictionary<TKey, TValue> {
+
 		public ConcurrentHashcodeDictionary() {
 			this.Dictionary = new ConcurrentDictionary<int, TValue>();
 			this.DictionaryKeys = new ConcurrentDictionary<int, TKey>();
@@ -31,8 +30,8 @@ namespace Decorator.Caching {
 		}
 
 		public IEnumerable<KeyValuePair<TKey, TValue>> GetItems() {
-			var valenumer = Dictionary.GetEnumerator();
-			var keysenumer = DictionaryKeys.GetEnumerator();
+			var valenumer = this.Dictionary.GetEnumerator();
+			var keysenumer = this.DictionaryKeys.GetEnumerator();
 
 			while (valenumer.MoveNext() && keysenumer.MoveNext()) {
 				var kvp = new KeyValuePair<TKey, TValue>(keysenumer.Current.Value, valenumer.Current.Value);
@@ -42,6 +41,7 @@ namespace Decorator.Caching {
 		}
 
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => new HashcodeDictionaryEnumerator<TKey, TValue>(this);
+
 		IEnumerator IEnumerable.GetEnumerator() => new HashcodeDictionaryEnumerator<TKey, TValue>(this);
 	}
 }

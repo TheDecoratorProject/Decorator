@@ -37,11 +37,13 @@ namespace Decorator.Tests {
 
 	[Message("non-existant")]
 	public class NonExistant {
+
 		[Position(0), Required]
 		public string AAA { get; set; }
 	}
 
 	public class NeedsAttribute {
+
 		[Position(0), Required]
 		public string WOWOW { get; set; }
 	}
