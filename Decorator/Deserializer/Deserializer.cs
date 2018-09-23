@@ -18,7 +18,7 @@ namespace Decorator {
 							.GetMethods();
 
 			var genericTType = typeof(object).MakeByRefType();
-			var genericIEnumerableTType = typeof(IEnumerable<object>).MakeByRefType();
+			var genericIEnumerableTType = typeof(object[]).MakeByRefType();
 
 			// TODO: put the 'foreach' precursor stuff in a function, not the HandleParam stuff
 
@@ -60,6 +60,12 @@ namespace Decorator {
 				return false;
 			}
 
+			// ensure strict message amount for IEnumerable support reasons
+			if (m.Count != def.MaxCount) {
+				result = default;
+				return false;
+			}
+
 			return TryDeserializeValue<TItem>(m, def, out result);
 		}
 
@@ -70,7 +76,7 @@ namespace Decorator {
 		/// <param name="m">The message.</param>
 		/// <param name="result">The result after deserialization</param>
 		/// <returns><c>true</c> if it can deserialize it, <c>false</c> if it can't</returns>
-		public static bool TryDeserializeItems<TItem>(BaseMessage m, out IEnumerable<TItem> result) {
+		public static bool TryDeserializeItems<TItem>(BaseMessage m, out TItem[] result) {
 			if (m is null) throw new ArgumentNullException(nameof(m));
 
 			var def = MessageManager.GetDefinitionFor<TItem>();
@@ -110,7 +116,7 @@ namespace Decorator {
 			return true;
 		}
 
-		public static bool TryDeserializeItems(Type t, BaseMessage m, out IEnumerable<object> result) {
+		public static bool TryDeserializeItems(Type t, BaseMessage m, out object[] result) {
 			if (t is null) throw new ArgumentNullException(nameof(t));
 			if (m is null) throw new ArgumentNullException(nameof(m));
 
@@ -121,7 +127,7 @@ namespace Decorator {
 				return false;
 			}
 
-			result = (IEnumerable<object>)args[1];
+			result = (object[])args[1];
 
 			return true;
 		}
@@ -147,7 +153,7 @@ namespace Decorator {
 			return true;
 		}
 
-		private static bool TryDeserializeValues<T>(BaseMessage m, MessageDefinition def, out IEnumerable<T> result) {
+		private static bool TryDeserializeValues<T>(BaseMessage m, MessageDefinition def, out T[] result) {
 			var max = m.Count / def.IntMaxCount;
 
 			var itms = new T[max];

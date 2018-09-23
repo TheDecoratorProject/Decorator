@@ -1,5 +1,4 @@
 ﻿namespace ProtocolMessage {
-
 	using System;
 	using System.Collections.Generic;
 
@@ -19,7 +18,6 @@
 	}
 
 	public class ProtocolMessageManager {
-
 		internal Dictionary<int, ProtocolMessage> ProtocolMessages { get; }
 			= new Dictionary<int, ProtocolMessage>();
 
@@ -54,6 +52,7 @@
 							throw new ProtocolMessageException(
 								string.Format("The message could not be converted as the specified array does not contain index {0} for the required property '{1}'",
 								position.Index, property.MemberInfo.Name));
+
 						if (property.Optional)
 							continue;
 					}
@@ -72,11 +71,12 @@
 	internal class ProtocolMessage {
 		internal string MessageType { get; }
 
-		internal List<IProtocolMember> Members
-			= new List<IProtocolMember>();
+		internal IProtocolMember[] Members { get; }
 
 		internal ProtocolMessage(Type type) {
 			this.MessageType = type.GetAttribute<Message>().MessageType;
+
+			var _members = new List<IProtocolMember>();
 
 			foreach (var member in new List<MemberInfo>(PropertyCache.Get(type)).Union(FieldCache.Get(type))) {
 				var position = member.GetCustomAttribute<Position>();
@@ -105,7 +105,6 @@
 						Required = required != null
 					};
 					break;
-
 					case MemberTypes.Field:
 					entry = new ProtocolField(member, type) {
 						Position = position,
@@ -115,8 +114,10 @@
 					break;
 				}
 
-				this.Members.Add(entry);
+				_members.Add(entry);
 			}
+
+			this.Members = _members.ToArray();
 		}
 	}
 
@@ -169,13 +170,11 @@
 	}
 
 	internal static class ExpressionHelpers {
-
 		internal static T GetAttribute<T>(this ICustomAttributeProvider provider) where T : Attribute =>
 			(provider.GetCustomAttributes(typeof(T), true)?[0] as T) ?? null;
 	}
 
 	internal static class PropertyInfoExtensions {
-
 		internal static Action<object, object> GetSetMethodByExpression(this PropertyInfo propertyInfo) {
 			var _obj = typeof(object);
 
@@ -229,7 +228,6 @@
 	}
 
 	internal static class InstanceCache {
-
 		internal static T CreateInstance<T>(Type type) where T : class {
 			if (!InstanceCacheStorage<T>.Cache.TryGetValue(type.GetHashCode(), out var function)) {
 				function = Expression.Lambda<Func<T>>(Expression.New(type)).Compile();
@@ -246,9 +244,7 @@
 
 	[Serializable]
 	public sealed class ProtocolMessageException : Exception {
-
-		public ProtocolMessageException(string message) : base(message) {
-		}
+		public ProtocolMessageException(string message) : base(message) { }
 	}
 
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]

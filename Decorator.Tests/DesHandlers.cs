@@ -47,7 +47,28 @@ namespace Decorator.Tests {
 				args.AddRange(msg.Arguments);
 			}
 
-			Assert.True(Decorator.Deserializer.TryDeserializeItems<TestMessage>(msg, out var _));
+			Assert.True(Decorator.Deserializer.TryDeserializeItems<TestMessage>(new BasicMessage("test", args.ToArray()), out var _));
+		}
+
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", "HandlerDeserialization")]
+		public void DeserializesAndInvokesIEnumerable() {
+			var instance = new HandlerClass();
+
+			var args = new List<object>();
+
+			var msg = Setup.Correct;
+
+			// 4 is arbitrary here
+			for (var i = 0; i < 4; i++) {
+				msg.Arguments[1] = i;
+				args.AddRange(msg.Arguments);
+			}
+
+			Deserializer<HandlerClass>.InvokeMethodFromMessage(instance, new BasicMessage("test", args.ToArray()));
+
+			Assert.True(instance.Invoked);
+			Assert.Equal(4, instance.Items);
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]

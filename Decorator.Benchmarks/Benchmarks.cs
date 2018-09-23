@@ -45,6 +45,7 @@ namespace Decorator.Benchmarks {
 			};
 
 			// dry run, ensure caching in decorator is fine
+			this.BasicDeserialize();
 
 			for (var i = 0; i < 2; i++) {
 				this.BasicDeserialize();
@@ -59,11 +60,11 @@ namespace Decorator.Benchmarks {
 		[Benchmark(Description = "Simple TryDeserialize", Baseline = true)]
 		public bool BasicDeserialize()
 			=> Deserializer.TryDeserializeItem<Chat>(this._goodMsg, out var _);
-
+		
 		[Benchmark(Description = "ProtocolMessage alternative")]
 		public ProtocolMessage.Chat ProtocolMessage()
 			=> this._pm.Convert<ProtocolMessage.Chat>(this._goodArgs);
-
+		
 		[Benchmark(Description = "TryDeserialize with Type")]
 		public bool DeserializeWithType()
 			=> Deserializer.TryDeserializeItem(this._type, this._goodMsg, out var _);
@@ -79,7 +80,7 @@ namespace Decorator.Benchmarks {
 		[Benchmark(Description = "Invalid Type")]
 		public bool InvalidChat_Type()
 			=> Deserializer.TryDeserializeItem<Chat>(this._badType, out var _);
-
+			
 		[Benchmark(Description = "Deserialize Message to Method")]
 		public void InvokeMethodMessage()
 			=> Deserializer<Benchmarks>.InvokeMethodFromMessage(this, this._goodMsg);
@@ -87,7 +88,7 @@ namespace Decorator.Benchmarks {
 		[Benchmark(Description = "Deserialize Item to Method")]
 		public void InvokeMethodItem()
 			=> Deserializer<Benchmarks>.InvokeMethodFromItem(this, this._chat);
-
+			
 		[DeserializedHandler]
 		public void HandleItem(Chat chat) {
 			// Allow the deserializer to discover this method

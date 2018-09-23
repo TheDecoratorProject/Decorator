@@ -12,7 +12,7 @@ namespace Decorator.Tests {
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "CanDeserialize")]
 		public void TooLongMessage()
-			=> Assert.True(Decorator.Deserializer.TryDeserializeItem<TestMessage>(Setup.TooLong, out var _));
+			=> Assert.False(Decorator.Deserializer.TryDeserializeItem<TestMessage>(Setup.TooLong, out var _));
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "CanDeserialize")]

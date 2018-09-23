@@ -36,12 +36,10 @@ namespace Decorator {
 			var instanceObj = (object)instance;
 
 			foreach (var i in MethodInvoker<TClass>.Cache) {
-				if (i.Key.GenericTypeArguments.Length > 0) {
-					var genArg = i.Key.GenericTypeArguments[0];
-
-					if (typeof(IEnumerable).IsAssignableFrom(i.Key) &&
-						Deserializer.TryDeserializeItems(genArg, msg, out var enumerable)) {
-						var result = _objToArray.GetMethodFor(genArg)(null, new object[] { enumerable });
+				if (i.Key.IsArray) {
+					var arrayType = i.Key.GetElementType();
+					if (Deserializer.TryDeserializeItems(arrayType, msg, out var enumerable)) {
+						var result = _objToArray.GetMethodFor(arrayType)(null, new object[] { enumerable });
 
 						InvokeMethods(instanceObj, result, i.Value);
 					}
@@ -51,17 +49,21 @@ namespace Decorator {
 			}
 		}
 
-		private static void InvokeMethods(object instance, object result, IEnumerable<MethodInfo> methods) {
+		private static void InvokeMethods(object instance, object result, MethodInfo[] methods) {
 			foreach (var method in methods)
 				MethodInvoker<TClass>.InvokeMethod(method, instance, result);
 		}
 
-		private static IEnumerable<T> FromObjToArray<T>(IEnumerable<object> objs)
+		private static T[] FromObjToArray<T>(object[] objs)
 			=> FromObj<T>(objs).ToArray();
 
-		private static IEnumerable<T> FromObj<T>(IEnumerable<object> objs) {
-			foreach (var i in objs)
-				yield return (T)i;
+		private static T[] FromObj<T>(object[] objs) {
+			var res = new T[objs.Length];
+
+			for (int i = 0; i < objs.Length; i++)
+				res[i] = (T)objs[i];
+
+			return res;
 		}
 	}
 }
