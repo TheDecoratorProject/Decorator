@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Decorator.Helpers;
+using System;
 using System.Reflection;
 
 namespace Decorator {
@@ -37,61 +37,70 @@ namespace Decorator {
 					_tryDeserializeRepeatable = new FunctionWrapper(method);
 		}
 
-		/// <summary>
-		/// Attempts to deserialize a <paramref name="m"/> to a <typeparamref name="TItem"/>, and returns whether or not it can.
-		/// </summary>
-		/// <typeparam name="TItem">The type of the item.</typeparam>
-		/// <param name="m">The message.</param>
-		/// <param name="result">The result after deserialization</param>
-		/// <returns><c>true</c> if it can deserialize it, <c>false</c> if it can't</returns>
+		/// <summary>Attempts to deserialize the <see cref="BaseMessage" /><paramref name="m" /> to a <typeparamref name="TItem" /></summary>
+		/// <typeparam name="TItem">The message class type</typeparam>
+		/// <param name="m">The message to deserialize into a <typeparamref name="TItem" /></param>
+		/// <param name="result">The result of the deserialization</param>
+		/// <example><code>
+		/// [Message("12o")]
+		/// public class Oatmeal {
+		///		[Position(0), Required]
+		///		public int One { get; set; }
+		///
+		///		[Position(1), Required]
+		///		public int Two { get; set; }
+		///
+		///		[Position(2), Required]
+		///		public string Oatmeal { get; set; }
+		/// }
+		///
+		/// var result = Deserializer.TryDeserializeItem<Oatmeal>(new BasicMessage("12o", 1, 2, "oatmeal", out var oatmeal);
+		///
+		/// if (result) {
+		///		Console.WriteLine($"{oatmeal.One}, {oatmeal.Two}, {oatmeal.Oatmeal}\Kirby is a pink guy");
+		/// }
+		///
+		/// // should output:
+		///
+		/// // 1, 2, oatmeal
+		/// // Kirby is a pink guy
+		/// </code></example>
+		/// <returns>
+		/// <para><c>true</c> if it was able to deserialize <paramref name="m" /> into a <typeparamref name="TItem" />, with <paramref name="result" /> containing the valid result, or</para>
+		/// <para><c>false</c> if it was unable to deserialize <paramref name="m" /> into a <typeparamref name="TItem" /></para></returns>
+		/// <exception cref="ArgumentNullException">Thrown when <paramref name="m> <c>is</c> <c>null</c></exception>
+		/// <seealso cref="TryDeserializeItem(Type, BaseMessage, out object)"/>
 		public static bool TryDeserializeItem<TItem>(BaseMessage m, out TItem result) {
 			if (m is null) throw new ArgumentNullException(nameof(m));
 
 			var def = MessageManager.GetDefinitionFor<TItem>();
 
-			if (def is null) {
-				result = default;
-				return false;
-			}
-
-			// attrib checking
-			if (!EnsureAttributesOn(m, def)) {
-				result = default;
-				return false;
-			}
-
-			// ensure strict message amount for IEnumerable support reasons
-			if (m.Count != def.MaxCount) {
-				result = default;
-				return false;
-			}
+			if (def is null ||
+				!EnsureAttributesOn(m, def) ||
+				m.Count != def.MaxCount) return TryMethodHelpers.EndTryMethod(false, default, out result);
 
 			return TryDeserializeValue<TItem>(m, def, out result);
 		}
 
 		/// <summary>
-		/// Attempts to deserialize the <paramref name="m"/> to a <typeparamref name="IEnumerable{TItem}"/>, and returns whether or not it can.
+		/// Attempts to deserialize the <paramref name="m"/> to a <see cref="IEnumerable{TItem}"/>, and returns whether or not it can.
 		/// </summary>
 		/// <typeparam name="TItem">The type of the item.</typeparam>
 		/// <param name="m">The message.</param>
 		/// <param name="result">The result after deserialization</param>
+		/// <remarks>
+		/// var THIS_IS_THE = new BEST_BURRITO(Consts.I_HAVE_EVER_EATEN);
+		/// return THIS_IS_THE.YUM_YUM_YUM;
+		/// </remarks>
 		/// <returns><c>true</c> if it can deserialize it, <c>false</c> if it can't</returns>
 		public static bool TryDeserializeItems<TItem>(BaseMessage m, out TItem[] result) {
 			if (m is null) throw new ArgumentNullException(nameof(m));
 
 			var def = MessageManager.GetDefinitionFor<TItem>();
 
-			if (def is null) {
-				result = default;
-				return false;
-			}
-
-			// attrib checking
-			if (!EnsureAttributesOn(m, def) ||
-				!def.Repeatable) {
-				result = default;
-				return false;
-			}
+			if (def is null ||
+				!EnsureAttributesOn(m, def) ||
+				!def.Repeatable) return TryMethodHelpers.EndTryMethod(false, default, out result);
 
 			return TryDeserializeValues<TItem>(m, def, out result);
 		}
@@ -106,14 +115,9 @@ namespace Decorator {
 
 			var method = _tryDeserialize.GetMethodFor(t);
 
-			if (!(bool)(method(null, args))) {
-				result = default;
-				return false;
-			}
+			if (!(bool)(method(null, args))) return TryMethodHelpers.EndTryMethod(false, default, out result);
 
-			result = args[1];
-
-			return true;
+			return TryMethodHelpers.EndTryMethod(true, args[1], out result);
 		}
 
 		public static bool TryDeserializeItems(Type t, BaseMessage m, out object[] result) {
@@ -122,35 +126,23 @@ namespace Decorator {
 
 			var args = new object[] { m, null };
 
-			if (!(bool)(_tryDeserializeRepeatable.GetMethodFor(t)(null, args))) {
-				result = default;
-				return false;
-			}
+			if (!((bool)_tryDeserializeRepeatable.GetMethodFor(t)(null, args))) return TryMethodHelpers.EndTryMethod(false, default, out result);
 
-			result = (object[])args[1];
-
-			return true;
+			return TryMethodHelpers.EndTryMethod(true, (object[])args[1], out result);
 		}
 
 		#endregion reflectionified
 
 		private static bool TryDeserializeValue<T>(BaseMessage m, MessageDefinition def, out T result) {
-			var max = 0;
-
 			// prevent boxing calls
 			var instance = (object)InstanceOf<T>.Create();
 
-			foreach (var i in def.Properties) {
-				if (PropertyQualifies(i, m))
-					i.Set(instance, m.Arguments[i.IntPos]);
-				else if (i.State == TypeRequiredness.Required) {
-					result = default;
-					return false;
-				}
-			}
+			foreach (var i in def.Properties)
+				if (PropertyQualifies(i, m)) i.Set(instance, m.Arguments[i.IntPos]);
+				else if (i.State == TypeRequiredness.Optional) continue;
+				else return TryMethodHelpers.EndTryMethod(false, default, out result);
 
-			result = (T)instance;
-			return true;
+			return TryMethodHelpers.EndTryMethod(true, (T)instance, out result);
 		}
 
 		private static bool TryDeserializeValues<T>(BaseMessage m, MessageDefinition def, out T[] result) {
@@ -163,16 +155,12 @@ namespace Decorator {
 
 				Array.Copy(m.Arguments, i * def.IntMaxCount, messageItems, 0, def.IntMaxCount);
 
-				if (!TryDeserializeValue<T>(new BasicMessage(null, messageItems), def, out T item)) {
-					result = default;
-					return false;
-				}
+				if (!TryDeserializeValue<T>(new BasicMessage(null, messageItems), def, out var item)) return TryMethodHelpers.EndTryMethod(false, default, out result);
 
 				itms[i] = item;
 			}
 
-			result = itms;
-			return true;
+			return TryMethodHelpers.EndTryMethod(true, itms, out result);
 		}
 
 		private static bool PropertyQualifies(MessageProperty prop, BaseMessage m)
