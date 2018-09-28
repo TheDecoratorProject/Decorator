@@ -43,7 +43,8 @@ namespace Decorator {
 		/// <param name="result">The result of the deserialization</param>
 		/// <example><code>
 		/// [Message("12o")]
-		/// public class Oatmeal {
+		/// public class Oatmeal
+		/// {
 		///		[Position(0), Required]
 		///		public int One { get; set; }
 		///
@@ -56,8 +57,9 @@ namespace Decorator {
 		///
 		/// var result = Deserializer.TryDeserializeItem<Oatmeal>(new BasicMessage("12o", 1, 2, "oatmeal", out var oatmeal);
 		///
-		/// if (result) {
-		///		Console.WriteLine($"{oatmeal.One}, {oatmeal.Two}, {oatmeal.Oatmeal}\Kirby is a pink guy");
+		/// if (result)
+		/// {
+		///		Console.WriteLine($"{oatmeal.One}, {oatmeal.Two}, {oatmeal.Oatmeal}\nKirby is a pink guy");
 		/// }
 		///
 		/// // should output:
@@ -88,10 +90,34 @@ namespace Decorator {
 		/// <typeparam name="TItem">The type of the item.</typeparam>
 		/// <param name="m">The message.</param>
 		/// <param name="result">The result after deserialization</param>
-		/// <remarks>
-		/// var THIS_IS_THE = new BEST_BURRITO(Consts.I_HAVE_EVER_EATEN);
-		/// return THIS_IS_THE.YUM_YUM_YUM;
-		/// </remarks>
+		/// <example><code>
+		/// [Message("example"), Repeatable]
+		/// public class TestyClass
+		/// {
+		///		[Position(0), Required]
+		///		public int Id { get; set; }
+		///
+		///		[Position(2), Required]
+		///		public string Name { get; set; }
+		/// }
+		/// 
+		/// var result = Deserializer.TryDeserializeItems<TestyClass>(new BasicMessage("example", 0, "John", 1, "Mac", 2, "Mark", 3, "Zuccy", 4, "Johnny"), out var items);
+		/// 
+		/// if (result)
+		/// {
+		///		foreach (var i in items)
+		///		{
+		///			Console.WriteLine($"{i.Id} - {i.Name}");
+		///		}
+		/// }
+		/// 
+		/// // should output:
+		/// // 0 - John
+		/// // 1 - Mac
+		/// // 2 - Mark
+		/// // 3 - Zuccy
+		/// // 4 - Johnny
+		/// </code></example>
 		/// <returns><c>true</c> if it can deserialize it, <c>false</c> if it can't</returns>
 		public static bool TryDeserializeItems<TItem>(BaseMessage m, out TItem[] result) {
 			if (m is null) throw new ArgumentNullException(nameof(m));
@@ -107,6 +133,10 @@ namespace Decorator {
 
 		#region reflectionified
 
+		/// <summary>
+		/// Invokes <seealso cref="TryDeserializeItem{TItem}(BaseMessage, out TItem)"/> by using <seealso cref="System.Type"/> <paramref name="t"/> as the generic argument.
+		/// </summary>
+		/// <see cref="TryDeserializeItem{TItem}(BaseMessage, out TItem)"/>
 		public static bool TryDeserializeItem(Type t, BaseMessage m, out object result) {
 			if (t is null) throw new ArgumentNullException(nameof(t));
 			if (m is null) throw new ArgumentNullException(nameof(m));
@@ -120,6 +150,13 @@ namespace Decorator {
 			return TryMethodHelpers.EndTryMethod(true, args[1], out result);
 		}
 
+		/// <summary>
+		/// Invokes <seealso cref="TryDeserializeItems{TItem}(BaseMessage, out TItem[])"/>
+		/// </summary>
+		/// <param name="t"></param>
+		/// <param name="m"></param>
+		/// <param name="result"></param>
+		/// <returns></returns>
 		public static bool TryDeserializeItems(Type t, BaseMessage m, out object[] result) {
 			if (t is null) throw new ArgumentNullException(nameof(t));
 			if (m is null) throw new ArgumentNullException(nameof(m));

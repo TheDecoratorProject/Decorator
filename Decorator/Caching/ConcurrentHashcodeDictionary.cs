@@ -7,12 +7,12 @@ namespace Decorator.Caching {
 	internal class ConcurrentHashcodeDictionary<TKey, TValue> : IHashcodeDictionary<TKey, TValue> {
 
 		public ConcurrentHashcodeDictionary() {
-			this.Dictionary = new ConcurrentDictionary<int, TValue>();
-			this.DictionaryKeys = new ConcurrentDictionary<int, TKey>();
+			this.Dictionary = new ConcurrentHashcodeDictionary<TValue>();
+			this.DictionaryKeys = new ConcurrentHashcodeDictionary<TKey>();
 		}
 
-		public ConcurrentDictionary<int, TValue> Dictionary { get; set; }
-		public ConcurrentDictionary<int, TKey> DictionaryKeys { get; set; }
+		public ConcurrentHashcodeDictionary<TValue> Dictionary { get; set; }
+		public ConcurrentHashcodeDictionary<TKey> DictionaryKeys { get; set; }
 
 		public bool TryAdd(TKey key, TValue value) {
 			var hashcode = key.GetHashCode();

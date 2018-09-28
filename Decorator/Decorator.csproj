@@ -35,6 +35,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ConcurrentHashcodeDictionary" Version="1.0.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
   </ItemGroup>
