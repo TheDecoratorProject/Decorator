@@ -4,27 +4,31 @@ using System.Collections.Generic;
 
 using Xunit;
 
-namespace Decorator.Tests {
-
-	public class Deserialize {
-
-		private static void Verify(BaseMessage m, TestMessage t) {
+namespace Decorator.Tests
+{
+	public class Deserialize
+	{
+		private static void Verify(BaseMessage m, TestMessage t)
+		{
 			Assert.Equal("test", m.Type);
 			Assert.Equal(m.Arguments[0], t.PositionZeroItem);
 			Assert.Equal(m.Arguments[1], t.PositionOneItem);
 		}
 
-		private static void AttemptDeserialize(BaseMessage msg) {
+		private static void AttemptDeserialize(BaseMessage msg)
+		{
 			if (!Decorator.Deserializer.TryDeserializeItem<TestMessage>(msg, out var result))
 				throw new InvalidDeserializationAttemptException();
 
 			Verify(msg, result);
 		}
 
-		private static void AttemptDeserializeRepeated(BaseMessage msg, int repeatAmt) {
+		private static void AttemptDeserializeRepeated(BaseMessage msg, int repeatAmt)
+		{
 			var args = new List<object>();
 
-			for (var i = 0; i < repeatAmt; i++) {
+			for (var i = 0; i < repeatAmt; i++)
+			{
 				msg.Arguments[1] = i;
 				args.AddRange(msg.Arguments);
 			}
@@ -33,7 +37,8 @@ namespace Decorator.Tests {
 				throw new InvalidDeserializationAttemptException();
 
 			var c = 0;
-			foreach (var i in result) {
+			foreach (var i in result)
+			{
 				Assert.Equal("just right", i.PositionZeroItem);
 				Assert.Equal(c, i.PositionOneItem);
 

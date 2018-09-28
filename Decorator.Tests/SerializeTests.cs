@@ -4,13 +4,14 @@ using System.Collections.Generic;
 
 using Xunit;
 
-namespace Decorator.Tests {
-
-	public class SerializeTests {
-
+namespace Decorator.Tests
+{
+	public class SerializeTests
+	{
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "CanSerialize")]
-		public void SerializeExample() {
+		public void SerializeExample()
+		{
 			Assert.Equal(new BasicMessage("test", "frog", 8), Serializer.SerializeItem(new TestMessage {
 				PositionOneItem = 8,
 				PositionZeroItem = "frog"
@@ -23,13 +24,15 @@ namespace Decorator.Tests {
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "CanSerialize")]
-		public void SerializeEnumerable() {
+		public void SerializeEnumerable()
+		{
 			var args = new List<object>();
 
 			var msg = Setup.Correct;
 
 			// 4 is arbitrary here
-			for (var i = 0; i < 4; i++) {
+			for (var i = 0; i < 4; i++)
+			{
 				msg.Arguments[1] = i;
 				args.AddRange(msg.Arguments);
 			}
@@ -58,7 +61,8 @@ namespace Decorator.Tests {
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "CanSerialize")]
-		public void NeedsAttributes1() {
+		public void NeedsAttributes1()
+		{
 			Assert.Throws<MissingAttributeException>(delegate () {
 				Serializer.SerializeItem(new NeedsAttribute {
 					WOWOW = "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE no my secret comment EEEEEEEEEEEEEEEE"
@@ -68,7 +72,8 @@ namespace Decorator.Tests {
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "CanSerialize")]
-		public void NeedsAttributes2() {
+		public void NeedsAttributes2()
+		{
 			Assert.Throws<MissingAttributeException>(delegate () {
 				Serializer.SerializeItem<NeedsAttribute>(new NeedsAttribute {
 					WOWOW = "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE no my secret comment EEEEEEEEEEEEEEEE"
@@ -78,14 +83,10 @@ namespace Decorator.Tests {
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "CanSerialize")]
-		public void NoProperties() {
-			Assert.Equal(new BasicMessage("noprop"), Serializer.SerializeItem(new NoProperties()));
-		}
+		public void NoProperties() => Assert.Equal(new BasicMessage("noprop"), Serializer.SerializeItem(new NoProperties()));
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "CanSerialize")]
-		public void NoItems() {
-			Assert.Equal(new BasicMessage("noprop"), Serializer.SerializeItems(new NoProperties[0] { }));
-		}
+		public void NoItems() => Assert.Equal(new BasicMessage("noprop"), Serializer.SerializeItems(new NoProperties[0] { }));
 	}
 }

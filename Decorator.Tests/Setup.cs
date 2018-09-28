@@ -1,7 +1,7 @@
-﻿namespace Decorator.Tests {
-
-	public static class Setup {
-
+﻿namespace Decorator.Tests
+{
+	public static class Setup
+	{
 		public static BaseMessage TooShort => new BasicMessage(
 					"test",
 					"too short"

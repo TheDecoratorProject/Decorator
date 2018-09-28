@@ -1,12 +1,13 @@
 ﻿using Xunit;
 
-namespace Decorator.Tests {
-
-	public class MessageTesting {
-
+namespace Decorator.Tests
+{
+	public class MessageTesting
+	{
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", nameof(MessageTesting))]
-		public void GetsArgument() {
+		public void GetsArgument()
+		{
 			var at = 2;
 
 			var msg = new BasicMessage("test", 1, at, 3);
@@ -16,7 +17,8 @@ namespace Decorator.Tests {
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", nameof(MessageTesting))]
-		public void Hashcode() {
+		public void Hashcode()
+		{
 			var msg = new BasicMessage("test", 1);
 
 			// make sure it doesn't throw
@@ -26,7 +28,8 @@ namespace Decorator.Tests {
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", nameof(MessageTesting))]
-		public void DoesDoEqualsCorrectly() {
+		public void DoesDoEqualsCorrectly()
+		{
 			var msg = new BasicMessage("test", 992, 0b1010);
 
 			var msg2 = new BasicMessage("test", 992, 0b1010);
@@ -36,7 +39,8 @@ namespace Decorator.Tests {
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", nameof(MessageTesting))]
-		public void DoesDoesntEqualsCorrectly1() {
+		public void DoesDoesntEqualsCorrectly1()
+		{
 			var msg = new BasicMessage("test", 92, 0b1010);
 
 			var msg2 = new BasicMessage("test", 992, 0b1010);
@@ -46,7 +50,8 @@ namespace Decorator.Tests {
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", nameof(MessageTesting))]
-		public void InequalByNull() {
+		public void InequalByNull()
+		{
 			var msg = new BasicMessage("test", 92);
 
 			Assert.False(msg.Equals(null));
@@ -54,7 +59,8 @@ namespace Decorator.Tests {
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", nameof(MessageTesting))]
-		public void InequalByArgumentsNull() {
+		public void InequalByArgumentsNull()
+		{
 			var msg = new BasicMessage("test", 92);
 
 			Assert.False(msg.Equals(new BasicMessage("test", null)));
@@ -62,7 +68,8 @@ namespace Decorator.Tests {
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", nameof(MessageTesting))]
-		public void EqualsByReference() {
+		public void EqualsByReference()
+		{
 			var msg = new BasicMessage("test", 92, 0b1010);
 			var msg2 = msg;
 
@@ -111,7 +118,8 @@ namespace Decorator.Tests {
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", nameof(MessageTesting))]
-		public void FalseGenericObject() {
+		public void FalseGenericObject()
+		{
 			var msg = new BasicMessage("test", 992, 0b1010);
 
 			Assert.False(msg.Equals(""));

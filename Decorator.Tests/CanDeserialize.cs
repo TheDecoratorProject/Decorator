@@ -1,9 +1,9 @@
 using Xunit;
 
-namespace Decorator.Tests {
-
-	public class CanDeserializeProperly {
-
+namespace Decorator.Tests
+{
+	public class CanDeserializeProperly
+	{
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "CanDeserialize")]
 		public void TooShortMessage()

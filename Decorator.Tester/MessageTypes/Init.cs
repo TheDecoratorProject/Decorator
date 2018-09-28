@@ -1,10 +1,10 @@
 using Decorator.Attributes;
 
-namespace Decorator.Tester {
-
+namespace Decorator.Tester
+{
 	[Message("init")]
-	public class InitEvent {
-
+	public class InitEvent
+	{
 		[Required]
 		[Position(0)]
 		public uint MyId { get; set; }

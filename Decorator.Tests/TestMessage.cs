@@ -1,10 +1,10 @@
 ﻿using Decorator.Attributes;
 
-namespace Decorator.Tests {
-
+namespace Decorator.Tests
+{
 	[Message("test"), Repeatable]
-	public class TestMessage {
-
+	public class TestMessage
+	{
 		[Position(0)]
 		public string PositionZeroItem { get; set; }
 
@@ -15,19 +15,20 @@ namespace Decorator.Tests {
 	}
 
 	[Message(null)]
-	public class NullType {
+	public class NullType
+	{
 	}
 
 	[Message("rep")]
-	public class NonRepeatable {
-
+	public class NonRepeatable
+	{
 		[Position(0)]
 		public int SomeValue { get; set; }
 	}
 
 	[Message("opt")]
-	public class OptionalMsg {
-
+	public class OptionalMsg
+	{
 		[Position(0), Required]
 		public string RequiredString { get; set; }
 
@@ -36,22 +37,24 @@ namespace Decorator.Tests {
 	}
 
 	[Message("non-existant")]
-	public class NonExistant {
-
+	public class NonExistant
+	{
 		[Position(0), Required]
 		public string AAA { get; set; }
 	}
 
-	public class NeedsAttribute {
-
+	public class NeedsAttribute
+	{
 		[Position(0), Required]
 		public string WOWOW { get; set; }
 	}
 
-	public class ExampleHandlerClass {
+	public class ExampleHandlerClass
+	{
 	}
 
 	[Message("noprop")]
-	public class NoProperties {
+	public class NoProperties
+	{
 	}
 }
