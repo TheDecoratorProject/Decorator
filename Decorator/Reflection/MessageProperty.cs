@@ -3,22 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Decorator {
-
-	internal class MessageDefinition {
-
-		public MessageDefinition(string type, IEnumerable<MessageProperty> props, bool rep) {
-			this.Repeatable = rep;
-			this.Type = type;
-			this.Properties = props.ToArray();
+namespace Decorator
+{
+	internal class MessageDefinition
+	{
+		public MessageDefinition(string type, IEnumerable<MessageProperty> props, bool rep)
+		{
+			Repeatable = rep;
+			Type = type;
+			Properties = props.ToArray();
 
 			uint maxPos = 0;
-			foreach (var i in this.Properties)
+			foreach (var i in Properties)
 				if (i.Position >= (maxPos > 0 ? maxPos - 1 : 0))
 					maxPos = i.Position + 1;
 
-			this.MaxCount = maxPos;
-			this.IntMaxCount = (int)this.MaxCount;
+			MaxCount = maxPos;
+			IntMaxCount = (int)MaxCount;
 		}
 
 		public string Type;
@@ -30,23 +31,25 @@ namespace Decorator {
 		internal int IntMaxCount;
 	}
 
-	internal enum TypeRequiredness {
+	internal enum TypeRequiredness
+	{
 		Required,
 
 		Optional
 	}
 
-	internal class MessageProperty {
+	internal class MessageProperty
+	{
+		public MessageProperty(uint pos, bool req, PropertyInfo propInf)
+		{
+			Position = pos;
+			State = req ? TypeRequiredness.Required : TypeRequiredness.Optional;
+			PropertyInfo = propInf;
 
-		public MessageProperty(uint pos, bool req, PropertyInfo propInf) {
-			this.Position = pos;
-			this.State = req ? TypeRequiredness.Required : TypeRequiredness.Optional;
-			this.PropertyInfo = propInf;
+			_propSetRaw = PropertyInfo.GetSetMethodByExpression();
+			_propGetRaw = PropertyInfo.GetGetMethod().ILWrap();
 
-			this._propSetRaw = this.PropertyInfo.GetSetMethodByExpression();
-			this._propGetRaw = this.PropertyInfo.GetGetMethod().ILWrap();
-
-			this.IntPos = (int)this.Position;
+			IntPos = (int)Position;
 		}
 
 		public uint Position;
@@ -61,9 +64,9 @@ namespace Decorator {
 		private readonly ILFunc _propGetRaw;
 
 		public object Get(object instance)
-			=> this._propGetRaw(instance, default);
+			=> _propGetRaw(instance, default);
 
 		public void Set(object instance, object value)
-			=> this._propSetRaw(instance, value);
+			=> _propSetRaw(instance, value);
 	}
 }

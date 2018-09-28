@@ -1,52 +1,60 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace Decorator.Caching {
-
-	internal class HashcodeDictionary<TKey, TValue> : IHashcodeDictionary<TKey, TValue> {
-
-		public HashcodeDictionary(Dictionary<TKey, TValue> dict) : this() {
-			foreach (var i in dict) {
+namespace Decorator.Caching
+{
+	internal class HashcodeDictionary<TKey, TValue> : IHashcodeDictionary<TKey, TValue>
+	{
+		public HashcodeDictionary(Dictionary<TKey, TValue> dict) : this()
+		{
+			foreach (var i in dict)
+			{
 				var hc = i.Key.GetHashCode();
 
-				this.Dictionary[hc] = i.Value;
-				this.DictionaryKeys[hc] = i.Key;
+				Dictionary[hc] = i.Value;
+				DictionaryKeys[hc] = i.Key;
 			}
 		}
 
-		public HashcodeDictionary() {
-			this.Dictionary = new Dictionary<int, TValue>();
-			this.DictionaryKeys = new Dictionary<int, TKey>();
+		public HashcodeDictionary()
+		{
+			Dictionary = new ResizingArray<TValue>();
+			DictionaryKeys = new ResizingArray<TKey>();
 		}
 
-		public Dictionary<int, TValue> Dictionary { get; set; }
-		public Dictionary<int, TKey> DictionaryKeys { get; set; }
+		public ResizingArray<TValue> Dictionary { get; set; }
+		public ResizingArray<TKey> DictionaryKeys { get; set; }
 
-		public bool TryAdd(TKey key, TValue value) {
+		public bool TryAdd(TKey key, TValue value)
+		{
 			var hashcode = key.GetHashCode();
 
-			this.Dictionary[hashcode] = value;
-			this.DictionaryKeys[hashcode] = key;
+			Dictionary[hashcode] = value;
+			DictionaryKeys[hashcode] = key;
 
 			return true;
 		}
 
-		public bool TryGetValue(TKey key, out TValue value) {
+		public bool TryGetValue(TKey key, out TValue value)
+		{
 			bool val;
 
-			val = this.Dictionary.TryGetValue(key.GetHashCode(), out value);
+			val = Dictionary.TryGetValue(key.GetHashCode(), out value);
 
 			return val;
 		}
 
-		public IEnumerable<KeyValuePair<TKey, TValue>> GetItems() {
-			var valenumer = this.Dictionary.GetEnumerator();
-			var keysenumer = this.DictionaryKeys.GetEnumerator();
+		public IEnumerable<KeyValuePair<TKey, TValue>> GetItems()
+		{
+			var arr1 = Dictionary.Array;
+			var arr2 = DictionaryKeys.Array;
 
-			while (valenumer.MoveNext() && keysenumer.MoveNext()) {
-				var kvp = new KeyValuePair<TKey, TValue>(keysenumer.Current.Value, valenumer.Current.Value);
-
-				yield return kvp;
+			for (int i = 0; i < Dictionary.Length; i++)
+			{
+				yield return new KeyValuePair<TKey, TValue>(
+						arr2[i],
+						arr1[i]
+					);
 			}
 		}
 

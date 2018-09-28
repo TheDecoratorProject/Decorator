@@ -7,16 +7,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Decorator {
-
+namespace Decorator
+{
 	internal static class MethodInvoker<TClass>
-		where TClass : class {
+		where TClass : class
+	{
 		private static readonly Type _tclassType = typeof(TClass);
 
-		static MethodInvoker() {
-			Cache = new ConcurrentHashcodeDictionary<Type, MethodInfo[]>();
+		static MethodInvoker()
+		{
+			Cache = new HashcodeDictionary<Type, MethodInfo[]>();
 
-			MethodInfoCache = new ConcurrentHashcodeDictionary<MethodInfo, Action<object, object>>();
+			MethodInfoCache = new HashcodeDictionary<MethodInfo, Action<object, object>>();
 
 			//TODO: clean
 			// with like a reflection helper class
@@ -29,19 +31,21 @@ namespace Decorator {
 					val.Add(i);
 				else dict[i.GetParameters()[0].ParameterType] = new List<MethodInfo> { i };
 
-			foreach (var i in dict) {
+			foreach (var i in dict)
+			{
 				Cache.TryAdd(i.Key, i.Value.ToArray());
 			}
 		}
 
-		public static ConcurrentHashcodeDictionary<Type, MethodInfo[]> Cache;
+		public static HashcodeDictionary<Type, MethodInfo[]> Cache;
 
-		public static ConcurrentHashcodeDictionary<MethodInfo, Action<object, object>> MethodInfoCache;
+		public static HashcodeDictionary<MethodInfo, Action<object, object>> MethodInfoCache;
 
 		public static MethodInfo[] GetMethodsFor<TItem>()
 			=> GetMethodsFor(typeof(TItem));
 
-		public static MethodInfo[] GetMethodsFor(Type item) {
+		public static MethodInfo[] GetMethodsFor(Type item)
+		{
 			if (Cache.TryGetValue(item, out var res)) return res;
 			throw new LackingMethodsException(item);
 		}
@@ -49,8 +53,10 @@ namespace Decorator {
 		public static void InvokeMethod<TItem>(MethodInfo method, TClass instance, TItem item)
 			=> InvokeMethod(method, (object)instance, item);
 
-		public static void InvokeMethod<TItem>(MethodInfo method, object instance, TItem item) {
-			if (!MethodInfoCache.TryGetValue(method, out var invoke)) {
+		public static void InvokeMethod<TItem>(MethodInfo method, object instance, TItem item)
+		{
+			if (!MethodInfoCache.TryGetValue(method, out var invoke))
+			{
 				invoke = method
 							.GetSingleInvokable();
 

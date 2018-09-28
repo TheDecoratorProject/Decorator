@@ -3,29 +3,31 @@
 using System;
 using System.Reflection;
 
-namespace Decorator {
-
-	internal class FunctionWrapper {
-
-		public FunctionWrapper(MethodInfo method) {
-			this.Method = method;
-			this._versions = new ConcurrentHashcodeDictionary<Type, ILFunc>();
+namespace Decorator
+{
+	internal class FunctionWrapper
+	{
+		public FunctionWrapper(MethodInfo method)
+		{
+			Method = method;
+			_versions = new ConcurrentHashcodeDictionary<Type, ILFunc>();
 		}
 
 		public MethodInfo Method;
 
 		private readonly ConcurrentHashcodeDictionary<Type, ILFunc> _versions;
 
-		public ILFunc GetMethodFor(Type type) {
-			if (this._versions.TryGetValue(type, out var res)) return res;
+		public ILFunc GetMethodFor(Type type)
+		{
+			if (_versions.TryGetValue(type, out var res)) return res;
 
-			var genMethod = this.Method
+			var genMethod = Method
 								.MakeGenericMethod(type);
 
 			var method = genMethod
 							.ILWrapRefSupport();
 
-			this._versions.TryAdd(type, method);
+			_versions.TryAdd(type, method);
 
 			return method;
 		}

@@ -1,15 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 
-namespace Decorator {
-
+namespace Decorator
+{
 	/// <summary>Deserializes any message to a method in the TClass</summary>
 	/// <typeparam name="TClass">The type of the class.</typeparam>
 	public static class Deserializer<TClass>
-		where TClass : class {
-
+		where TClass : class
+	{
 		private static readonly FunctionWrapper _objToArray = new FunctionWrapper(
 				typeof(Deserializer<TClass>)
 					.GetMethod(nameof(FromObjToArray), BindingFlags.Static | BindingFlags.NonPublic)
@@ -21,8 +19,10 @@ namespace Decorator {
 		/// <typeparam name="TItem">The item to use</typeparam>
 		/// <param name="instance">The instance of the <typeparamref name="TClass"/> to deserialize it to (use null for static)</param>
 		/// <param name="item">The item to use to invoke stuff</param>
-		public static void InvokeMethodFromItem<TItem>(TClass instance, TItem item) {
-			foreach (var i in MethodInvoker<TClass>.GetMethodsFor<TItem>()) {
+		public static void InvokeMethodFromItem<TItem>(TClass instance, TItem item)
+		{
+			foreach (var i in MethodInvoker<TClass>.GetMethodsFor<TItem>())
+			{
 				MethodInvoker<TClass>.InvokeMethod<TItem>(i, instance, item);
 			}
 		}
@@ -32,24 +32,31 @@ namespace Decorator {
 		/// </summary>
 		/// <param name="instance">The instance of the <typeparamref name="TClass"/> to deserialize it to (use null for static)</param>
 		/// <param name="msg">The message</param>
-		public static void InvokeMethodFromMessage(TClass instance, BaseMessage msg) {
+		public static void InvokeMethodFromMessage(TClass instance, BaseMessage msg)
+		{
 			var instanceObj = (object)instance;
 
-			foreach (var i in MethodInvoker<TClass>.Cache) {
-				if (i.Key.IsArray) {
+			foreach (var i in MethodInvoker<TClass>.Cache)
+			{
+				if (i.Key.IsArray)
+				{
 					var arrayType = i.Key.GetElementType();
-					if (Deserializer.TryDeserializeItems(arrayType, msg, out var enumerable)) {
+					if (Deserializer.TryDeserializeItems(arrayType, msg, out var enumerable))
+					{
 						var result = _objToArray.GetMethodFor(arrayType)(null, new object[] { enumerable });
 
 						InvokeMethods(instanceObj, result, i.Value);
 					}
-				} else if (Deserializer.TryDeserializeItem(i.Key, msg, out var itm)) {
+				}
+				else if (Deserializer.TryDeserializeItem(i.Key, msg, out var itm))
+				{
 					InvokeMethods(instanceObj, itm, i.Value);
 				}
 			}
 		}
 
-		private static void InvokeMethods(object instance, object result, MethodInfo[] methods) {
+		private static void InvokeMethods(object instance, object result, MethodInfo[] methods)
+		{
 			foreach (var method in methods)
 				MethodInvoker<TClass>.InvokeMethod(method, instance, result);
 		}
@@ -57,7 +64,8 @@ namespace Decorator {
 		private static T[] FromObjToArray<T>(object[] objs)
 			=> FromObj<T>(objs).ToArray();
 
-		private static T[] FromObj<T>(object[] objs) {
+		private static T[] FromObj<T>(object[] objs)
+		{
 			var res = new T[objs.Length];
 
 			for (int i = 0; i < objs.Length; i++)

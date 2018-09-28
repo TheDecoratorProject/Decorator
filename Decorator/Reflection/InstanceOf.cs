@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace Decorator {
-
-	internal static class InstanceOf<T> {
-
+namespace Decorator
+{
+	internal static class InstanceOf<T>
+	{
 		public static T Create()
 			=> Constructor();
 

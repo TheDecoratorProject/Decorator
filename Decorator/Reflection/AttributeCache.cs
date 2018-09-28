@@ -4,17 +4,21 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace Decorator {
-
+namespace Decorator
+{
 	internal static class AttributeCache<T>
-		where T : Attribute {
+		where T : Attribute
+	{
 		private static ConcurrentHashcodeDictionary<MemberInfo, T[]> _memberInfoCache = new ConcurrentHashcodeDictionary<MemberInfo, T[]>();
 
-		public static bool TryHasAttribute(MemberInfo member, out T[] result) {
-			if (!_memberInfoCache.TryGetValue(member, out result)) {
+		public static bool TryHasAttribute(MemberInfo member, out T[] result)
+		{
+			if (!_memberInfoCache.TryGetValue(member, out result))
+			{
 				result = member.GetCustomAttributes<T>().ToArray();
 
-				if (result.Length == 0) {
+				if (result.Length == 0)
+				{
 					_memberInfoCache.TryAdd(member, result);
 					return false;
 				}

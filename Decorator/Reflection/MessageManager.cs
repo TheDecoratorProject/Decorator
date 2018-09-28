@@ -5,11 +5,12 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace Decorator {
-
-	internal static class MessageManager {
-
-		static MessageManager() {
+namespace Decorator
+{
+	internal static class MessageManager
+	{
+		static MessageManager()
+		{
 			Definitions = new HashcodeDictionary<Type, MessageDefinition>();
 
 			foreach (var i in
@@ -25,12 +26,14 @@ namespace Decorator {
 		internal static MessageDefinition GetDefinitionFor<T>()
 			=> GetDefinitionForType(typeof(T));
 
-		internal static MessageDefinition GetDefinitionForType(Type type) {
+		internal static MessageDefinition GetDefinitionForType(Type type)
+		{
 			// cache
 			if (Definitions.TryGetValue(type, out var res)) return res;
 
 			// if it is a message
-			if (!AttributeCache<MessageAttribute>.TryHasAttribute(type, out var msgAttrib)) {
+			if (!AttributeCache<MessageAttribute>.TryHasAttribute(type, out var msgAttrib))
+			{
 				res = default;
 				Definitions.TryAdd(type, res);
 				return res;
@@ -44,7 +47,8 @@ namespace Decorator {
 			var max = 0;
 			var msgProps = new MessageProperty[props.Length];
 
-			for (var j = 0; j < props.Length; j++) {
+			for (var j = 0; j < props.Length; j++)
+			{
 				var i = props[j];
 
 				if (HandleItem(i, out var prop))
@@ -52,7 +56,8 @@ namespace Decorator {
 			}
 
 			// resize the array if needed
-			if (msgProps.Length != max) {
+			if (msgProps.Length != max)
+			{
 				var newMsgProps = new MessageProperty[max];
 				Array.Copy(msgProps, 0, newMsgProps, 0, max);
 				msgProps = newMsgProps;
@@ -68,8 +73,10 @@ namespace Decorator {
 			return msgDef;
 		}
 
-		private static bool HandleItem(PropertyInfo i, out MessageProperty prop) {
-			if (AttributeCache<PositionAttribute>.TryHasAttribute(i, out var posAttrib)) {
+		private static bool HandleItem(PropertyInfo i, out MessageProperty prop)
+		{
+			if (AttributeCache<PositionAttribute>.TryHasAttribute(i, out var posAttrib))
+			{
 				var required = AttributeCache<RequiredAttribute>.TryHasAttribute(i, out var _);
 				var optional = AttributeCache<OptionalAttribute>.TryHasAttribute(i, out var _);
 
