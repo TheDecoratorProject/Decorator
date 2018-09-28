@@ -103,7 +103,8 @@ namespace Decorator.Tests {
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "HandlerDeserialization")]
-		public void NeedsAttributes() {
+		public void NeedsAttributes()
+		{
 			Assert.False(
 				Decorator.Deserializer.TryDeserializeItem<NeedsAttribute>(new BasicMessage("wew lad", "there be humans"), out var _)
 			);
@@ -111,37 +112,66 @@ namespace Decorator.Tests {
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "HandlerDeserialization")]
-		public void TryDeserializeItemDefaults() {
+		public void TryDeserializeItemDefaults()
+		{
 			Assert.Throws<ArgumentNullException>(() => Decorator.Deserializer.TryDeserializeItem<TestMessage>(default, out var _));
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "HandlerDeserialization")]
-		public void TryDeserializeItemsDefaults() {
+		public void TryDeserializeItemsDefaults()
+		{
 			Assert.Throws<ArgumentNullException>(() => Decorator.Deserializer.TryDeserializeItems<TestMessage>(default, out var _));
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "HandlerDeserialization")]
-		public void TryDeserializeItemDefaultType() {
+		public void TryDeserializeItemDefaultType()
+		{
 			Assert.Throws<ArgumentNullException>(() => Decorator.Deserializer.TryDeserializeItem(default, default, out var _));
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "HandlerDeserialization")]
-		public void TryDeserializeItemsDefaultType() {
+		public void TryDeserializeItemsDefaultType()
+		{
 			Assert.Throws<ArgumentNullException>(() => Decorator.Deserializer.TryDeserializeItems(default, default, out var _));
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "HandlerDeserialization")]
-		public void TryDeserializeItemDefaultMessage() {
+		public void TryDeserializeItemDefaultMessage()
+		{
 			Assert.Throws<ArgumentNullException>(() => Decorator.Deserializer.TryDeserializeItem(typeof(TestMessage), default, out var _));
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "HandlerDeserialization")]
-		public void TryDeserializeItemsDefaultMessage() {
+		public void TryDeserializeItemsDefaultMessage()
+		{
+			Assert.Throws<ArgumentNullException>(() => Decorator.Deserializer.TryDeserializeItems(typeof(TestMessage), default, out var _));
+		}
+
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", "HandlerDeserialization")]
+		public void NeedsAttributesType()
+		{
+			Assert.False(
+				Decorator.Deserializer.TryDeserializeItem(typeof(NeedsAttribute), new BasicMessage("wew lad", "there be humans"), out var _)
+			);
+		}
+
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", "HandlerDeserialization")]
+		public void TryDeserializeItemDefaultsType()
+		{
+			Assert.Throws<ArgumentNullException>(() => Decorator.Deserializer.TryDeserializeItem(typeof(TestMessage), default, out var _));
+		}
+
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", "HandlerDeserialization")]
+		public void TryDeserializeItemsDefaultsType()
+		{
 			Assert.Throws<ArgumentNullException>(() => Decorator.Deserializer.TryDeserializeItems(typeof(TestMessage), default, out var _));
 		}
 	}

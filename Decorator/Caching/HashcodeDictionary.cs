@@ -5,17 +5,6 @@ namespace Decorator.Caching
 {
 	internal class HashcodeDictionary<TKey, TValue> : IHashcodeDictionary<TKey, TValue>
 	{
-		public HashcodeDictionary(Dictionary<TKey, TValue> dict) : this()
-		{
-			foreach (var i in dict)
-			{
-				var hc = i.Key.GetHashCode();
-
-				Dictionary[hc] = i.Value;
-				DictionaryKeys[hc] = i.Key;
-			}
-		}
-
 		public HashcodeDictionary()
 		{
 			Dictionary = new ResizingArray<TValue>();

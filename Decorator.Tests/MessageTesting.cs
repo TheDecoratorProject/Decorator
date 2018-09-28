@@ -47,7 +47,7 @@ namespace Decorator.Tests {
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", nameof(MessageTesting))]
 		public void InequalByNull() {
-			var msg = new BasicMessage("test", 92, 0b1010);
+			var msg = new BasicMessage("test", 92);
 
 			Assert.False(msg.Equals(null));
 		}
@@ -55,7 +55,7 @@ namespace Decorator.Tests {
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", nameof(MessageTesting))]
 		public void InequalByArgumentsNull() {
-			var msg = new BasicMessage("test", 92, 0b1010);
+			var msg = new BasicMessage("test", 92);
 
 			Assert.False(msg.Equals(new BasicMessage("test", null)));
 		}
@@ -71,9 +71,40 @@ namespace Decorator.Tests {
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", nameof(MessageTesting))]
-		public void InequalByType() {
+		public void InequalByType()
+		{
 			var msg = new BasicMessage("test", 1);
 			var msg2 = new BasicMessage("tot", 1);
+
+			Assert.False(msg.Equals(msg2));
+		}
+
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", nameof(MessageTesting))]
+		public void InequalByParameterAmount()
+		{
+			var msg = new BasicMessage("test", 1);
+			var msg2 = new BasicMessage("test", 1, 2);
+
+			Assert.False(msg.Equals(msg2));
+		}
+
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", nameof(MessageTesting))]
+		public void InequalByNullArgs()
+		{
+			var msg = new BasicMessage("test", null);
+			var msg2 = new BasicMessage("test", 1);
+
+			Assert.False(msg.Equals(msg2));
+		}
+
+		[Fact, Trait("Project", "Decorator.Tests")]
+		[Trait("Category", nameof(MessageTesting))]
+		public void InequalByOthersNullArgs()
+		{
+			var msg = new BasicMessage("test", 1);
+			var msg2 = new BasicMessage("test", null);
 
 			Assert.False(msg.Equals(msg2));
 		}
@@ -88,7 +119,8 @@ namespace Decorator.Tests {
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", nameof(MessageTesting))]
-		public void TrueExecutesBaseEquals() {
+		public void TrueExecutesBaseEquals()
+		{
 			var msg = new BasicMessage("test", 992, 0b1010);
 			var msg2 = new BasicMessage("test", 992, 0b1010);
 

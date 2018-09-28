@@ -14,7 +14,6 @@
 		private int[] _keys;
 
 		public T[] Array => _array;
-		public int[] Keys => _keys;
 
 		public int Length => _counter;
 
@@ -45,15 +44,6 @@
 
 		public T this[int key]
 		{
-			get
-			{
-				for (int i = 0; i < _keys.Length; i++)
-				{
-					if (key == _keys[i]) return _array[i];
-				}
-
-				return default;
-			}
 			set => AddItem(key, value);
 		}
 
