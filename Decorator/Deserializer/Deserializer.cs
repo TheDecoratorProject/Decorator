@@ -84,7 +84,7 @@ namespace Decorator
 
 			if (def is null ||
 				!EnsureAttributesOn(m, def) ||
-				m.Count != def.MaxCount) return TryMethodHelpers.EndTryMethod(false, default, out result);
+				m.IntCount != def.IntMaxCount) return TryMethodHelpers.EndTryMethod(false, default, out result);
 
 			return TryDeserializeValue<TItem>(m, def, out result);
 		}
@@ -212,7 +212,7 @@ namespace Decorator
 
 		private static bool PropertyQualifies(MessageProperty prop, BaseMessage m)
 		{
-			if (!(m.Arguments.Length > prop.IntPos)) return false;
+			if (!(m.IntCount > prop.IntPos)) return false;
 
 			var item = m.Arguments[prop.IntPos];
 			if (item is null) return false;

@@ -6,6 +6,7 @@
 decorator-sig.snk
 
 *.json
+!xunit.runner.json
 *.sh
 *.xml
 *.bat
