@@ -1,5 +1,7 @@
 using Decorator.Attributes;
+
 using System.Collections.Generic;
+
 using Xunit;
 using Xunit.Abstractions;
 
@@ -7,7 +9,10 @@ namespace Decorator.Tests
 {
 	public class MessageInfo : IXunitSerializable
 	{
-		public MessageInfo() { }
+		public MessageInfo()
+		{
+		}
+
 		public MessageInfo(bool result, string type, object[] args)
 		{
 			ExpectedResult = result;
@@ -15,7 +20,7 @@ namespace Decorator.Tests
 			Arguments = args;
 		}
 
-		public bool ExpectedResult { get; set;  }
+		public bool ExpectedResult { get; set; }
 		public string Type { get; set; }
 		public object[] Arguments { get; set; }
 
@@ -33,15 +38,13 @@ namespace Decorator.Tests
 			info.AddValue(nameof(Arguments), Arguments);
 		}
 
-		public static MessageInfo Make()
-		{
-			return new MessageInfo();
-		}
+		public static MessageInfo Make() => new MessageInfo();
 	}
 
 	public class TestDeserializeChecking
 	{
 		#region TestMessage
+
 		public const string TESTMESSAGE_TYPE = "test";
 
 		[Message(TESTMESSAGE_TYPE)]
@@ -71,13 +74,14 @@ namespace Decorator.Tests
 			yield return new object[] { new MessageInfo(false, null, new object[] { "(in)valid message", 1234 }) };
 			yield return new object[] { new MessageInfo(true, TESTMESSAGE_TYPE, new object[] { "valid message", 1234 }) };
 		}
-		#endregion
+
+		#endregion TestMessage
 
 		#region NullMessage
+
 		[Message(null)]
 		public class NullMessage
 		{
-
 		}
 
 		[Theory, Trait("Category", nameof(TestDeserializeChecking))]
@@ -96,9 +100,11 @@ namespace Decorator.Tests
 			yield return new object[] { new MessageInfo(true, null, new object[] { }) };
 			yield return new object[] { new MessageInfo(true, null, null) };
 		}
-		#endregion
+
+		#endregion NullMessage
 
 		#region OptionalMessage
+
 		public const string OPTIONAL_TYPE = "opt";
 
 		[Message(OPTIONAL_TYPE)]
@@ -112,7 +118,7 @@ namespace Decorator.Tests
 		[MemberData(nameof(GetOptionalMessageDeserializationValues))]
 		public void OptionalMessageDeserialization(MessageInfo messageInfo)
 			=> Assert.Equal(messageInfo.ExpectedResult, Deserializer.TryDeserializeItem<OptionalMessage>(new BasicMessage(messageInfo.Type, messageInfo.Arguments), out _));
-		
+
 		public static IEnumerable<object[]> GetOptionalMessageDeserializationValues()
 		{
 			yield return new object[] { new MessageInfo(false, OPTIONAL_TYPE, new object[] { }) };
@@ -124,7 +130,7 @@ namespace Decorator.Tests
 			yield return new object[] { new MessageInfo(true, OPTIONAL_TYPE, new object[] { 1234 }) };
 			yield return new object[] { new MessageInfo(true, OPTIONAL_TYPE, new object[] { 3f }) };
 		}
-		#endregion
+
+		#endregion OptionalMessage
 	}
 }
- 
