@@ -38,7 +38,7 @@ namespace Decorator.Caching
 			var arr1 = Dictionary.Array;
 			var arr2 = DictionaryKeys.Array;
 
-			for (int i = 0; i < Dictionary.Length; i++)
+			for (var i = 0; i < Dictionary.Length; i++)
 			{
 				yield return new KeyValuePair<TKey, TValue>(
 						arr2[i],

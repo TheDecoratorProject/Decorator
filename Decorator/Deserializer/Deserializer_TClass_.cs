@@ -68,7 +68,7 @@ namespace Decorator
 		{
 			var res = new T[objs.Length];
 
-			for (int i = 0; i < objs.Length; i++)
+			for (var i = 0; i < objs.Length; i++)
 				res[i] = (T)objs[i];
 
 			return res;

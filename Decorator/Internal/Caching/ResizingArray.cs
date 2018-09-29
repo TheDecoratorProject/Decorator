@@ -6,30 +6,29 @@
 		{
 			_array = new T[size];
 			_keys = new int[size];
-			_counter = 0;
+			Length = 0;
 		}
 
-		private int _counter;
 		private T[] _array;
 		private int[] _keys;
 
 		public T[] Array => _array;
 
-		public int Length => _counter;
+		public int Length { get; private set; }
 
 		public void AddItem(int key, T item)
 		{
-			if (_array.Length >= _counter) ResizeArray();
+			if (_array.Length >= Length) ResizeArray();
 
-			_array[_counter] = item;
-			_keys[_counter] = key;
+			_array[Length] = item;
+			_keys[Length] = key;
 
-			_counter++;
+			Length++;
 		}
 
 		public bool TryGetValue(int key, out T item)
 		{
-			for (int i = 0; i < _keys.Length; i++)
+			for (var i = 0x0; i < _keys.Length; i++)
 			{
 				if (key == _keys[i])
 				{

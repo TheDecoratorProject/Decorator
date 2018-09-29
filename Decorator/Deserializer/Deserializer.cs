@@ -185,8 +185,7 @@ namespace Decorator
 
 			foreach (var i in def.Properties)
 				if (PropertyQualifies(i, m)) i.Set(instance, m.Arguments[i.IntPos]);
-				else if (i.State == TypeRequiredness.Optional) continue;
-				else return TryMethodHelpers.EndTryMethod(false, default, out result);
+				else if (i.State != TypeRequiredness.Optional) return TryMethodHelpers.EndTryMethod(false, default, out result);
 
 			return TryMethodHelpers.EndTryMethod(true, (T)instance, out result);
 		}
@@ -212,8 +211,14 @@ namespace Decorator
 		}
 
 		private static bool PropertyQualifies(MessageProperty prop, BaseMessage m)
-			=> m.Arguments.Length > prop.IntPos &&
-				prop.PropertyInfo.PropertyType == m.Arguments[prop.Position]?.GetType();
+		{
+			if (!(m.Arguments.Length > prop.IntPos)) return false;
+
+			var item = m.Arguments[prop.IntPos];
+			if (item is null) return false;
+
+			return prop.Type == item.GetType();
+		}
 
 		private static bool EnsureAttributesOn(BaseMessage m, MessageDefinition def)
 			=> m.Type == def.Type;

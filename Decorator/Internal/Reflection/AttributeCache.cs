@@ -9,7 +9,7 @@ namespace Decorator
 	internal static class AttributeCache<T>
 		where T : Attribute
 	{
-		private static ConcurrentHashcodeDictionary<MemberInfo, T[]> _memberInfoCache = new ConcurrentHashcodeDictionary<MemberInfo, T[]>();
+		private static readonly ConcurrentHashcodeDictionary<MemberInfo, T[]> _memberInfoCache = new ConcurrentHashcodeDictionary<MemberInfo, T[]>();
 
 		public static bool TryHasAttribute(MemberInfo member, out T[] result)
 		{

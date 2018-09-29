@@ -49,6 +49,9 @@ namespace Decorator
 			_propSetRaw = PropertyInfo.GetSetMethodByExpression();
 			_propGetRaw = PropertyInfo.GetGetMethod().ILWrap();
 
+			Type = propInf.PropertyType;
+			TypeHashcode = Type.GetHashCode();
+
 			IntPos = (int)Position;
 		}
 
@@ -57,6 +60,8 @@ namespace Decorator
 		public TypeRequiredness State;
 
 		public PropertyInfo PropertyInfo;
+		public Type Type;
+		public int TypeHashcode;
 
 		internal int IntPos;
 

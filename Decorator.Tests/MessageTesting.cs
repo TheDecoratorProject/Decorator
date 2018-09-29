@@ -8,7 +8,7 @@ namespace Decorator.Tests
 		[Trait("Category", nameof(MessageTesting))]
 		public void GetsArgument()
 		{
-			var at = 2;
+			const int at = 2;
 
 			var msg = new BasicMessage("test", 1, at, 3);
 
