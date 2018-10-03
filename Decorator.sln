@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decorator.Tests", "Decorato
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decorator.Benchmarks", "Decorator.Benchmarks\Decorator.Benchmarks.csproj", "{7BBC2064-7985-4E00-8163-5B785B419DE4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1333659F-B022-47D4-8A65-A650DF466B00}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decorator.Demo", "Decorator.Demo\Decorator.Demo.csproj", "{C2B9A8D5-F5A9-4431-8A52-67589545EC7F}"
 EndProject
 Global
