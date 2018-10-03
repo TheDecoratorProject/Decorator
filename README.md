@@ -10,7 +10,7 @@ Decorate classes with attributes and serialize object arrays into a concrete cla
 PM> Package-Install SirJosh3917.Decorator
 ```
 
-# Code please!
+## Deserialization
 
 Create a message type.
 
@@ -26,90 +26,52 @@ public class PingMessage {
 Deserialize an `object[]` to this class.
 
 ```cs
-object[] array = new object[] { DateTime.UtcNow }
+dateTime time = DateTime.UtcNow;
+object[] array = new object[] { time }
 
-PingMessage deserialized = Deserializer.Deserialize<PingMessage>(new BasicMessage("ping", array));
+PingMessage deserialized = null;
 
-Assert.Equal(array[0], deserialized.ReplyTime);
-```
-
-## Deserialization and passing to a method
-
-Deserialize a message to a method.
-
-```cs
-[Message("a")]
-public class MessageA {
-    [Position(0), Required]
-    public string Value { get; set; }
-}
-
-[Message("b")]
-public class MessageB {
-    [Position(0), Required]
-    public string Value { get; set; }
-}
-
-public class HandleIncomingMessages {
-    [DeserializedHandler]
-    public void HandleMessageAs(MessageA msg) {
-        Console.WriteLine($"A - {msg.Value}");
-    }
-    
-    [DeserializedHandler]
-    public void HandleMessageBs(MessageB msg) {
-        Console.WriteLine($"B - {msg.Value}");
-    }
-}
-
-HandleIncomingMessages instance = new HandleIncomingMessages();
-
-Deserializer<HandleIncomingMessages>.DeserializeMessageToMethod(instance, new BasicMessage("b", "Hello, "));
-Deserializer<HandleIncomingMessages>.DeserializeMessageToMethod(instance, new BasicMessage("a", "World!"));
-
-//At the moment, static isn't handled properly
-```
-
-## Deserialization into an enumerable and passing to a method
-
-For receiving multiple instances of the same message, add the `Repeatable` attribute.
-
-```cs
-[Message("chat"), Repeatable]
-public class Chat {
-    [Position(0), Required]
-    public string Message { get; set; }
-}
-
-IEnumerable<Chat> chats = Deserializer.DeserializeRepeats<Chat>(new BasicMessage("chat", "These", "Are", "Multiple", "Messages!"));
-foreach(var i in chats) {
-    Console.WriteLine(i.Message);
-}
+Deserializer.TryDeserializeItem<PingMessage>(new BasicMessage("ping", array), out deserialized);
+// deserialized.ReplyTime contains now the value from time
 ```
 
 ## Serialization
 
+### For a single class instance
+
+Create a message type.
 ```cs
 [Message("chat"), Repeatable]
 public class Chat {
     [Position(0), Required]
     public string Message { get; set; }
 }
+```
 
-BaseMessage msg = Serializer.Serialize<Chat>(new Chat {
+
+Serialize into a BaseMessage. ``BaseMessage.Arguments`` is an ``object[]``. Its content would be ``object[] {"Test!"}``.
+
+```cs
+BaseMessage msg = Serializer.SerializeItem<Chat>(new Chat {
     Message = "Test!"
 });
+```
 
-// msg.Arguments is an object[] { "Test!" }
+### For multiple class instances of the same type
 
-// you can also serialize multiple
-BaseMessage msg = Serializer.Serialize<Chat>(new Chat[] {
+Create an Enumerable of messages.
+```cs
+var messages = new Chat[] {
     new Chat { Message = "Test!" },
     new Chat { Message = "Multiple" },
     new Chat { Message = "Things!" },
-});
+}
+```
 
-// msg.Arguments is an object[] { "Test!", "Multiple", "Things!" }
+Serialize into a BaseMessage. ``BaseMessage.Arguments`` is an ``object[]``. Its content would be ``object[] { "Test!", "Multiple", "Things!" }``
+
+```cs
+BaseMessage msg = Serializer.SerializeItems<Chat>(messages);
 ```
 
 ## Optional
@@ -123,21 +85,19 @@ public class Example {
     public string Value { get; set; }
 }
 
-Example exmp = Deserializer.Deserialize<Example>(new BasicMessage("test"));
+Example exmp = null;
 
-//the above line of code will throw an exception, the message count must be 1
+Deserializer.TryDeserializeItem<Example>(new BasicMessage("test"), out exmp);
+// the above line of code will throw an exception, the message count must be 1
 
-Example exmp = Deserializer.Deserialize<Example>(new BasicMessage("test", null));
+Deserializer.TryDeserializeItem<Example>(new BasicMessage("test", null), out exmp);
+// exmp.Value is 'default(string)', a.k.a. 'null'
 
-//exmp.Value is 'default(string)', a.k.a. 'null'
+Deserializer.TryDeserializeItem<Example>(new BasicMessage("test", 1929495), out exmp);
+// exmp.Value is 'default(string)', a.k.a. 'null'
 
-Example exmp = Deserializer.Deserialize<Example>(new BasicMessage("test", 1929495));
-
-//exmp.Value is 'default(string)', a.k.a. 'null'
-
-Example exmp = Deserializer.Deserialize<Example>(new BasicMessage("test", "value"));
-
-//exmp.Value is "value"
+Deserializer.TryDeserializeItem<Example>(new BasicMessage("test", "value"), out exmp);
+// exmp.Value is "value"
 ```
 
 ## Position

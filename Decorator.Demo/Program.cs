@@ -1,4 +1,4 @@
-﻿namespace Decorator.Tester
+﻿namespace Decorator.Demo
 {
 	internal static class Program
 	{

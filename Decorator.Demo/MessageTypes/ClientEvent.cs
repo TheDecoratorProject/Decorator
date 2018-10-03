@@ -1,6 +1,6 @@
 using Decorator.Attributes;
 
-namespace Decorator.Tester
+namespace Decorator.Demo
 {
 	public class ClientEvent : ClientExistsEvent
 	{

@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Decorator.Tests
 {
-	public class SerializeTests
+	public sealed class SerializationTests
 	{
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "CanSerialize")]

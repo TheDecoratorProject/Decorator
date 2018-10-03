@@ -1,6 +1,6 @@
 using Decorator.Attributes;
 
-namespace Decorator.Tester.MessageTypes
+namespace Decorator.Demo.MessageTypes
 {
 	[Message("chat")]
 	public class Chat

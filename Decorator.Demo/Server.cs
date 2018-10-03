@@ -1,9 +1,9 @@
 using Decorator.Attributes;
-using Decorator.Tester.MessageTypes;
+using Decorator.Demo.MessageTypes;
 
 using System.Collections.Generic;
 
-namespace Decorator.Tester
+namespace Decorator.Demo
 {
 	public class Server
 	{
