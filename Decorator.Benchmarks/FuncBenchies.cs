@@ -13,9 +13,9 @@ namespace Decorator.Benchmarks
 	/// CONCLUSION:
 	/// IL is faster then Expressions.
 	/// </summary>
-	public class FuncBenches
+	public class FuncBenchies
 	{
-		private MethodInfo method => typeof(FuncBenches).GetMethod("Method");
+		private MethodInfo method => typeof(FuncBenchies).GetMethod("Method");
 
 		private Func<object, object[], object> _invoker;
 		private Func<object, object[], object> _thing;

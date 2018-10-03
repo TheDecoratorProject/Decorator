@@ -21,10 +21,10 @@ namespace Decorator
 
 			if (def is null) throw new MissingAttributeException(typeof(MessageAttribute), typeof(TClass));
 
-			var data = new object[def.MaxCount];
+			var data = new object[def.Properties.Length];
 
 			foreach (var i in def.Properties)
-				data[(int)i.Position] = i.Get(itm);
+				data[i.PositionInt] = i.Get(itm);
 
 			return new BasicMessage(def.Type, data);
 		}
@@ -41,13 +41,11 @@ namespace Decorator
 
 			var itms = items.ToArray();
 
-			var objs = new object[itms.Length * def.MaxCount];
-
-			if (objs.Length == 0) return new BasicMessage(def.Type);
+			var objs = new object[itms.Length * def.Properties.Length];
 
 			for (var i = 0; i < itms.Length; i++)
 				foreach (var j in def.Properties)
-					objs[(i * def.MaxCount) + (int)j.Position] = j.Get(itms[i]);
+					objs[(i * def.Properties.Length) + (int)j.Position] = j.Get(itms[i]);
 
 			return new BasicMessage(def.Type, objs);
 		}

@@ -66,7 +66,7 @@ namespace Decorator.Tests
 		{
 			yield return new object[] { new MessageInfo(false, TESTMESSAGE_TYPE, new object[] { }) };
 			yield return new object[] { new MessageInfo(false, TESTMESSAGE_TYPE, new object[] { "too short" }) };
-			yield return new object[] { new MessageInfo(false, TESTMESSAGE_TYPE, new object[] { "too long", 1, "..." }) };
+			yield return new object[] { new MessageInfo(true, TESTMESSAGE_TYPE, new object[] { "too long", 1, "..." }) };
 			yield return new object[] { new MessageInfo(false, TESTMESSAGE_TYPE, new object[] { 1, "incorrect types" }) };
 			yield return new object[] { new MessageInfo(false, TESTMESSAGE_TYPE, new object[] { null, null }) };
 			yield return new object[] { new MessageInfo(false, TESTMESSAGE_TYPE, new object[] { null, 100 }) };
@@ -95,8 +95,8 @@ namespace Decorator.Tests
 			yield return new object[] { new MessageInfo(false, "", new object[] { null }) };
 			yield return new object[] { new MessageInfo(false, "", new object[] { }) };
 			yield return new object[] { new MessageInfo(false, "", null) };
-			yield return new object[] { new MessageInfo(false, null, new object[] { "" }) };
-			yield return new object[] { new MessageInfo(false, null, new object[] { null }) };
+			yield return new object[] { new MessageInfo(true, null, new object[] { "" }) };
+			yield return new object[] { new MessageInfo(true, null, new object[] { null }) };
 			yield return new object[] { new MessageInfo(true, null, new object[] { }) };
 			yield return new object[] { new MessageInfo(true, null, null) };
 		}
@@ -121,9 +121,9 @@ namespace Decorator.Tests
 
 		public static IEnumerable<object[]> GetOptionalMessageDeserializationValues()
 		{
-			yield return new object[] { new MessageInfo(false, OPTIONAL_TYPE, new object[] { }) };
-			yield return new object[] { new MessageInfo(false, OPTIONAL_TYPE, new object[] { null, null }) };
-			yield return new object[] { new MessageInfo(false, OPTIONAL_TYPE, new object[] { 1010, 1100 }) };
+			yield return new object[] { new MessageInfo(true, OPTIONAL_TYPE, new object[] { }) };
+			yield return new object[] { new MessageInfo(true, OPTIONAL_TYPE, new object[] { null, null }) };
+			yield return new object[] { new MessageInfo(true, OPTIONAL_TYPE, new object[] { 1010, 1100 }) };
 			yield return new object[] { new MessageInfo(false, $"n{OPTIONAL_TYPE}", new object[] { 1234 }) };
 			yield return new object[] { new MessageInfo(true, OPTIONAL_TYPE, new object[] { null }) };
 			yield return new object[] { new MessageInfo(true, OPTIONAL_TYPE, new object[] { "invalid type" }) };
@@ -132,5 +132,46 @@ namespace Decorator.Tests
 		}
 
 		#endregion OptionalMessage
+
+		#region OptionalsShouldBeSkipped
+		public const string OSBS_TYPE = "osbs";
+
+		[Message(OSBS_TYPE)]
+		public class OptionalsShouldBeSkipped
+		{
+			[Position(0), Required]
+			public string RequiredString { get; set; }
+
+			[Position(1), Optional]
+			public int OptionalValue { get; set; }
+
+			[Position(2), Required]
+			public string AnotherRequiredString { get; set; }
+
+			[Position(3), Optional]
+			public int UhgAnother { get; set; }
+
+			[Position(4), Optional]
+			public int YetAnotherOptionalValue { get; set; }
+
+			[Position(5), Required]
+			public string AlasAnotherRequiredString { get; set; }
+		}
+
+		[Theory, Trait("Category", nameof(TestDeserializeChecking))]
+		[MemberData(nameof(OptionalsShouldBeSkippedDeserializationValues))]
+		public void OptionalsShouldBeSkippedDeserialization(MessageInfo messageInfo)
+			=> Assert.Equal(messageInfo.ExpectedResult, Deserializer.TryDeserializeItem<OptionalsShouldBeSkipped>(new BasicMessage(messageInfo.Type, messageInfo.Arguments), out _));
+
+		public static IEnumerable<object[]> OptionalsShouldBeSkippedDeserializationValues()
+		{
+			yield return new object[] { new MessageInfo(false, OSBS_TYPE, new object[] { null, null, null, null, null, null }) };
+			yield return new object[] { new MessageInfo(true, OSBS_TYPE, new object[] { "", "", "", "", "", "" }) };
+			yield return new object[] { new MessageInfo(true, OSBS_TYPE, new object[] { "", 1, "", 1, 1, "" }) };
+			yield return new object[] { new MessageInfo(false, OSBS_TYPE, new object[] { 1, 1, "", 1, 1, "" }) };
+			yield return new object[] { new MessageInfo(true, OSBS_TYPE, new object[] { "", "", "", 1, 1, "" }) };
+		}
+
+		#endregion
 	}
 }

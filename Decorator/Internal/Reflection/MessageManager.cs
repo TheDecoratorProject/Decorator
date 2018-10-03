@@ -73,28 +73,18 @@ namespace Decorator
 			return msgDef;
 		}
 
-		private static bool HandleItem(PropertyInfo i, out MessageProperty prop)
+		private static bool HandleItem(PropertyInfo property, out MessageProperty msgProperty)
 		{
-			if (AttributeCache<PositionAttribute>.TryHasAttribute(i, out var posAttrib))
+			if (AttributeCache<PositionAttribute>.TryHasAttribute(property, out var posAttrib))
 			{
-				var required = AttributeCache<RequiredAttribute>.TryHasAttribute(i, out var _);
-				var optional = AttributeCache<OptionalAttribute>.TryHasAttribute(i, out var _);
-
-				if (!required && !optional)
-					required = true;
-				else if (optional)
-					required = false;
-
-				prop = new MessageProperty(
+				return Helpers.TryMethodHelpers.EndTryMethod<MessageProperty>(true, 
+				 new MessageProperty(
 						posAttrib[0].Position,
-						required,
-						i
-					);
-				return true;
+						property
+					), out msgProperty);
 			}
 
-			prop = default;
-			return false;
+			return Helpers.TryMethodHelpers.EndTryMethod<MessageProperty>(false, default, out msgProperty);
 		}
 	}
 }

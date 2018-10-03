@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Decorator.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -11,27 +12,21 @@ namespace Decorator
 		{
 			Repeatable = rep;
 			Type = type;
-			Properties = props.ToArray();
+			Properties = props
+				.OrderBy(x => x.Position)
+				.ToArray();
 
-			uint maxPos = 0;
-			foreach (var i in Properties)
-				if (i.Position >= (maxPos > 0 ? maxPos - 1 : 0))
-					maxPos = i.Position + 1;
-
-			MaxCount = maxPos;
-			IntMaxCount = (int)MaxCount;
+			if(Properties.Length > 0)
+				MaximumSize = Properties[Properties.Length - 1].PositionInt;
 		}
 
 		public string Type;
 		public MessageProperty[] Properties;
-		public uint MaxCount;
-
+		public int MaximumSize;
 		public bool Repeatable;
-
-		internal int IntMaxCount;
 	}
 
-	internal enum TypeRequiredness
+	internal enum TypeTreatment
 	{
 		Required,
 
@@ -40,30 +35,40 @@ namespace Decorator
 
 	internal class MessageProperty
 	{
-		public MessageProperty(uint pos, bool req, PropertyInfo propInf)
+		public MessageProperty(uint pos, PropertyInfo property)
 		{
 			Position = pos;
-			State = req ? TypeRequiredness.Required : TypeRequiredness.Optional;
-			PropertyInfo = propInf;
+			PositionInt = (int)pos;
 
+			// if it has [Optional], it's optional
+			Treatment = AttributeCache<OptionalAttribute>.HasAttribute(property) ?
+						TypeTreatment.Optional
+
+			// it doesn't matter if it has [Required] or doesn't, it's required.
+						: TypeTreatment.Required;
+			
+			PropertyInfo = property;
+
+			Flatten = AttributeCache<FlattenAttribute>.HasAttribute(property);
+
+			Type = property.PropertyType;
+			TypeHashcode = Type.GetHashCode();
+			
 			_propSetRaw = PropertyInfo.GetSetMethodByExpression();
 			_propGetRaw = PropertyInfo.GetGetMethod().ILWrap();
-
-			Type = propInf.PropertyType;
-			TypeHashcode = Type.GetHashCode();
-
-			IntPos = (int)Position;
 		}
 
 		public uint Position;
+		internal int PositionInt;
 
-		public TypeRequiredness State;
+		public TypeTreatment Treatment;
 
 		public PropertyInfo PropertyInfo;
+
+		public bool Flatten;
+
 		public Type Type;
 		public int TypeHashcode;
-
-		internal int IntPos;
 
 		private readonly Action<object, object> _propSetRaw;
 		private readonly ILFunc _propGetRaw;

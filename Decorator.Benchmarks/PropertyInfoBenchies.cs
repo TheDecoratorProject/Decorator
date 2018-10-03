@@ -13,78 +13,59 @@ namespace Decorator.Benchmarks
 	/// </summary>
 	public class PropertyInfoBenchies
 	{
-		public int TestProperty { get; set; }
-		private PropertyInfo prop;
-		private readonly MethodInfo setMethod;
+		public int TestingProperty { get; set; }
 
-		private readonly Action<object, object> expressSet;
-		private readonly Func<object, object[], object> ilSet;
+		private PropertyInfo _property;
+		private readonly MethodInfo _propertySetMethod;
 
-		private readonly Action<object, object> ilsetA;
+		private readonly Action<object, object> _expressionSet;
+		private readonly Func<object, object[], object> _ilwrapSet;
+		private readonly Action<object, object> _ilsetSet;
 
-		private readonly object[] data = new object[] { 1234 };
-		private readonly int _data = 1234;
+		private readonly object[] _ilwrapDataCache = new object[] { 1234 };
+		private readonly int _ilsetDataCache = 1234;
 
 		public PropertyInfoBenchies()
 		{
-			prop = typeof(PropertyInfoBenchies).GetProperty(nameof(TestProperty));
-			setMethod = prop.GetSetMethod();
-			/*
-			expressSet = GetSetMethodByExpression(prop, setMethod);*/
-			ilSet = ILWrap(setMethod);
-			ilsetA = ILSet(setMethod);
+			_property = typeof(PropertyInfoBenchies).GetProperty(nameof(TestingProperty));
+			_propertySetMethod = _property.GetSetMethod();
 
-			TestProperty = 1;
-			ilsetA(this, 20);
-
-			Console.WriteLine(TestProperty);
+			_expressionSet = GetSetMethodByExpression(_property, _propertySetMethod);
+			_ilwrapSet = ILWrap(_propertySetMethod);
+			_ilsetSet = ILSet(_propertySetMethod);
 		}
 
 		[Benchmark]
-		public Action<object, object> GenerateExpression() => GetSetMethodByExpression(prop, setMethod);
+		public Action<object, object> GenerateExpression() => GetSetMethodByExpression(_property, _propertySetMethod);
 
 		[Benchmark]
-		public Func<object, object[], object> GenerateIL() => ILWrap(setMethod);
+		public Func<object, object[], object> GenerateILWrap() => ILWrap(_propertySetMethod);
 
 		[Benchmark]
-		public Action<object, object> GenerateSetAction() => ILSet(setMethod);
+		public Action<object, object> GenerateILSet() => ILSet(_propertySetMethod);
 
 		[Benchmark]
-		public void ExpressionSet() => expressSet(this, 1234);
+		public void CallExpression() => _expressionSet(this, 1234);
 
 		[Benchmark]
-		public void ILSetWithAllocation() => ilSet(this, new object[] { 1234 });
+		public void CallILWrapUncached() => _ilwrapSet(this, new object[] { 1234 });
 
 		[Benchmark]
-		public void ILSet() => ilSet(this, data);
+		public void CallILWrap() => _ilwrapSet(this, _ilwrapDataCache);
 
 		[Benchmark]
-		public void PropILSet() => ilsetA(this, _data);
+		public void CallILSet() => _ilsetSet(this, _ilsetDataCache);
 
-		public static Action<object, object> ILSet(MethodInfo prop)
+		public static Action<object, object> GetSetMethodByExpression(PropertyInfo propertyInfo, MethodInfo setMethodInfo)
 		{
-			var dm = new DynamicMethod(prop.Name, null, new Type[] {
-				typeof(object), typeof(object)
-			}, prop.DeclaringType, true);
+			var _obj = typeof(object);
 
-			var il = dm.GetILGenerator();
+			var instance = Expression.Parameter(_obj, "instance");
+			var value = Expression.Parameter(_obj, "value");
+			var instanceCast = (!(propertyInfo.DeclaringType).GetTypeInfo().IsValueType) ? Expression.TypeAs(instance, propertyInfo.DeclaringType) : Expression.Convert(instance, propertyInfo.DeclaringType);
+			var valueCast = (!(propertyInfo.PropertyType).GetTypeInfo().IsValueType) ? Expression.TypeAs(value, propertyInfo.PropertyType) : Expression.Convert(value, propertyInfo.PropertyType);
 
-			il.Emit(OpCodes.Ldarg_0);
-
-			il.Emit(OpCodes.Ldarg_1);
-			il.Emit(OpCodes.Unbox_Any, prop.GetParameters()[0].ParameterType);
-
-			il.EmitCall(
-				prop.IsStatic || prop.DeclaringType.IsValueType ?
-					OpCodes.Call
-					: OpCodes.Callvirt,
-
-				prop,
-				null);
-
-			il.Emit(OpCodes.Ret);
-
-			return (Action<object, object>)dm.CreateDelegate(typeof(Action<object, object>));
+			return Expression.Lambda<Action<object, object>>(Expression.Call(instanceCast, setMethodInfo, valueCast), new ParameterExpression[] { instance, value }).Compile();
 		}
 
 		public static Func<object, object[], object> ILWrap(MethodInfo method)
@@ -121,16 +102,30 @@ namespace Decorator.Benchmarks
 			return (Func<object, object[], object>)dm.CreateDelegate(typeof(Func<object, object[], object>));
 		}
 
-		public static Action<object, object> GetSetMethodByExpression(PropertyInfo propertyInfo, MethodInfo setMethodInfo)
+		public static Action<object, object> ILSet(MethodInfo prop)
 		{
-			var _obj = typeof(object);
+			var dm = new DynamicMethod(prop.Name, null, new Type[] {
+				typeof(object), typeof(object)
+			}, prop.DeclaringType, true);
 
-			var instance = Expression.Parameter(_obj, "instance");
-			var value = Expression.Parameter(_obj, "value");
-			var instanceCast = (!(propertyInfo.DeclaringType).GetTypeInfo().IsValueType) ? Expression.TypeAs(instance, propertyInfo.DeclaringType) : Expression.Convert(instance, propertyInfo.DeclaringType);
-			var valueCast = (!(propertyInfo.PropertyType).GetTypeInfo().IsValueType) ? Expression.TypeAs(value, propertyInfo.PropertyType) : Expression.Convert(value, propertyInfo.PropertyType);
+			var il = dm.GetILGenerator();
 
-			return Expression.Lambda<Action<object, object>>(Expression.Call(instanceCast, setMethodInfo, valueCast), new ParameterExpression[] { instance, value }).Compile();
+			il.Emit(OpCodes.Ldarg_0);
+
+			il.Emit(OpCodes.Ldarg_1);
+			il.Emit(OpCodes.Unbox_Any, prop.GetParameters()[0].ParameterType);
+
+			il.EmitCall(
+				prop.IsStatic || prop.DeclaringType.IsValueType ?
+					OpCodes.Call
+					: OpCodes.Callvirt,
+
+				prop,
+				null);
+
+			il.Emit(OpCodes.Ret);
+
+			return (Action<object, object>)dm.CreateDelegate(typeof(Action<object, object>));
 		}
 	}
 }

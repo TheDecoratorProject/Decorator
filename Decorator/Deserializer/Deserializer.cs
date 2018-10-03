@@ -1,6 +1,7 @@
 ﻿using Decorator.Helpers;
 
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Decorator
@@ -83,8 +84,7 @@ namespace Decorator
 			var def = MessageManager.GetDefinitionFor<TItem>();
 
 			if (def is null ||
-				!EnsureAttributesOn(m, def) ||
-				m.IntCount != def.IntMaxCount) return TryMethodHelpers.EndTryMethod(false, default, out result);
+				!EnsureAttributesOn(m, def)) return TryMethodHelpers.EndTryMethod(false, default, out result);
 
 			return TryDeserializeValue<TItem>(m, def, out result);
 		}
@@ -183,41 +183,78 @@ namespace Decorator
 			// prevent boxing calls
 			var instance = (object)InstanceOf<T>.Create();
 
-			foreach (var i in def.Properties)
-				if (PropertyQualifies(i, m)) i.Set(instance, m.Arguments[i.IntPos]);
-				else if (i.State != TypeRequiredness.Optional) return TryMethodHelpers.EndTryMethod(false, default, out result);
+			var lastPosAttrib = 0;
+			var position = 0;
 
+			foreach (var i in def.Properties)
+			{
+				var increase = i.PositionInt - lastPosAttrib;
+				position += increase;
+				lastPosAttrib = i.PositionInt;
+
+				if (i.Flatten)
+				{
+					var definition = MessageManager.GetDefinitionForType(i.Type);
+
+					var len = definition.MaximumSize;
+
+					//TODO: get the exact length, for now this is fine
+					var arrCpy = new object[len];
+
+					Array.Copy(m.Arguments, position, arrCpy, 0, len);
+
+					if (!TryDeserializeItem(i.Type, new BasicMessage(definition.Type, arrCpy), out var res))
+						return TryMethodHelpers.EndTryMethod(false, default, out result);
+
+					i.Set(instance, res);
+					position += len;
+				} else if (PropertyQualifies(i, m, position))
+				{
+					i.Set(instance, m.Arguments[position]);
+				}
+				else if (i.Treatment != TypeTreatment.Optional) return TryMethodHelpers.EndTryMethod(false, default, out result);
+			}
+
+			m._desSize = position + 1;
 			return TryMethodHelpers.EndTryMethod(true, (T)instance, out result);
 		}
 
 		private static bool TryDeserializeValues<T>(BaseMessage m, MessageDefinition def, out T[] result)
 		{
-			var max = m.Count / def.IntMaxCount;
+			var itms = new List<T>(m.IntCount);
 
-			var itms = new T[max];
+			var array = m.Arguments;
+			var bm = new BasicMessage(m.Type, array);
+			var _desSizeCounter = 0;
 
-			for (var i = 0; i < max; i++)
+			while (TryDeserializeValue<T>(bm, def, out var res))
 			{
-				var messageItems = new object[def.IntMaxCount];
+				itms.Add(res);
 
-				Array.Copy(m.Arguments, i * def.IntMaxCount, messageItems, 0, def.IntMaxCount);
+				_desSizeCounter += bm._desSize;
 
-				if (!TryDeserializeValue<T>(new BasicMessage(null, messageItems), def, out var item)) return TryMethodHelpers.EndTryMethod(false, default, out result);
+				var size = m.IntCount - _desSizeCounter;
+				array = new object[size];
+				Array.Copy(m.Arguments, _desSizeCounter, array, 0, size);
 
-				itms[i] = item;
+				bm = new BasicMessage(m.Type, array);
 			}
 
-			return TryMethodHelpers.EndTryMethod(true, itms, out result);
+			return array.Length > 0 ?
+						TryMethodHelpers.EndTryMethod<T[]>(false, default, out result)
+						: TryMethodHelpers.EndTryMethod<T[]>(true, itms.ToArray(), out result);
 		}
 
-		private static bool PropertyQualifies(MessageProperty prop, BaseMessage m)
+		private static bool PropertyQualifies(MessageProperty prop, BaseMessage m, int position)
 		{
-			if (!(m.IntCount > prop.IntPos)) return false;
+			if (position >= m.IntCount) return false;
 
-			var item = m.Arguments[prop.IntPos];
-			if (item is null) return false;
+			var item = m.Arguments[position];
 
-			return prop.Type == item.GetType();
+			return
+				item is null ?
+					false
+					: prop.Type == item.GetType();
 		}
 
 		private static bool EnsureAttributesOn(BaseMessage m, MessageDefinition def)

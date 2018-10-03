@@ -39,6 +39,8 @@ namespace Decorator
 			}
 		}
 
+		internal int _desSize;
+
 		/// <summary>Gets the <see cref="System.Object"/> at the specified index of <see cref="BaseMessage.Arguments"/>.</summary>
 		/// <value>The <see cref="System.Object"/>.</value>
 		/// <param name="index">The index.</param>

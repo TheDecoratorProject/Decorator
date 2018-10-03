@@ -22,6 +22,9 @@ namespace Decorator.Tests
         [DeserializedHandler]
         public void TestMessageHandler(TestMessage m)
         {
+			// ienumerable
+			if (m.PositionOneItem == 0) return;
+
             Assert.Equal(1337, m.PositionOneItem);
             Invoked = true;
             InvokedCount++;
@@ -29,8 +32,12 @@ namespace Decorator.Tests
 
         [DeserializedHandler]
         public void AnotherTestMessageHandler(TestMessage m)
-        {
-            Assert.Equal(1337, m.PositionOneItem);
+		{
+			// ienumerable
+			if (m.PositionOneItem == 0) return;
+
+
+			Assert.Equal(1337, m.PositionOneItem);
             Invoked = true;
             InvokedCount++;
         }
