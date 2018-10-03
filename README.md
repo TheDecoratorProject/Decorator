@@ -1,17 +1,18 @@
-# Decorator ![Nuget Version](https://img.shields.io/nuget/v/SirJosh3917.Decorator.svg) ![Nuget Downloads](https://img.shields.io/nuget/dt/SirJosh3917.Decorator.svg) [![Build status](https://ci.appveyor.com/api/projects/status/6ooio3rqlsbhs1q2?svg=true)](https://ci.appveyor.com/project/SirJosh3917/decorator) [![codecov](https://codecov.io/gh/SirJosh3917/Decorator/branch/master/graph/badge.svg)](https://codecov.io/gh/SirJosh3917/Decorator) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/43061e7f10a04bfd8dd91f185fc1303a)](https://www.codacy.com/app/SirJosh3917/Decorator?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=SirJosh3917/Decorator&amp;utm_campaign=Badge_Grade)
-Decorate classes with attributes and parse an array of objects and a string type into a class - forget about handling bad input forever.
+# Decorator
+
+Decorate classes with attributes and serialize object arrays into a concrete classes.
+
+![Nuget Version](https://img.shields.io/nuget/v/SirJosh3917.Decorator.svg) ![Nuget Downloads](https://img.shields.io/nuget/dt/SirJosh3917.Decorator.svg) 
+
+[![Build status](https://ci.appveyor.com/api/projects/status/6ooio3rqlsbhs1q2?svg=true)](https://ci.appveyor.com/project/SirJosh3917/decorator) [![codecov](https://codecov.io/gh/SirJosh3917/Decorator/branch/master/graph/badge.svg)](https://codecov.io/gh/SirJosh3917/Decorator) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/43061e7f10a04bfd8dd91f185fc1303a)](https://www.codacy.com/app/SirJosh3917/Decorator?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=SirJosh3917/Decorator&amp;utm_campaign=Badge_Grade)
 
 ```
 PM> Package-Install SirJosh3917.Decorator
 ```
 
-`Decorator` was taken :(
+# Code please!
 
-# Why?
-Decorator is useful for taking an `object[]` array and converting it into a class - it ensures type safety and prevents malformed user input from ever happening.
-
-# Show-me-the-code Tutorial
-First, we'll create our message type
+Create a message type.
 
 ```cs
 [Message("ping")]
@@ -22,7 +23,7 @@ public class PingMessage {
 }
 ```
 
-Then, let's deserialize an `object[]` to this class.
+Deserialize an `object[]` to this class.
 
 ```cs
 object[] array = new object[] { DateTime.UtcNow }
@@ -32,8 +33,9 @@ PingMessage deserialized = Deserializer.Deserialize<PingMessage>(new BasicMessag
 Assert.Equal(array[0], deserialized.ReplyTime);
 ```
 
-## Deserializing to methods
-Let's say you want to magically deserialize a message to a method, well this would be how you do it!
+## Deserialization and passing to a method
+
+Deserialize a message to a method.
 
 ```cs
 [Message("a")]
@@ -68,8 +70,9 @@ Deserializer<HandleIncomingMessages>.DeserializeMessageToMethod(instance, new Ba
 //At the moment, static isn't handled properly
 ```
 
-## Deserializing multiple messages in one message to a method
-If you want to be able to recieve multiple of the same message, throw a `Repeatable` attribute to recieve multiple of the message.
+## Deserialization into an enumerable and passing to a method
+
+For receiving multiple instances of the same message, add the `Repeatable` attribute.
 
 ```cs
 [Message("chat"), Repeatable]
@@ -84,8 +87,7 @@ foreach(var i in chats) {
 }
 ```
 
-## Serializing stuff
-Serializing is easier then deserialization, and it's simple enough.
+## Serialization
 
 ```cs
 [Message("chat"), Repeatable]
@@ -110,10 +112,9 @@ BaseMessage msg = Serializer.Serialize<Chat>(new Chat[] {
 // msg.Arguments is an object[] { "Test!", "Multiple", "Things!" }
 ```
 
-## Requiredness
+## Optional
 
-You may have seen the `[Required]` attribute on our properties. This is behaviour by default, and you don't need to speicfy it.
-There *is* an `[Optional]` attribute though, and you can use it to say that a message property doesn't *have* to be set.
+The `[Optional]` attribute, can be used to mark a property nonobligatory.
 
 ```cs
 [Message("test")]
@@ -141,7 +142,7 @@ Example exmp = Deserializer.Deserialize<Example>(new BasicMessage("test", "value
 
 ## Position
 
-`[Position(x)]` specifies what position the property is in the `object[]` array.
+`[Position(x)]` specifies which index in the `object[]` holds the corresponding value.
 
 ```cs
 [Message("example")]
@@ -168,3 +169,7 @@ BaseMessage bm = Serializer.Serialize<Example>(new Example {
 
 // bm.Arguments = new object[] { short.MaxValue, 1337, DateTime.UtcNow, "string" };
 ```
+
+## License
+
+[MIT License (MIT)](./LICENSE)
