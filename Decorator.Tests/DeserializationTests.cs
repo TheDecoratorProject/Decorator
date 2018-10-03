@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Decorator.Tests
 {
-	public class Deserialize
+	public sealed class DeserializationTests
 	{
 		private static void Verify(BaseMessage m, TestMessage t)
 		{

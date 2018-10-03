@@ -2,10 +2,10 @@
 
 namespace Decorator.Tests
 {
-	public class MessageTesting
+	public sealed class MessageTests
 	{
 		[Fact, Trait("Project", "Decorator.Tests")]
-		[Trait("Category", nameof(MessageTesting))]
+		[Trait("Category", nameof(MessageTests))]
 		public void GetsArgument()
 		{
 			const int at = 2;
@@ -16,7 +16,7 @@ namespace Decorator.Tests
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
-		[Trait("Category", nameof(MessageTesting))]
+		[Trait("Category", nameof(MessageTests))]
 		public void Hashcode()
 		{
 			var msg = new BasicMessage("test", 1);
@@ -27,7 +27,7 @@ namespace Decorator.Tests
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
-		[Trait("Category", nameof(MessageTesting))]
+		[Trait("Category", nameof(MessageTests))]
 		public void DoesDoEqualsCorrectly()
 		{
 			var msg = new BasicMessage("test", 992, 0b1010);
@@ -38,7 +38,7 @@ namespace Decorator.Tests
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
-		[Trait("Category", nameof(MessageTesting))]
+		[Trait("Category", nameof(MessageTests))]
 		public void DoesDoesntEqualsCorrectly1()
 		{
 			var msg = new BasicMessage("test", 92, 0b1010);
@@ -49,7 +49,7 @@ namespace Decorator.Tests
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
-		[Trait("Category", nameof(MessageTesting))]
+		[Trait("Category", nameof(MessageTests))]
 		public void InequalByNull()
 		{
 			var msg = new BasicMessage("test", 92);
@@ -58,7 +58,7 @@ namespace Decorator.Tests
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
-		[Trait("Category", nameof(MessageTesting))]
+		[Trait("Category", nameof(MessageTests))]
 		public void InequalByArgumentsNull()
 		{
 			var msg = new BasicMessage("test", 92);
@@ -67,7 +67,7 @@ namespace Decorator.Tests
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
-		[Trait("Category", nameof(MessageTesting))]
+		[Trait("Category", nameof(MessageTests))]
 		public void EqualsByReference()
 		{
 			var msg = new BasicMessage("test", 92, 0b1010);
@@ -77,7 +77,7 @@ namespace Decorator.Tests
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
-		[Trait("Category", nameof(MessageTesting))]
+		[Trait("Category", nameof(MessageTests))]
 		public void InequalByType()
 		{
 			var msg = new BasicMessage("test", 1);
@@ -87,7 +87,7 @@ namespace Decorator.Tests
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
-		[Trait("Category", nameof(MessageTesting))]
+		[Trait("Category", nameof(MessageTests))]
 		public void InequalByParameterAmount()
 		{
 			var msg = new BasicMessage("test", 1);
@@ -97,7 +97,7 @@ namespace Decorator.Tests
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
-		[Trait("Category", nameof(MessageTesting))]
+		[Trait("Category", nameof(MessageTests))]
 		public void InequalByNullArgs()
 		{
 			var msg = new BasicMessage("test", null);
@@ -107,7 +107,7 @@ namespace Decorator.Tests
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
-		[Trait("Category", nameof(MessageTesting))]
+		[Trait("Category", nameof(MessageTests))]
 		public void InequalByOthersNullArgs()
 		{
 			var msg = new BasicMessage("test", 1);
@@ -117,7 +117,7 @@ namespace Decorator.Tests
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
-		[Trait("Category", nameof(MessageTesting))]
+		[Trait("Category", nameof(MessageTests))]
 		public void FalseGenericObject()
 		{
 			var msg = new BasicMessage("test", 992, 0b1010);
@@ -126,7 +126,7 @@ namespace Decorator.Tests
 		}
 
 		[Fact, Trait("Project", "Decorator.Tests")]
-		[Trait("Category", nameof(MessageTesting))]
+		[Trait("Category", nameof(MessageTests))]
 		public void TrueExecutesBaseEquals()
 		{
 			var msg = new BasicMessage("test", 992, 0b1010);

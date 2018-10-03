@@ -1,6 +1,6 @@
 using Decorator.Attributes;
 
-namespace Decorator.Tester.MessageTypes
+namespace Decorator.Demo.MessageTypes
 {
 	[Message("sde")]
 	public class SafeDisconnectEvent

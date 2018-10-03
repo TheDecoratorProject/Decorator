@@ -1,6 +1,6 @@
 using Decorator.Attributes;
 
-namespace Decorator.Tester
+namespace Decorator.Demo
 {
 	[Message("init")]
 	public class InitEvent

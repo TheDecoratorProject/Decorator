@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Decorator.Tests
 {
-	public class DesHandlers
+	public sealed class DeserializationHandlerTests
 	{
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "HandlerDeserialization")]
