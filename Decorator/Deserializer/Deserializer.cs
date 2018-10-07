@@ -131,8 +131,7 @@ namespace Decorator
 			var def = MessageManager.GetDefinitionFor<TItem>();
 
 			if (def is null ||
-				!EnsureAttributesOn(m, def) ||
-				!def.Repeatable) return TryMethodHelpers.EndTryMethod(false, default, out result);
+				!EnsureAttributesOn(m, def)) return TryMethodHelpers.EndTryMethod(false, default, out result);
 
 			return TryDeserializeValues<TItem>(m, def, out result);
 		}
@@ -192,22 +191,27 @@ namespace Decorator
 				position += increase;
 				lastPosAttrib = i.PositionInt;
 
+				//TODO: put this flatten stuff in a function
 				if (i.Flatten)
 				{
 					var definition = MessageManager.GetDefinitionForType(i.Type);
+					if (definition is null) return TryMethodHelpers.EndTryMethod(false, default, out result);
 
-					var len = definition.MaximumSize;
+					var len = definition.MaximumSize + 1;
 
 					//TODO: get the exact length, for now this is fine
 					var arrCpy = new object[len];
 
+					if (m.IntCount < position + len) return TryMethodHelpers.EndTryMethod(false, default, out result);
+
 					Array.Copy(m.Arguments, position, arrCpy, 0, len);
 
+					//TODO: add generic TryDeserializeValue
 					if (!TryDeserializeItem(i.Type, new BasicMessage(definition.Type, arrCpy), out var res))
 						return TryMethodHelpers.EndTryMethod(false, default, out result);
 
 					i.Set(instance, res);
-					position += len;
+					position += len - 1;
 				} else if (PropertyQualifies(i, m, position))
 				{
 					i.Set(instance, m.Arguments[position]);

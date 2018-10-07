@@ -39,8 +39,6 @@ namespace Decorator
 				return res;
 			}
 
-			var repeatable = AttributeCache<RepeatableAttribute>.TryHasAttribute(type, out var _);
-
 			// store properties
 			var props = type.GetProperties();
 
@@ -65,8 +63,7 @@ namespace Decorator
 
 			var msgDef = new MessageDefinition(
 					msgAttrib[0].Type,
-					msgProps,
-					repeatable
+					msgProps
 				);
 
 			Definitions.TryAdd(type, msgDef);

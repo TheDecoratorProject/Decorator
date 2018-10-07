@@ -59,6 +59,32 @@ namespace Decorator.Benchmarks
 				InvalidChat_Type();
 			}
 		}
+		[Message("demo")]
+		public class DemoMessage
+		{
+			[Position(0), Required]
+			public string SomeData { get; set; }
+
+			[Position(1), Optional]
+			public int IntegerData { get; set; }
+		}
+
+		[Message("fsat")]
+		public class FlattenComplexArraysTest
+		{
+			[Position(0), Flatten]
+			public DemoMessage[] SomeStringData { get; set; }
+
+			public override bool Equals(object obj)
+			{
+				return obj is FlattenComplexArraysTest fsat &&
+						fsat.SomeStringData.Equals(this.SomeStringData);
+			}
+		}
+
+		[Benchmark(Description = "eee")]
+		public bool UhhArrays()
+			=> Deserializer.TryDeserializeItem<FlattenComplexArraysTest>(new BasicMessage("fsat", 3, "message", 1234, "more", 4567, "8778", null), out _);
 
 		[Benchmark(Description = "Simple TryDeserialize", Baseline = true)]
 		public bool BasicDeserialize()

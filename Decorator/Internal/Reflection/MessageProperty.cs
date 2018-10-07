@@ -8,9 +8,8 @@ namespace Decorator
 {
 	internal class MessageDefinition
 	{
-		public MessageDefinition(string type, IEnumerable<MessageProperty> props, bool rep)
+		public MessageDefinition(string type, IEnumerable<MessageProperty> props)
 		{
-			Repeatable = rep;
 			Type = type;
 			Properties = props
 				.OrderBy(x => x.Position)
@@ -23,7 +22,6 @@ namespace Decorator
 		public string Type;
 		public MessageProperty[] Properties;
 		public int MaximumSize;
-		public bool Repeatable;
 	}
 
 	internal enum TypeTreatment

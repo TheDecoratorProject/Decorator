@@ -2,7 +2,6 @@
 
 namespace Decorator.Demo
 {
-    [Repeatable]
 	[Message("ce")]
 	public class ClientExistsEvent
 	{

@@ -2,7 +2,7 @@
 
 namespace Decorator.Tests
 {
-	[Message("test"), Repeatable]
+	[Message("test")]
 	public class TestMessage
 	{
 		[Position(0)]

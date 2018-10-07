@@ -79,28 +79,6 @@ namespace Decorator.Tests
 
 		[Fact, Trait("Project", "Decorator.Tests")]
 		[Trait("Category", "HandlerDeserialization")]
-		public void DoesntDeserializesNonEnumerable()
-		{
-			var instance = new HandlerClass();
-
-			var args = new List<object>();
-
-			var msg = Setup.NonRepeatable;
-
-			// 4 is arbitrary here
-			for (var i = 0; i < 4; i++)
-			{
-				msg.Arguments[0] = i;
-				args.AddRange(msg.Arguments);
-			}
-
-			var t = args.ToArray();
-
-			Assert.False(Decorator.Deserializer.TryDeserializeItems<NonRepeatable>(new BasicMessage("rep", t), out var _));
-		}
-
-		[Fact, Trait("Project", "Decorator.Tests")]
-		[Trait("Category", "HandlerDeserialization")]
 		public void NonExistantMethod()
 		{
 			var instance = new HandlerClass();
