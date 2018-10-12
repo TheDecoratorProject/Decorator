@@ -22,4 +22,8 @@
     <ProjectReference Include="..\Decorator\Decorator.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Competetors\LukeMDeserialiser\" />
+  </ItemGroup>
+
 </Project>

@@ -6,16 +6,55 @@ using System;
 
 namespace Decorator.Benchmarks
 {
+	[Deserialiser.Deserialisable]
+	[ProtocolMessage.Message("say")]
 	[Message("say")]
 	public class Chat
 	{
+		[Deserialiser.Order(0)]
+		[ProtocolMessage.Position(0), ProtocolMessage.Required]
 		[Position(0), Required]
 		public int PlayerId { get; set; }
 
+		[Deserialiser.Order(1)]
+		[ProtocolMessage.Position(1), ProtocolMessage.Required]
 		[Position(1), Required]
 		public string Message { get; set; }
 	}
 
+	public class Benchmarks
+	{
+		private readonly object[] args = new object[] { 5, "heyo !" };
+
+		private BaseMessage _bm;
+		private ProtocolMessage.ProtocolMessageManager _pm;
+
+		[GlobalSetup]
+		public void Setup()
+		{
+			_pm = new ProtocolMessage.ProtocolMessageManager();
+
+			_bm = new BasicMessage("say", args);
+
+			TryDecorator();
+			TryProtocolMessage();
+			TryDeserialiser();
+		}
+
+		[Benchmark]
+		public bool TryDecorator()
+			=> Decorator.Deserializer.TryDeserializeItem<Chat>(_bm, out _);
+
+		[Benchmark]
+		public void TryProtocolMessage()
+			=> _pm.Convert<Chat>(args);
+
+		[Benchmark]
+		public void TryDeserialiser()
+			=> Deserialiser.Deserialiser<Chat>.Deserialise(args);
+	}
+
+	/*
 	public class Benchmarks
 	{
 		private readonly object[] _goodArgs = new object[] { 10, "hello world" };
@@ -123,5 +162,5 @@ namespace Decorator.Benchmarks
 		{
 			// Allow the deserializer to discover this method
 		}
-	}
+	}*/
 }
