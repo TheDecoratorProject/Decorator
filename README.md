@@ -2,7 +2,7 @@
 
 Decorate classes with attributes and serialize object arrays into a concrete classes.
 
-![Nuget Version](https://img.shields.io/nuget/v/SirJosh3917.Decorator.svg) ![Nuget Downloads](https://img.shields.io/nuget/dt/SirJosh3917.Decorator.svg) 
+[![Nuget Version](https://img.shields.io/nuget/v/SirJosh3917.Decorator.svg) ![Nuget Downloads](https://img.shields.io/nuget/dt/SirJosh3917.Decorator.svg)](https://www.nuget.org/packages/SirJosh3917.Decorator/)
 
 [![Build status](https://ci.appveyor.com/api/projects/status/6ooio3rqlsbhs1q2?svg=true)](https://ci.appveyor.com/project/SirJosh3917/decorator) [![codecov](https://codecov.io/gh/SirJosh3917/Decorator/branch/master/graph/badge.svg)](https://codecov.io/gh/SirJosh3917/Decorator) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/43061e7f10a04bfd8dd91f185fc1303a)](https://www.codacy.com/app/SirJosh3917/Decorator?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=SirJosh3917/Decorator&amp;utm_campaign=Badge_Grade)
 
@@ -26,12 +26,14 @@ public class PingMessage {
 Deserialize an `object[]` to this class.
 
 ```cs
-dateTime time = DateTime.UtcNow;
+DateTime time = DateTime.UtcNow;
 object[] array = new object[] { time }
 
 PingMessage deserialized = null;
 
 Deserializer.TryDeserializeItem<PingMessage>(new BasicMessage("ping", array), out deserialized);
+// 1.2.0-pre: Deserializer<PingMessage>.TryDeserializeItem(new BasicMessage("ping", array), out deserialized);
+
 // deserialized.ReplyTime contains now the value from time
 ```
 
@@ -86,6 +88,8 @@ public class Example {
 }
 
 Example exmp = null;
+
+//1.2.0-pre note: Replace Deserializer.TryDeserializeItem<Example> with Deserializer<Example>.TryDeserializeItem
 
 Deserializer.TryDeserializeItem<Example>(new BasicMessage("test"), out exmp);
 // the above line of code will throw an exception, the message count must be 1
