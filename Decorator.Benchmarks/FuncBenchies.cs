@@ -223,7 +223,7 @@ namespace Decorator.Benchmarks
 				}
 			}
 
-			if (method.ReturnType is null || method.ReturnType == typeof(void))
+			if (method.ReturnType == null || method.ReturnType == typeof(void))
 			{
 				il.Emit(OpCodes.Ldnull);
 			}

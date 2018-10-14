@@ -4,7 +4,7 @@ namespace Decorator.Tests
 {
 	public sealed class MessageTests
 	{
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", nameof(MessageTests))]
 		public void GetsArgument()
 		{
@@ -15,7 +15,7 @@ namespace Decorator.Tests
 			Assert.Equal(at, msg[1]);
 		}
 
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", nameof(MessageTests))]
 		public void Hashcode()
 		{
@@ -26,7 +26,7 @@ namespace Decorator.Tests
 			msg.GetHashCode();
 		}
 
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", nameof(MessageTests))]
 		public void DoesDoEqualsCorrectly()
 		{
@@ -37,7 +37,7 @@ namespace Decorator.Tests
 			Assert.True(msg.Equals(msg2));
 		}
 
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", nameof(MessageTests))]
 		public void DoesDoesntEqualsCorrectly1()
 		{
@@ -48,7 +48,7 @@ namespace Decorator.Tests
 			Assert.False(msg.Equals(msg2));
 		}
 
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", nameof(MessageTests))]
 		public void InequalByNull()
 		{
@@ -57,7 +57,7 @@ namespace Decorator.Tests
 			Assert.False(msg.Equals(null));
 		}
 
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", nameof(MessageTests))]
 		public void InequalByArgumentsNull()
 		{
@@ -66,7 +66,7 @@ namespace Decorator.Tests
 			Assert.False(msg.Equals(new BasicMessage("test", null)));
 		}
 
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", nameof(MessageTests))]
 		public void EqualsByReference()
 		{
@@ -76,7 +76,7 @@ namespace Decorator.Tests
 			Assert.True(msg.Equals(msg2));
 		}
 
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", nameof(MessageTests))]
 		public void InequalByType()
 		{
@@ -86,7 +86,7 @@ namespace Decorator.Tests
 			Assert.False(msg.Equals(msg2));
 		}
 
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", nameof(MessageTests))]
 		public void InequalByParameterAmount()
 		{
@@ -96,7 +96,7 @@ namespace Decorator.Tests
 			Assert.False(msg.Equals(msg2));
 		}
 
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", nameof(MessageTests))]
 		public void InequalByNullArgs()
 		{
@@ -106,7 +106,7 @@ namespace Decorator.Tests
 			Assert.False(msg.Equals(msg2));
 		}
 
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", nameof(MessageTests))]
 		public void InequalByOthersNullArgs()
 		{
@@ -116,7 +116,7 @@ namespace Decorator.Tests
 			Assert.False(msg.Equals(msg2));
 		}
 
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", nameof(MessageTests))]
 		public void FalseGenericObject()
 		{
@@ -125,7 +125,7 @@ namespace Decorator.Tests
 			Assert.False(msg.Equals(""));
 		}
 
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", nameof(MessageTests))]
 		public void TrueExecutesBaseEquals()
 		{

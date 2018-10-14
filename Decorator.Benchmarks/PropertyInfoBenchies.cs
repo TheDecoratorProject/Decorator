@@ -90,7 +90,7 @@ namespace Decorator.Benchmarks
 			}
 			il.EmitCall(method.IsStatic || method.DeclaringType.IsValueType ?
 				OpCodes.Call : OpCodes.Callvirt, method, null);
-			if (method.ReturnType is null || method.ReturnType == typeof(void))
+			if (method.ReturnType == null || method.ReturnType == typeof(void))
 			{
 				il.Emit(OpCodes.Ldnull);
 			}

@@ -27,7 +27,7 @@ namespace Decorator
 		{
 			var def = MessageManager.GetDefinitionFor<TClass>();
 
-			if (def is null) throw new MissingAttributeException(typeof(MessageAttribute), typeof(TClass));
+			if (def == null) throw new MissingAttributeException(typeof(MessageAttribute), typeof(TClass));
 
 			var data = new object[def.Properties.Length];
 

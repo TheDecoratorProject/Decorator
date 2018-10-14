@@ -21,14 +21,14 @@ namespace Decorator
 		}
 
 		private static ClassWrapper _tryDeserialize;
-		private static ConcurrentHashcodeDictionary<Type, ILFunc> _tryDesItem;
-		private static ConcurrentHashcodeDictionary<Type, ILFunc> _tryDesItems;
+		private static ConcurrentHashcodeDictionary<int, ILFunc> _tryDesItem;
+		private static ConcurrentHashcodeDictionary<int, ILFunc> _tryDesItems;
 
 		static Deserializer()
 		{
 			_tryDeserialize = new ClassWrapper(typeof(Deserializer<>));
-			_tryDesItem = new ConcurrentHashcodeDictionary<Type, ILFunc>();
-			_tryDesItems = new ConcurrentHashcodeDictionary<Type, ILFunc>();
+			_tryDesItem = new ConcurrentHashcodeDictionary<int, ILFunc>();
+			_tryDesItems = new ConcurrentHashcodeDictionary<int, ILFunc>();
 		}
 
 		/// <summary>
@@ -37,21 +37,21 @@ namespace Decorator
 		/// <see cref="TryDeserializeItem{TItem}(BaseMessage, out TItem)"/>
 		public static bool TryDeserializeItem(Type t, BaseMessage m, out object result)
 		{
-			if (t is null) throw new ArgumentNullException(nameof(t));
-			if (m is null) throw new ArgumentNullException(nameof(m));
+			if (null == t) throw new ArgumentNullException(nameof(t));
+			if (null == m) throw new ArgumentNullException(nameof(m));
 
 			var args = new object[] { m, null };
 
 			var cls = _tryDeserialize.GetClassFor(t);
 
-			if(!_tryDesItem.TryGetValue(cls, out var method))
+			if(!_tryDesItem.TryGetValue(cls.GetHashCode(), out var method))
 			{
 				var mthds = cls.GetMethods();
 
 				method = cls.GetMethod(nameof(Deserializer<int>.TryDeserializeItem))
 							.ILWrapRefSupport();
 
-				_tryDesItem.TryAdd(cls, method);
+				_tryDesItem.TryAdd(cls.GetHashCode(), method);
 			}
 
 			if (!(bool)(method(null, args))) return TryMethodHelpers.EndTryMethod(false, default, out result);
@@ -68,28 +68,26 @@ namespace Decorator
 		/// <returns></returns>
 		public static bool TryDeserializeItems(Type t, BaseMessage m, out object[] result)
 		{
-			if (t is null) throw new ArgumentNullException(nameof(t));
-			if (m is null) throw new ArgumentNullException(nameof(m));
+			if (null == t) throw new ArgumentNullException(nameof(t));
+			if (null == m) throw new ArgumentNullException(nameof(m));
 
 			var args = new object[] { m, null };
 
 			var cls = _tryDeserialize.GetClassFor(t);
 
-			if (!_tryDesItems.TryGetValue(cls, out var method))
+			if (!_tryDesItems.TryGetValue(cls.GetHashCode(), out var method))
 			{
 				var mthds = cls.GetMethods();
 
 				method = cls.GetMethod(nameof(Deserializer<int>.TryDeserializeItems))
 							.ILWrapRefSupport();
 
-				_tryDesItems.TryAdd(cls, method);
+				_tryDesItems.TryAdd(cls.GetHashCode(), method);
 			}
-			
+
 			if (!((bool)method(null, args))) return TryMethodHelpers.EndTryMethod(false, default, out result);
 
-			if(args[1] is object[] objArr)
-				return TryMethodHelpers.EndTryMethod(true, objArr, out result);
-			else return TryMethodHelpers.EndTryMethod(true, new object[] { args[1] }, out result);
+			return TryMethodHelpers.EndTryMethod(true, (object[])args[1], out result);
 		}
 	}
 }

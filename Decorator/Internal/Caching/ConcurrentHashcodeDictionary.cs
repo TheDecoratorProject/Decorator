@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Decorator.Caching
 {
@@ -25,24 +26,12 @@ namespace Decorator.Caching
 
 		public bool TryGetValue(TKey key, out TValue value)
 		{
-			bool val;
-
-			val = Dictionary.TryGetValue(key.GetHashCode(), out value);
-
-			return val;
+			return Dictionary.TryGetValue(key.GetHashCode(), out value);
 		}
 
 		public IEnumerable<KeyValuePair<TKey, TValue>> GetItems()
 		{
-			var valenumer = Dictionary.GetEnumerator();
-			var keysenumer = DictionaryKeys.GetEnumerator();
-
-			while (valenumer.MoveNext() && keysenumer.MoveNext())
-			{
-				var kvp = new KeyValuePair<TKey, TValue>(keysenumer.Current.Value, valenumer.Current.Value);
-
-				yield return kvp;
-			}
+			return Dictionary.Zip(DictionaryKeys, (a, b) => new KeyValuePair<TKey, TValue>(b.Value, a.Value));
 		}
 
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => new HashcodeDictionaryEnumerator<TKey, TValue>(this);

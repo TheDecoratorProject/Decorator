@@ -17,7 +17,7 @@ namespace Decorator.Tests
 
 		private static void AttemptDeserialize(BaseMessage msg)
 		{
-			if (!Decorator.Deserializer.TryDeserializeItem<TestMessage>(msg, out var result))
+			if (!Decorator.Deserializer<TestMessage>.TryDeserializeItem(msg, out var result))
 				throw new InvalidDeserializationAttemptException();
 
 			Verify(msg, result);
@@ -33,7 +33,7 @@ namespace Decorator.Tests
 				args.AddRange(msg.Arguments);
 			}
 
-			if (!Decorator.Deserializer.TryDeserializeItems<TestMessage>(new BasicMessage("test", args.ToArray()), out var result))
+			if (!Decorator.Deserializer<TestMessage>.TryDeserializeItems(new BasicMessage("test", args.ToArray()), out var result))
 				throw new InvalidDeserializationAttemptException();
 
 			var c = 0;
@@ -46,22 +46,22 @@ namespace Decorator.Tests
 			}
 		}
 
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", "Deserialization")]
 		public void DeserializesValuesCorrectly()
 			=> AttemptDeserialize(Setup.Correct);
 
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", "Deserialization")]
 		public void DeserializesIncorrectValuesCorrectly()
 			=> Assert.Throws<InvalidDeserializationAttemptException>(() => AttemptDeserialize(Setup.IncorrectTypes));
 
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", "Deserialization")]
 		public void DeserializesRepeatsCorrectly()
 			=> AttemptDeserializeRepeated(Setup.Correct, 3);
 
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", "Deserialization")]
 		public void DeserializesIncorrectRepeatsCorrectly()
 			=> Assert.Throws<InvalidDeserializationAttemptException>(() => AttemptDeserializeRepeated(Setup.IncorrectTypes, 3));

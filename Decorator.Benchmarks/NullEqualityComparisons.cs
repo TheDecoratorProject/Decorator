@@ -27,7 +27,7 @@ namespace Decorator.Benchmarks
 		[Benchmark]
 		public bool IsNull()
 		{
-			return SomeObject is null;
+			return SomeObject == null;
 		}
 
 		[Benchmark]
@@ -43,8 +43,8 @@ namespace Decorator.Benchmarks
 		[Arguments(789.0f)]
 		public bool IsNullOptimization(object inp)
 		{
-			return inp is null ?
-					SomeObject is null
+			return inp == null ?
+					SomeObject == null
 					: inp == SomeObject;
 		}
 	}

@@ -8,7 +8,7 @@ namespace Decorator.Tests
 {
 	public sealed class SerializationTests
 	{
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", "CanSerialize")]
 		public void SerializeExample()
 		{
@@ -18,11 +18,11 @@ namespace Decorator.Tests
 			}));
 		}
 
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", "CanSerialize")]
 		public void SerializeEmpty() => Assert.Equal(new BasicMessage(null), Serializer.SerializeItem(new NullType()));
 
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", "CanSerialize")]
 		public void SerializeEnumerable()
 		{
@@ -59,7 +59,7 @@ namespace Decorator.Tests
 			}));
 		}
 
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", "CanSerialize")]
 		public void NeedsAttributes1()
 		{
@@ -70,7 +70,7 @@ namespace Decorator.Tests
 			});
 		}
 
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", "CanSerialize")]
 		public void NeedsAttributes2()
 		{
@@ -81,11 +81,11 @@ namespace Decorator.Tests
 			});
 		}
 
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", "CanSerialize")]
 		public void NoProperties() => Assert.Equal(new BasicMessage("noprop"), Serializer.SerializeItem(new NoProperties()));
 
-		[Fact, Trait("Project", "Decorator.Tests")]
+		[Fact]
 		[Trait("Category", "CanSerialize")]
 		public void NoItems() => Assert.Equal(new BasicMessage("noprop"), Serializer.SerializeItems(new NoProperties[0] { }));
 	}

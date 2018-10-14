@@ -3,6 +3,7 @@ using System;
 
 namespace Decorator.Demo
 {
+	[Message]
 	public class NeedsAttribute
 	{
 		[Position(0), Required]
@@ -14,8 +15,9 @@ namespace Decorator.Demo
 		public static void Main()
 		{
 			Console.WriteLine("YEEE");
-			Decorator.Deserializer.TryDeserializeItem<NeedsAttribute>(new BasicMessage("wew lad"), out var _);
-				Console.WriteLine("yeahok");
+			for(int i = 0; i < 20_000_000; i++)
+				Decorator.Deserializer.TryDeserializeItem<NeedsAttribute>(new BlankMessage("wew lad"), out var _);
+			Console.WriteLine("yeahok");
 			Console.ReadLine();
 
 			var client1 = new Client();

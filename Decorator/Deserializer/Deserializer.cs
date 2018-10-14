@@ -20,7 +20,7 @@ namespace Decorator
 		static Deserializer()
 		{
 			def = MessageManager.GetDefinitionFor<TItem>();
-			if (def is null) throw new Exceptions.InvalidMessageException(typeof(TItem));
+			if (def == null) throw new Exceptions.InvalidMessageException(typeof(TItem));
 
 			var methods = typeof(Deserializer<TItem>)
 							.GetMethods();
@@ -83,7 +83,7 @@ namespace Decorator
 		/// <seealso cref="TryDeserializeItem(Type, BaseMessage, out object)"/>
 		public static bool TryDeserializeItem(BaseMessage m, out TItem result)
 		{
-			if (m is null) throw new ArgumentNullException(nameof(m));
+			if (m == null) throw new ArgumentNullException(nameof(m));
 
 			if (!EnsureAttributesOn(m)) return TryMethodHelpers.EndTryMethod(false, default, out result);
 
@@ -127,7 +127,7 @@ namespace Decorator
 		/// <returns><c>true</c> if it can deserialize it, <c>false</c> if it can't</returns>
 		public static bool TryDeserializeItems(BaseMessage m, out TItem[] result)
 		{
-			if (m is null) throw new ArgumentNullException(nameof(m));
+			if (m == null) throw new ArgumentNullException(nameof(m));
 
 			if (!EnsureAttributesOn(m)) return TryMethodHelpers.EndTryMethod(false, default, out result);
 
@@ -166,14 +166,15 @@ namespace Decorator
 				if (i.Flatten)
 				{
 					var definition = MessageManager.GetDefinitionForType(i.Type);
-					if (definition is null) return TryMethodHelpers.EndTryMethod(false, default, out result);
+					if (definition == null) return TryMethodHelpers.EndTryMethod(false, default, out result);
 
 					var len = definition.MaximumSize + 1;
 
 					//TODO: get the exact length, for now this is fine
 					var arrCpy = new object[len];
 
-					if (m.IntCount < position + len) return TryMethodHelpers.EndTryMethod(false, default, out result);
+					if (m.Count < position + len)
+						return TryMethodHelpers.EndTryMethod(false, default, out result);
 
 					Array.Copy(m.Arguments, position, arrCpy, 0, len);
 
@@ -196,7 +197,7 @@ namespace Decorator
 
 		private static bool TryDeserializeValues(BaseMessage m, out TItem[] result)
 		{
-			var itms = new List<TItem>(m.IntCount);
+			var itms = new List<TItem>(m.Count);
 
 			var array = m.Arguments;
 			var bm = new BasicMessage(m.Type, array);
@@ -208,7 +209,7 @@ namespace Decorator
 
 				_desSizeCounter += bm._desSize;
 
-				var size = m.IntCount - _desSizeCounter;
+				var size = m.Count - _desSizeCounter;
 				array = new object[size];
 				Array.Copy(m.Arguments, _desSizeCounter, array, 0, size);
 
@@ -222,14 +223,13 @@ namespace Decorator
 
 		private static bool PropertyQualifies(MessageProperty prop, BaseMessage m, int position)
 		{
-			if (position >= m.IntCount) return false;
+			if (position >= m.Count) return false;
 
 			var item = m.Arguments[position];
 
 			return
-				item is null ?
-					false
-					: prop.Type == item.GetType();
+				item != null &&
+				prop.Type == item.GetType();
 		}
 
 		private static bool EnsureAttributesOn(BaseMessage m)

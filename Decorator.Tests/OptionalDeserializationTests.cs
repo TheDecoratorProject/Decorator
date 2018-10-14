@@ -4,7 +4,7 @@ namespace Decorator.Tests
 {
     public sealed class OptionalDeserializationTests
     {
-        [Fact, Trait("Project", "Decorator.Tests")]
+        [Fact]
         [Trait("Category", nameof(OptionalDeserializationTests))]
         public void OptionalBehavior()
         {
@@ -22,7 +22,7 @@ namespace Decorator.Tests
          *
          * as such, it is decided against.
          *
-        [Fact, Trait("Project", "Decorator.Tests")]
+        [Fact]
         [Trait("Category", nameof(OptionalDeserializationTests))]
         public void MessageCountDoesntMatterAtTheEnd() {
             var bm = new BasicMessage("opt", "required");

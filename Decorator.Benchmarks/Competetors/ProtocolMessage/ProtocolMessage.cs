@@ -37,7 +37,7 @@
 		{
 			if (array == null || array.Length == 0)
 			{
-				throw new ProtocolMessageException(string.Format("The message for type '{0}' could not be converted as the specified array is null or empty.",
+				throw new ProtocolMessageException(string.Format("The message for type '{0}' could not be converted as the specified array == null or empty.",
 					typeof(T).AssemblyQualifiedName));
 			}
 

@@ -20,41 +20,35 @@ namespace Decorator
 
 		public static Action<object, object> GetSetMethodByExpression(this PropertyInfo propertyInfo)
 		{
-			var prop = propertyInfo.GetSetMethod();
-
-			var dm = new DynamicMethod(prop.Name, null, new Type[] {
-				typeof(object), typeof(object)
-			}, prop.DeclaringType, true);
-
-			var il = dm.GetILGenerator();
-
-			il.Emit(OpCodes.Ldarg_0);
-
-			il.Emit(OpCodes.Ldarg_1);
-			il.Emit(OpCodes.Unbox_Any, prop.GetParameters()[0].ParameterType);
-
-			il.EmitCall(
-				prop.IsStatic || prop.DeclaringType.IsValueType ?
-					OpCodes.Call
-					: OpCodes.Callvirt,
-
-				prop,
-				null);
-
-			il.Emit(OpCodes.Ret);
-
-			return (Action<object, object>)dm.CreateDelegate(typeof(Action<object, object>));
+			return GetSingleInvokable(propertyInfo.GetSetMethod());
 		}
 
 		// https://stackoverflow.com/questions/20491162/create-expression-function-from-methodinfo-with-unknown-signature
 
 		public static Action<object, object> GetSingleInvokable(this MethodInfo method)
 		{
-			var paramExprs = GetParamExpr(method);
-			var paramTypes = GetParamTypes(method, paramExprs);
-			var instanceExp = Expression.Convert(paramExprs[0], method.DeclaringType);
-			var call = Expression.Call(instanceExp, method, paramTypes);
-			return (Action<object, object>)Expression.Lambda(call, paramExprs).Compile();
+			var dm = new DynamicMethod(method.Name, null, new Type[] {
+				typeof(object), typeof(object)
+			}, method.DeclaringType, true);
+
+			var il = dm.GetILGenerator();
+
+			il.Emit(OpCodes.Ldarg_0);
+
+			il.Emit(OpCodes.Ldarg_1);
+			il.Emit(OpCodes.Unbox_Any, method.GetParameters()[0].ParameterType);
+
+			il.EmitCall(
+				method.IsStatic || method.DeclaringType.IsValueType ?
+					OpCodes.Call
+					: OpCodes.Callvirt,
+
+				method,
+				null);
+
+			il.Emit(OpCodes.Ret);
+
+			return (Action<object, object>)dm.CreateDelegate(typeof(Action<object, object>));
 		}
 
 		private static List<ParameterExpression> GetParamExpr(MethodInfo method)
@@ -101,7 +95,7 @@ namespace Decorator
 			}
 			il.EmitCall(method.IsStatic || method.DeclaringType.IsValueType ?
 				OpCodes.Call : OpCodes.Callvirt, method, null);
-			if (method.ReturnType is null || method.ReturnType == typeof(void))
+			if (method.ReturnType == null || method.ReturnType == typeof(void))
 			{
 				il.Emit(OpCodes.Ldnull);
 			}
@@ -172,7 +166,7 @@ namespace Decorator
 				}
 			}
 
-			if (method.ReturnType is null || method.ReturnType == typeof(void))
+			if (method.ReturnType == null || method.ReturnType == typeof(void))
 			{
 				il.Emit(OpCodes.Ldnull);
 			}

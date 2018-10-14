@@ -35,7 +35,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ConcurrentHashcodeDictionary" Version="1.0.0" />
+    <PackageReference Include="ConcurrentHashcodeDictionary" Version="1.1.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
   </ItemGroup>
 
