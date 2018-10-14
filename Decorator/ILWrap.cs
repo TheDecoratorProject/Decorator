@@ -20,13 +20,30 @@ namespace Decorator
 
 		public static Action<object, object> GetSetMethodByExpression(this PropertyInfo propertyInfo)
 		{
-			var setMethodInfo = propertyInfo.GetSetMethod(true);
-			var instance = Expression.Parameter(_object, "instance");
-			var value = Expression.Parameter(_object, "value");
-			var instanceCast = (!(propertyInfo.DeclaringType).GetTypeInfo().IsValueType) ? Expression.TypeAs(instance, propertyInfo.DeclaringType) : Expression.Convert(instance, propertyInfo.DeclaringType);
-			var valueCast = (!(propertyInfo.PropertyType).GetTypeInfo().IsValueType) ? Expression.TypeAs(value, propertyInfo.PropertyType) : Expression.Convert(value, propertyInfo.PropertyType);
+			var prop = propertyInfo.GetSetMethod();
 
-			return Expression.Lambda<Action<object, object>>(Expression.Call(instanceCast, setMethodInfo, valueCast), new ParameterExpression[] { instance, value }).Compile();
+			var dm = new DynamicMethod(prop.Name, null, new Type[] {
+				typeof(object), typeof(object)
+			}, prop.DeclaringType, true);
+
+			var il = dm.GetILGenerator();
+
+			il.Emit(OpCodes.Ldarg_0);
+
+			il.Emit(OpCodes.Ldarg_1);
+			il.Emit(OpCodes.Unbox_Any, prop.GetParameters()[0].ParameterType);
+
+			il.EmitCall(
+				prop.IsStatic || prop.DeclaringType.IsValueType ?
+					OpCodes.Call
+					: OpCodes.Callvirt,
+
+				prop,
+				null);
+
+			il.Emit(OpCodes.Ret);
+
+			return (Action<object, object>)dm.CreateDelegate(typeof(Action<object, object>));
 		}
 
 		// https://stackoverflow.com/questions/20491162/create-expression-function-from-methodinfo-with-unknown-signature
