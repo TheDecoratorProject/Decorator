@@ -32,4 +32,29 @@ namespace Decorator
 			return method;
 		}
 	}
+
+	internal class ClassWrapper
+	{
+		public ClassWrapper(Type @class)
+		{
+			Class = @class;
+			_versions = new ConcurrentHashcodeDictionary<Type, Type>();
+		}
+
+		public Type Class;
+
+		private readonly ConcurrentHashcodeDictionary<Type, Type> _versions;
+
+		public Type GetClassFor(Type type)
+		{
+			if (_versions.TryGetValue(type, out var res)) return res;
+
+			var genClass = Class
+							.MakeGenericType(type);
+
+			_versions.TryAdd(type, genClass);
+
+			return genClass;
+		}
+	}
 }

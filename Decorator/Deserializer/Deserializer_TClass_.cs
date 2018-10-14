@@ -3,29 +3,13 @@ using System.Reflection;
 
 namespace Decorator
 {
-	/// <summary>Deserializes any message to a method in the TClass</summary>
-	/// <typeparam name="TClass">The type of the class.</typeparam>
-	public static class Deserializer<TClass>
+	public static class MethodDeserializer<TClass>
 		where TClass : class
 	{
 		private static readonly FunctionWrapper _objToArray = new FunctionWrapper(
-				typeof(Deserializer<TClass>)
+				typeof(MethodDeserializer<TClass>)
 					.GetMethod(nameof(FromObjToArray), BindingFlags.Static | BindingFlags.NonPublic)
 			);
-
-		/// <summary>
-		/// Invokes any methods in the <see cref="TClass"/> <paramref name="instance"/> that have the <seealso cref="Attributes.DeserializedHandlerAttribute"/> attribute and accept the <typeparamref name="TItem"/> parameter as input.
-		/// </summary>
-		/// <typeparam name="TItem">The item to use</typeparam>
-		/// <param name="instance">The instance of the <typeparamref name="TClass"/> to deserialize it to (use null for static)</param>
-		/// <param name="item">The item to use to invoke stuff</param>
-		public static void InvokeMethodFromItem<TItem>(TClass instance, TItem item)
-		{
-			foreach (var i in MethodInvoker<TClass>.GetMethodsFor<TItem>())
-			{
-				MethodInvoker<TClass>.InvokeMethod<TItem>(i, instance, item);
-			}
-		}
 
 		/// <summary>
 		/// Invokes any methods with the <seealso cref="Attributes.DeserializedHandlerAttribute"/> attribute if the <paramref name="msg"/> can be deserialized to the first parameter in the method.
@@ -72,6 +56,33 @@ namespace Decorator
 				res[i] = (T)objs[i];
 
 			return res;
+		}
+	}
+
+	/// <summary>Deserializes any message to a method in the TClass</summary>
+	/// <typeparam name="TClass">The type of the class.</typeparam>
+	public static class MethodDeserializer<TItem, TClass>
+		where TClass : class
+	{
+		private static MethodInfo[] _methods;
+
+		static MethodDeserializer()
+		{
+			_methods = MethodInvoker<TClass>.GetMethodsFor<TItem>();
+		}
+
+		/// <summary>
+		/// Invokes any methods in the <see cref="TClass"/> <paramref name="instance"/> that have the <seealso cref="Attributes.DeserializedHandlerAttribute"/> attribute and accept the <typeparamref name="TItem"/> parameter as input.
+		/// </summary>
+		/// <typeparam name="TItem">The item to use</typeparam>
+		/// <param name="instance">The instance of the <typeparamref name="TClass"/> to deserialize it to (use null for static)</param>
+		/// <param name="item">The item to use to invoke stuff</param>
+		public static void InvokeMethodFromItem(TClass instance, TItem item)
+		{
+			foreach (var i in _methods)
+			{
+				MethodInvoker<TClass>.InvokeMethod(i, instance, item);
+			}
 		}
 	}
 }

@@ -43,7 +43,7 @@ namespace Decorator.Benchmarks
 		
 		[Benchmark]
 		public bool TryDecorator()
-			=> Decorator.Deserializer.TryDeserializeItem<Chat>(_bm, out _);
+			=> Decorator.Deserializer<Chat>.TryDeserializeItem(_bm, out _);
 
 		[Benchmark]
 		public void TryProtocolMessage()

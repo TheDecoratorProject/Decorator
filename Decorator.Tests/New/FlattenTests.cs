@@ -144,7 +144,7 @@ namespace Decorator.Tests.New
 		{
 			var instance = new ArrayInvokeHandler();
 
-			Deserializer<ArrayInvokeHandler>.InvokeMethodFromMessage(instance, msg);
+			MethodDeserializer<ArrayInvokeHandler>.InvokeMethodFromMessage(instance, msg);
 
 			Assert.Equal(expected, instance.Invoked);
 		}

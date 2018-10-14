@@ -22,7 +22,7 @@ namespace Decorator.Demo
 
 			foreach (var i in _clients)
 				if (i.Key != _counter)
-					Deserializer<Client>.InvokeMethodFromMessage(i.Value, msg);
+					MethodDeserializer<Client>.InvokeMethodFromMessage(i.Value, msg);
 
 			var initMsg = Serializer.SerializeItem(new InitEvent {
 				MyId = _counter
@@ -39,8 +39,8 @@ namespace Decorator.Demo
 
 			var online = Serializer.SerializeItems(clients);
 
-			Deserializer<Client>.InvokeMethodFromMessage(_clients[_counter], initMsg);
-			Deserializer<Client>.InvokeMethodFromMessage(_clients[_counter], online);
+			MethodDeserializer<Client>.InvokeMethodFromMessage(_clients[_counter], initMsg);
+			MethodDeserializer<Client>.InvokeMethodFromMessage(_clients[_counter], online);
 
 			_counter += 1;
 		}
@@ -49,19 +49,19 @@ namespace Decorator.Demo
 		{
 			foreach (var i in _clients)
 				if (i.Key != clientId)
-					Deserializer<Client>.InvokeMethodFromMessage(i.Value, Serializer.SerializeItem(new ClientEvent {
+					MethodDeserializer<Client>.InvokeMethodFromMessage(i.Value, Serializer.SerializeItem(new ClientEvent {
 						Id = clientId,
 						JoinState = false,
 						Username = null
 					}));
 
-			Deserializer<Client>.InvokeMethodFromMessage(_clients[clientId], Serializer.SerializeItem(new SafeDisconnectEvent()));
+			MethodDeserializer<Client>.InvokeMethodFromMessage(_clients[clientId], Serializer.SerializeItem(new SafeDisconnectEvent()));
 
 			_clients.Remove(clientId);
 		}
 
 		public void HandleMessage(BaseMessage msg, uint clientId)
-			=> Deserializer<Server>.InvokeMethodFromMessage(this, msg);
+			=> MethodDeserializer<Server>.InvokeMethodFromMessage(this, msg);
 
 		[DeserializedHandler]
 		public void ChatMessage(SendChat schat)
@@ -75,7 +75,7 @@ namespace Decorator.Demo
 
 			foreach (var i in _clients)
 			{
-				Deserializer<Client>.InvokeMethodFromMessage(i.Value, msg);
+				MethodDeserializer<Client>.InvokeMethodFromMessage(i.Value, msg);
 			}
 		}
 	}

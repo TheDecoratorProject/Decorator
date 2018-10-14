@@ -15,7 +15,7 @@ namespace Decorator.Tests
 		{
 			var instance = new HandlerClass();
 
-			Deserializer<HandlerClass>.InvokeMethodFromItem(instance, new TestMessage {
+			MethodDeserializer<TestMessage, HandlerClass>.InvokeMethodFromItem(instance, new TestMessage {
 				PositionZeroItem = "",
 				PositionOneItem = 1337
 			});
@@ -29,7 +29,7 @@ namespace Decorator.Tests
 		{
 			var instance = new HandlerClass();
 
-			Deserializer<HandlerClass>.InvokeMethodFromMessage(instance, Setup.Correct);
+			MethodDeserializer<HandlerClass>.InvokeMethodFromMessage(instance, Setup.Correct);
 
 			Assert.True(instance.Invoked);
 		}
@@ -71,7 +71,7 @@ namespace Decorator.Tests
 				args.AddRange(msg.Arguments);
 			}
 
-			Deserializer<HandlerClass>.InvokeMethodFromMessage(instance, new BasicMessage("test", args.ToArray()));
+			MethodDeserializer<HandlerClass>.InvokeMethodFromMessage(instance, new BasicMessage("test", args.ToArray()));
 
 			Assert.True(instance.Invoked);
 			Assert.Equal(4, instance.Items);
@@ -83,7 +83,7 @@ namespace Decorator.Tests
 		{
 			var instance = new HandlerClass();
 
-			Assert.Throws<LackingMethodsException>(() => Deserializer<HandlerClass>.InvokeMethodFromItem(instance, new NonExistant {
+			Assert.Throws<TypeInitializationException>(() => MethodDeserializer<NonExistant, HandlerClass>.InvokeMethodFromItem(instance, new NonExistant {
 				AAA = "roses are red, violets are blue, this is a string comment, woopdy doo"
 			}));
 		}
@@ -92,8 +92,8 @@ namespace Decorator.Tests
 		[Trait("Category", "HandlerDeserialization")]
 		public void NeedsAttributes()
 		{
-			Assert.False(
-				Decorator.Deserializer.TryDeserializeItem<NeedsAttribute>(new BasicMessage("wew lad"), out var _)
+			Assert.Throws<TypeInitializationException>(() =>
+				Decorator.Deserializer.TryDeserializeItem<NeedsAttribute>(new BasicMessage("wew lad"), out _)
 			);
 		}
 
@@ -125,7 +125,7 @@ namespace Decorator.Tests
 		[Trait("Category", "HandlerDeserialization")]
 		public void NeedsAttributesType()
 		{
-			Assert.False(
+			Assert.Throws<TypeInitializationException>(() =>
 				Decorator.Deserializer.TryDeserializeItem(typeof(NeedsAttribute), new BasicMessage("wew lad", "there be humans"), out var _)
 			);
 		}
