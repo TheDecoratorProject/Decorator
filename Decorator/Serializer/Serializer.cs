@@ -29,22 +29,31 @@ namespace Decorator
 
 			if (def == null) throw new MissingAttributeException(typeof(MessageAttribute), typeof(TClass));
 
-			var data = new object[def.Properties.Length];
+			var data = new List<object>(def.Properties.Length);
+
+			var lastPosAttrib = 0;
+			var position = 0;
 
 			foreach (var i in def.Properties)
 			{
+				var increase = i.PositionInt - lastPosAttrib;
+				position += increase;
+				lastPosAttrib = i.PositionInt;
+
 				if (i.Flatten)
 				{
 					var serialized = _serialize.GetMethodFor(i.Type)(null, new object[] { i.Get(itm) });
-					data[i.PositionInt] = serialized;
+					var args = ((BaseMessage)serialized).Arguments;
+					data.InsertRange(position, args);
+					position += args.Length - 1;
 				}
 				else
 				{
-					data[i.PositionInt] = i.Get(itm);
+					data.Insert(position, i.Get(itm));
 				}
 			}
 
-			return new BasicMessage(def.Type, data);
+			return new BasicMessage(def.Type, data.ToArray());
 		}
 
 		/// <summary>Serializes the items specified.</summary>

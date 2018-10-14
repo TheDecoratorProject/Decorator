@@ -12,10 +12,11 @@ namespace Decorator.Tests
 		[Trait("Category", "CanSerialize")]
 		public void SerializeExample()
 		{
-			Assert.Equal(new BasicMessage("test", "frog", 8), Serializer.SerializeItem(new TestMessage {
+			var ser = Serializer.SerializeItem(new TestMessage {
 				PositionOneItem = 8,
 				PositionZeroItem = "frog"
-			}));
+			});
+			Assert.Equal(new BasicMessage("test", "frog", 8), ser);
 		}
 
 		[Fact]

@@ -86,6 +86,28 @@ namespace Decorator.Tests.New
 		public void MultipleDataPiecesDeserialization(MessageInfo messageInfo)
 			=> Assert.Equal(messageInfo.ExpectedResult, Deserializer.TryDeserializeItem<MultipleDataPieces>(new BasicMessage(messageInfo.Type, messageInfo.Arguments), out _));
 
+
+		[Fact, Trait("Category", nameof(FlattenTests))]
+		public void MultipleDataPiecesSerialization()
+		{
+			var msg = new BasicMessage("simple", new object[] { "data", "somedata", 14122, 42, "moredata", 13122 });
+			var itm = new MultipleDataPieces {
+				Data = "data",
+				DemoData = new DemoMessage {
+					SomeData = "somedata",
+					IntegerData = 14122,
+				},
+				DataInfo = 42,
+				MoreDemoData = new DemoMessage {
+					SomeData = "moredata",
+					IntegerData = 13122,
+				}
+			};
+
+			var srl = Serializer.SerializeItem<MultipleDataPieces>(itm);
+			Assert.Equal(msg, srl);
+		}
+
 		public static IEnumerable<object[]> GetMultipleDataPiecesDeserializationValues()
 		{
 			yield return new object[] { new MessageInfo(true, "simple", new object[] { "data", "somedata", 14122, 42, "moredata", 13122 }) };
