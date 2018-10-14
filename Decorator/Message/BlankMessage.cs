@@ -2,9 +2,9 @@
 {
 	/// <summary>An implementation of BaseMessage that meets the minimum bar, and doesn't force you to specify a type.</summary>
 	/// <seealso cref="Decorator.BaseMessage" />
-	public class BlankeMessage : BaseMessage
+	public class BlankMessage : BaseMessage
 	{
-		public BlankeMessage(params object[] args)
+		public BlankMessage(params object[] args)
 		{
 			Type = null;
 			Arguments = args;

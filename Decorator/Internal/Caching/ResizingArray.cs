@@ -18,7 +18,7 @@
 
 		public void AddItem(int key, T item)
 		{
-			if (_array.Length >= Length) ResizeArray();
+			if (_keys.Length >= Length) ResizeArray();
 
 			_array[Length] = item;
 			_keys[Length] = key;

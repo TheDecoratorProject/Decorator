@@ -93,7 +93,7 @@ namespace Decorator.Tests
 		public void NeedsAttributes()
 		{
 			Assert.False(
-				Decorator.Deserializer.TryDeserializeItem<NeedsAttribute>(new BasicMessage("wew lad", "there be humans"), out var _)
+				Decorator.Deserializer.TryDeserializeItem<NeedsAttribute>(new BasicMessage("wew lad"), out var _)
 			);
 		}
 

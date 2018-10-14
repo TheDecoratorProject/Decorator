@@ -3,12 +3,20 @@ using Decorator.Exceptions;
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Decorator
 {
 	/// <summary>Serialize a <see cref="TClass" /> to a <see cref="BaseMessage" /></summary>
 	public static class Serializer
 	{
+		private static FunctionWrapper _serialize;
+		
+		static Serializer()
+		{
+			_serialize = new FunctionWrapper(typeof(Serializer).GetMethods()[0]);
+		}
+		
 		/// <summary>Serializes the specified item.</summary>
 		/// <typeparam name="TClass">The type of the class.</typeparam>
 		/// <param name="itm">The item.</param>
@@ -24,7 +32,17 @@ namespace Decorator
 			var data = new object[def.Properties.Length];
 
 			foreach (var i in def.Properties)
-				data[i.PositionInt] = i.Get(itm);
+			{
+				if (i.Flatten)
+				{
+					var serialized = _serialize.GetMethodFor(i.Type)(null, new object[] { i.Get(itm) });
+					data[i.PositionInt] = serialized;
+				}
+				else
+				{
+					data[i.PositionInt] = i.Get(itm);
+				}
+			}
 
 			return new BasicMessage(def.Type, data);
 		}

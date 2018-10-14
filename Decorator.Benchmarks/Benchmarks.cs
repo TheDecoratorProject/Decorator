@@ -15,7 +15,7 @@ namespace Decorator.Benchmarks
 		[ProtocolMessage.Position(0), ProtocolMessage.Required]
 		[Position(0), Required]
 		public int PlayerId { get; set; }
-
+		
 		[Deserialiser.Order(1)]
 		[ProtocolMessage.Position(1), ProtocolMessage.Required]
 		[Position(1), Required]
@@ -40,7 +40,7 @@ namespace Decorator.Benchmarks
 			TryProtocolMessage();
 			TryDeserialiser();
 		}
-
+		
 		[Benchmark]
 		public bool TryDecorator()
 			=> Decorator.Deserializer.TryDeserializeItem<Chat>(_bm, out _);

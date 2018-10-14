@@ -159,6 +159,7 @@ namespace Decorator.Tests.New
 
 		//TODO: Flatten Arrays Tests
 
+		/*
 		[Message("fsat")]
 		public class FlattenSimpleArraysTest
 		{
@@ -171,7 +172,7 @@ namespace Decorator.Tests.New
 						fsat.SomeStringData.Equals(this.SomeStringData);
 			}
 		}
-
+		
 		[Theory, Trait("Category", nameof(FlattenTests))]
 		[MemberData(nameof(GetFlattenSimpleArrayDeserializationValues))]
 		public void FlattenSimpleArrayDeserialization(bool expected, BaseMessage msg, FlattenSimpleArraysTest fsat)
@@ -223,5 +224,6 @@ namespace Decorator.Tests.New
 			} } };
 			yield return new object[] { true, new BasicMessage("fsat", 0), new FlattenComplexArraysTest { SomeStringData = new DemoMessage[] { } } };
 		}
+		*/
 	}
 }

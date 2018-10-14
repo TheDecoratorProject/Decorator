@@ -1,9 +1,23 @@
-﻿namespace Decorator.Demo
+﻿using Decorator.Attributes;
+using System;
+
+namespace Decorator.Demo
 {
+	public class NeedsAttribute
+	{
+		[Position(0), Required]
+		public string WOWOW { get; set; }
+	}
+
 	internal static class Program
 	{
 		public static void Main()
 		{
+			Console.WriteLine("YEEE");
+			Decorator.Deserializer.TryDeserializeItem<NeedsAttribute>(new BasicMessage("wew lad"), out var _);
+				Console.WriteLine("yeahok");
+			Console.ReadLine();
+
 			var client1 = new Client();
 			var client2 = new Client();
 			var client3 = new Client();

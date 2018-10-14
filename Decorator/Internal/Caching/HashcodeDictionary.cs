@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Decorator.Caching
 {
@@ -7,12 +8,12 @@ namespace Decorator.Caching
 	{
 		public HashcodeDictionary()
 		{
-			Dictionary = new ResizingArray<TValue>();
-			DictionaryKeys = new ResizingArray<TKey>();
+			Dictionary = new Dictionary<int, TValue>();
+			DictionaryKeys = new Dictionary<int, TKey>();
 		}
 
-		public ResizingArray<TValue> Dictionary { get; set; }
-		public ResizingArray<TKey> DictionaryKeys { get; set; }
+		public Dictionary<int, TValue> Dictionary { get; set; }
+		public Dictionary<int, TKey> DictionaryKeys { get; set; }
 
 		public bool TryAdd(TKey key, TValue value)
 		{
@@ -35,16 +36,9 @@ namespace Decorator.Caching
 
 		public IEnumerable<KeyValuePair<TKey, TValue>> GetItems()
 		{
-			var arr1 = Dictionary.Array;
-			var arr2 = DictionaryKeys.Array;
-
-			for (var i = 0; i < Dictionary.Length; i++)
-			{
-				yield return new KeyValuePair<TKey, TValue>(
-						arr2[i],
-						arr1[i]
-					);
-			}
+			return Dictionary.Zip(DictionaryKeys, (value, key) => {
+				return new KeyValuePair<TKey, TValue>(key.Value, value.Value);
+			});
 		}
 
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => new HashcodeDictionaryEnumerator<TKey, TValue>(this);
