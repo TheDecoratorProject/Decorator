@@ -1,3 +1,11 @@
+# ATTENTION!
+
+Decorator is undergoing a major change, from 1.x.x to 2.x.x
+
+The current readme is for Decorator 1.x.x, please view the entire repo in 1.x.x mode.
+
+[Please view the entire repo in 1.x.x mode](https://github.com/SirJosh3917/Decorator/tree/bd3954577be2abbb2e358b1345d73c2d5e1ca4ae)
+
 # Decorator
 
 Decorate classes with attributes and serialize object arrays into a concrete classes.

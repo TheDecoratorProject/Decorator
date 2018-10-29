@@ -1,15 +1,14 @@
-﻿using BenchmarkDotNet.Running;
-
+﻿using BenchmarkDotNet.Attributes;
 using System;
 
 namespace Decorator.Benchmarks
 {
-	internal static class Program
-	{
-		private static void Main(string[] args)
+	class Program
+    {
+		static void Main(string[] args)
 		{
-			BenchmarkRunner.Run<Decorator.Benchmarks.Benchmarks>();
+			BenchmarkDotNet.Running.BenchmarkRunner.Run<Benchmarks>();
 			Console.ReadLine();
-		}
-	}
+        }
+    }
 }

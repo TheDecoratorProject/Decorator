@@ -6,19 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="readme.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="readme.md" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SwissILKnife" Version="0.0.2-pre" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+    <ProjectReference Include="..\Decorator\Decorator.csproj" />
   </ItemGroup>
 
 </Project>
