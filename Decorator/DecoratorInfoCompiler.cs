@@ -17,13 +17,25 @@ namespace Decorator
 
 			// get all props/fields with pos attrib
 
-			var members = GetMembers(BindingFlags.Default)
-							.Concat(
-								typeof(T)
-									.GetCustomAttributes(true)
-									.OfType<DiscoverAttribute>()
-									.SelectMany(x => GetMembers(x.BindingFlags))
-								);
+			IEnumerable<MemberInfo> members;
+
+			if (typeof(T).GetCustomAttributes(true).OfType<DiscoverAttribute>().Count() > 0)
+			{
+				// there are discover attributes
+				// we will ONLY discover what they have specified in the discover attributes
+
+				members = typeof(T)
+							.GetCustomAttributes(true)
+							.OfType<DiscoverAttribute>()
+							.SelectMany(x => GetMembers(x.BindingFlags));
+			}
+			else
+			{
+				// no DiscoverAttribute?
+				// we will just search for all public and instance ones then
+
+				members = GetMembers(BindingFlags.Public | BindingFlags.Instance);
+			}
 
 			var dict = new SortedDictionary<int, DecoratorInfo>();
 
