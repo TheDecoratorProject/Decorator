@@ -9,9 +9,9 @@ namespace Decorator.Serialize.Tests.Serializers
 {
     public class IntegerSerializerTests
     {
-        private IntegerSerializer _ser;
+		private readonly IntegerSerializer _ser;
 
-        public IntegerSerializerTests()
+		public IntegerSerializerTests()
         {
             _ser = new IntegerSerializer();
         }
@@ -65,8 +65,6 @@ namespace Decorator.Serialize.Tests.Serializers
         public void ReadWriteObject()
         {
             object data = 1234;
-            data = (object)data;
-
 
             using (var ms = new MemoryStream())
             {

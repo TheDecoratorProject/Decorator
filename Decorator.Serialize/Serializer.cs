@@ -20,13 +20,13 @@ namespace Decorator.Serialize
             _nullSer = new NullSerializer();
         }
 
-        private object _lock;
-        private List<ISerializer> _serializers;
-        private INullSerializer _nullSer;
-        private ConcurrentDictionary<int, int> _serializerCache;
+		private readonly object _lock;
+		private readonly List<ISerializer> _serializers;
+		private INullSerializer _nullSer;
+		private readonly ConcurrentDictionary<int, int> _serializerCache;
 
-        // <sum> recommended
-        public void RegisterInstance<T>(ISerializer<T> serializer)
+		// <sum> recommended
+		public void RegisterInstance<T>(ISerializer<T> serializer)
         {
             lock (_lock)
             {

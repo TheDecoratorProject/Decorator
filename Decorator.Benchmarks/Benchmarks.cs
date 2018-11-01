@@ -56,9 +56,9 @@ namespace Decorator.Benchmarks
 
 	public class Benchmarks
 	{
-		private TestClass _testClass;
+		private readonly TestClass _testClass;
 		private readonly object[] _data;
-		private ProtocolMessage.ProtocolMessageManager _pm;
+		private readonly ProtocolMessage.ProtocolMessageManager _pm;
 
 		public Benchmarks()
 		{
@@ -66,7 +66,7 @@ namespace Decorator.Benchmarks
 			{
 				String = "Hello, World!",
 				Int = 1234,
-				SomeIntegers = new int[]
+				SomeIntegers = new[]
 				{
 					1, 2, 8, 9, 20, 15
 				},

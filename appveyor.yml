@@ -14,18 +14,19 @@ init:
 
 before_build:
   - dotnet restore
+  - nuget install OpenCover -Version 4.6.519 -OutputDirectory packages
+  - nuget install Codecov -Version 1.0.3 -OutputDirectory packages
 
 build_script:
   - dotnet build -c %CONFIGURATION% "Decorator\Decorator.csproj"
   
 test_script:
     - ps: |
-        if ($env:CONFIGURATION -eq 'Debug')
+        if ($env:CONFIGURATION -eq 'Release')
         {
-          nuget install OpenCover -Version 4.6.519 -OutputDirectory packages
-          packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user "-target:%ProgramFiles%\dotnet\dotnet.exe" "-targetargs:test Decorator.Tests\Decorator.Tests.csproj" -returntargetcode "-filter:+[Decorator]*" -hideskipped:All -output:./coverage.xml -oldStyle
-          nuget install Codecov -Version 1.0.3 -OutputDirectory packages
-          packages\Codecov.1.0.3\tools\codecov.exe -f "coverage.xml"
+          dotnet test Decorator.Tests\ /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+          
+          packages\Codecov.1.0.3\tools\codecov.exe -f "Decorator.Tests\coverage.opencover.xml"
         }
 
 artifacts:
