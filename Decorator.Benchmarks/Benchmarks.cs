@@ -7,6 +7,13 @@ using System.Text;
 
 namespace Decorator.Benchmarks
 {
+	internal class ShouldNotHappenException : Exception
+	{
+		public ShouldNotHappenException() : base("This shouldn't happen.")
+		{
+		}
+	}
+
 	[Deserialisable]
 	[ProtocolMessage.Message(" ")]
 	public class TestClass : IDecorable
@@ -50,7 +57,7 @@ namespace Decorator.Benchmarks
 	public class Benchmarks
 	{
 		private TestClass _testClass;
-		private object[] _data;
+		private readonly object[] _data;
 		private ProtocolMessage.ProtocolMessageManager _pm;
 
 		public Benchmarks()
@@ -90,12 +97,12 @@ namespace Decorator.Benchmarks
 		[Benchmark]
 		public TestClass DecoratorDeserialize()
 		{
-			if (Converter<TestClass>.Deserialize(_data, out var result))
+			if (Converter<TestClass>.TryDeserialize(_data, out var result))
 			{
 				return result;
 			}
 
-			throw new Exception();
+			throw new ShouldNotHappenException();
 		}
 
 		[Benchmark]

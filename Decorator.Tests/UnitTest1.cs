@@ -125,7 +125,7 @@ namespace Decorator.Tests
 
 			File.WriteAllText("objArr.json", JsonConvert.SerializeObject(data, Formatting.Indented));
 
-			var des = Converter<World>.Deserialize(data, out var worldDes);
+			var des = Converter<World>.TryDeserialize(data, out var worldDes);
 		}
 
         [Fact]
@@ -133,7 +133,7 @@ namespace Decorator.Tests
         {
             var data = new object[] { "1234", null, 5678 };
 
-            Assert.True(Converter<Test>.Deserialize(data, out var item));
+            Assert.True(Converter<Test>.TryDeserialize(data, out var item));
 
             Assert.Equal("1234", item.Heyo);
             Assert.Equal(5678, item.Woyo);
@@ -205,7 +205,7 @@ namespace Decorator.Tests
 			};
 
 			var data = Converter<ArrayTest>.Serialize(item);
-			Converter<ArrayTest>.Deserialize(data, out var des)
+			Converter<ArrayTest>.TryDeserialize(data, out var des)
 				.Should()
 				.BeTrue();
 

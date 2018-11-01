@@ -33,8 +33,8 @@ namespace Decorator
 
 				for (int desArrayIndex = 0; desArrayIndex < len; desArrayIndex++)
 				{
-					if (!(array.Length > i)) return false;
-					if (!(array[i] is T)) return false;
+					if (array.Length <= i ||
+						!(array[i] is T)) return false;
 
 					desArray[desArrayIndex] = array[i++];
 				}

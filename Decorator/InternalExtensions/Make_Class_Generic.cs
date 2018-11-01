@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 
 namespace Decorator
 {
-	// Make.Class(typeof(Array<>)).GenericType(typeof(type));
+	// Sample usage of this class: Make.Class(typeof(Array<>)).GenericType(typeof(type));
 	internal static class Make
 	{
 		public interface IGenericMaker
@@ -13,10 +13,11 @@ namespace Decorator
 
 		private class GenericTypeCacher : IGenericMaker
 		{
-			public GenericTypeCacher(Type classType) => _classType = classType;
+			public GenericTypeCacher(Type classType)
+				=> _classType = classType;
 
-			private Type _classType;
-			private ConcurrentDictionary<Type, Type> _cache = new ConcurrentDictionary<Type, Type>();
+			private readonly Type _classType;
+			private readonly ConcurrentDictionary<Type, Type> _cache = new ConcurrentDictionary<Type, Type>();
 
 			public Type Generic(Type genericType)
 			{

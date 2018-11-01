@@ -6,6 +6,14 @@ using System.Text;
 
 namespace Decorator.Server
 {
+	public class NoMessageAttributesException : Exception
+	{
+		public NoMessageAttributesException(Type type) : base($"There are no '{typeof(MessageAttribute)}'s on the given {type}")
+		{
+
+		}
+	}
+
 	public static class IDecorableMessageExtensions
 	{
 		private static ConcurrentDictionary<Type, string> _typeCache = new ConcurrentDictionary<Type, string>();
@@ -18,7 +26,7 @@ namespace Decorator.Server
 			var msgAttrib = type.GetCustomAttributes(true)
 							.OfType<MessageAttribute>();
 
-			if (msgAttrib.Count() == 0) throw new Exception();
+			if (msgAttrib.Count() == 0) throw new NoMessageAttributesException(type);
 
 			msgType = msgAttrib.First().Type;
 

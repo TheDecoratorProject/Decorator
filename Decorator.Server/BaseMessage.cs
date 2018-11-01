@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Decorator.Server
 {
-	public struct BaseMessage
+	public struct BaseMessage : IEquatable<BaseMessage>
 	{
 		public BaseMessage(string type, params object[] arguments)
 		{
@@ -14,5 +14,9 @@ namespace Decorator.Server
 
 		public string Type { get; }
 		public object[] Arguments { get; }
+
+		public bool Equals(BaseMessage other)
+			=> other.Type == Type &&
+				other.Arguments == Arguments;
 	}
 }

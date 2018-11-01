@@ -34,7 +34,7 @@ namespace Decorator
 
 				for (int desArrayIndex = 0; desArrayIndex < len; desArrayIndex++)
 				{
-					if (!Converter<T>.Deserialize(array, ref i, out var item)) return false;
+					if (!Converter<T>.TryDeserialize(array, ref i, out var item)) return false;
 
 					desArray[desArrayIndex] = item;
 				}

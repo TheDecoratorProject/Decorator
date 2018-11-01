@@ -11,10 +11,6 @@ namespace Decorator
 
 	internal class Ignored : DecoratorInfo
 	{
-		public Ignored()
-		{
-		}
-
 		public override bool Deserialize(object instance, ref object[] array, ref int i)
 		{
 			i++;

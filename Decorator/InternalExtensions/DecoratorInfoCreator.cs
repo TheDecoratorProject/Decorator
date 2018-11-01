@@ -12,8 +12,5 @@ namespace Decorator
 
 			return (DecoratorInfo)inv;
 		}
-			/*
-			=> (DecoratorInfo)type.GetConstructor(Types.MemberInfoTypes)
-									.Invoke(new object[] { memberInfo });*/
 	}
 }

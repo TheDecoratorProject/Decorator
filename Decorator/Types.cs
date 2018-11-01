@@ -5,6 +5,6 @@ namespace Decorator
 {
 	internal static class Types
 	{
-		public static Type[] MemberInfoTypes = new Type[] { typeof(MemberInfo) };
+		public static readonly Type[] MemberInfoTypes = new Type[] { typeof(MemberInfo) };
 	}
 }

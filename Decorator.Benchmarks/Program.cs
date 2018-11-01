@@ -3,7 +3,7 @@ using System;
 
 namespace Decorator.Benchmarks
 {
-	class Program
+	static class Program
     {
 		static void Main(string[] args)
 		{

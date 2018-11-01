@@ -28,7 +28,7 @@ namespace Decorator
 
 		public override bool Deserialize(object instance, ref object[] array, ref int i)
 		{
-			if (!Converter<T>.Deserialize(array, ref i, out var result)) return false;
+			if (!Converter<T>.TryDeserialize(array, ref i, out var result)) return false;
 			_setValue(instance, result);
 			return true;
 		}

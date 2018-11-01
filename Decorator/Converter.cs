@@ -9,14 +9,14 @@ namespace Decorator
 
 		static Converter() => _members = DecoratorInfoCompiler<T>.Members;
 
-		public static bool Deserialize(object[] array, out T result)
+		public static bool TryDeserialize(object[] array, out T result)
 		{
 			int arrayIndex = 0;
 
-			return Deserialize(array, ref arrayIndex, out result);
+			return TryDeserialize(array, ref arrayIndex, out result);
 		}
 
-		public static bool Deserialize(object[] array, ref int arrayIndex, out T result)
+		public static bool TryDeserialize(object[] array, ref int arrayIndex, out T result)
 		{
 			result = InstanceOf<T>.Create();
 
