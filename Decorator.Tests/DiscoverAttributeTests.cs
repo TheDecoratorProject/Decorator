@@ -6,26 +6,26 @@ using Xunit;
 
 namespace Decorator.Tests
 {
-	public class DiscoverAttributeTestsBase : IDecorable
-	{
-		[Position(0), Required]
-		public int PublicInstance;
-
-		[Position(0), Required]
-		private readonly int PrivateInstance;
-
-		[Position(0), Required]
-		public static int PublicStatic;
-
-		[Position(0), Required]
-		private static readonly int PrivateStatic;
-
-		public int PrivateInstanceAccessor => PrivateInstance;
-		public static int PrivateStaticAccessor => PrivateStatic;
-	}
-
 	public class DiscoverAttributeTests
 	{
+		public class DiscoverAttributeTestsBase : IDecorable
+		{
+			[Position(0), Required]
+			public int PublicInstance;
+
+			[Position(0), Required]
+			private readonly int PrivateInstance;
+
+			[Position(0), Required]
+			public static int PublicStatic;
+
+			[Position(0), Required]
+			private static readonly int PrivateStatic;
+
+			public int PrivateInstanceAccessor => PrivateInstance;
+			public static int PrivateStaticAccessor => PrivateStatic;
+		}
+
 		private const int SUCCESS = 5;
 
 		private T GetInst<T>() where T : IDecorable
