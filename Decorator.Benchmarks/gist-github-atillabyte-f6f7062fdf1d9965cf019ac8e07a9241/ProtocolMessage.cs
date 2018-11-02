@@ -15,7 +15,7 @@
 
 		public ProtocolMessageManager()
 		{
-			this.ProtocolMessages =
+			ProtocolMessages =
 				AppDomain.CurrentDomain.GetAssemblies()
 				.Select(assembly => assembly.GetTypes())
 				.SelectMany(type => type)
@@ -33,7 +33,7 @@
 
 			var type = typeof(T);
 
-			if (this.ProtocolMessages.TryGetValue(type.GetHashCode(), out var message))
+			if (ProtocolMessages.TryGetValue(type.GetHashCode(), out var message))
 			{
 				var instance = (T)InstanceCache.CreateInstance<object>(type);
 
@@ -62,8 +62,8 @@
 			}
 			else
 			{
-				this.ProtocolMessages.Add(type.GetHashCode(), new ProtocolMessage(type));
-				return this.Convert<T>(array);
+				ProtocolMessages.Add(type.GetHashCode(), new ProtocolMessage(type));
+				return Convert<T>(array);
 			}
 		}
 	}
@@ -76,7 +76,7 @@
 
 		internal ProtocolMessage(Type type)
 		{
-			this.MessageType = type.GetAttribute<Message>().MessageType;
+			MessageType = type.GetAttribute<Message>().MessageType;
 
 			var _members = new List<IProtocolMember>();
 
@@ -110,6 +110,7 @@
 							Required = required != null
 						};
 						break;
+
 					case MemberTypes.Field:
 						entry = new ProtocolField(member, type)
 						{
@@ -123,7 +124,7 @@
 				_members.Add(entry);
 			}
 
-			this.Members = _members.ToArray();
+			Members = _members.ToArray();
 		}
 	}
 
@@ -152,12 +153,12 @@
 
 		public ProtocolProperty(MemberInfo property, Type type)
 		{
-			this.MemberInfo = property;
-			this.SetMemberValue = ((PropertyInfo)property).GetSetMethodByExpression();
+			MemberInfo = property;
+			SetMemberValue = ((PropertyInfo)property).GetSetMethodByExpression();
 		}
 
 		public void SetValue(object instance, object value) =>
-			this.SetMemberValue(instance, value);
+			SetMemberValue(instance, value);
 	}
 
 	internal class ProtocolField : IProtocolMember
@@ -172,12 +173,12 @@
 
 		public ProtocolField(MemberInfo property, Type type)
 		{
-			this.MemberInfo = property;
-			this.SetMemberValue = ((FieldInfo)property).GetSetMethodByExpression();
+			MemberInfo = property;
+			SetMemberValue = ((FieldInfo)property).GetSetMethodByExpression();
 		}
 
 		public void SetValue(object instance, object value) =>
-			this.SetMemberValue(instance, value);
+			SetMemberValue(instance, value);
 	}
 
 	internal static class ExpressionHelpers
@@ -268,7 +269,9 @@
 	[Serializable]
 	public sealed class ProtocolMessageException : Exception
 	{
-		public ProtocolMessageException(string message) : base(message) { }
+		public ProtocolMessageException(string message) : base(message)
+		{
+		}
 	}
 
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
@@ -283,7 +286,7 @@
 		public int Index { get; private set; }
 
 		public Position(int index) =>
-			this.Index = index;
+			Index = index;
 	}
 
 	[AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = false)]
@@ -296,7 +299,7 @@
 			if (string.IsNullOrEmpty(messageType))
 				throw new ProtocolMessageException("A valid non-empty message type must be specified for messages.");
 
-			this.MessageType = messageType;
+			MessageType = messageType;
 		}
 	}
 }

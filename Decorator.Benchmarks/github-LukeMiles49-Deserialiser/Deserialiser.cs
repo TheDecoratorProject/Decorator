@@ -11,7 +11,7 @@ namespace Deserialiser
 	{
 		private static readonly DeserialiseInfo[] info;
 
-		private static Func<T> constructor = Expression.Lambda<Func<T>>(Expression.New(typeof(T))).Compile();
+		private static readonly Func<T> constructor = Expression.Lambda<Func<T>>(Expression.New(typeof(T))).Compile();
 
 		static Deserialiser()
 		{
@@ -39,7 +39,7 @@ namespace Deserialiser
 				OrderAttribute a = p.GetCustomAttribute<OrderAttribute>();
 				if (a == null) continue;
 				if (dInfo.ContainsKey(a.position)) throw new InvalidDeserialisationInfoException($"Multiple items found with position {a.position}");
-				
+
 				dInfo[a.position] = (DeserialiseInfo)typeof(ValueInfo<>)
 					.MakeGenericType(p.PropertyType)
 					.GetConstructor(new Type[] { typeof(PropertyInfo), typeof(bool) })

@@ -1,33 +1,24 @@
 ﻿using FluentAssertions;
-using System;
-using System.Collections.Generic;
+
 using System.Reflection;
-using System.Text;
+
 using Xunit;
 
 namespace Decorator.Tests
 {
-	public class TestException : Exception
-	{
-		public TestException(string msg = "") : base($"A faulty test has been detected: {msg}")
-		{
-
-		}
-	}
-
 	public class DiscoverAttributeTestsBase : IDecorable
 	{
 		[Position(0), Required]
 		public int PublicInstance;
 
 		[Position(0), Required]
-		private int PrivateInstance;
+		private readonly int PrivateInstance;
 
 		[Position(0), Required]
 		public static int PublicStatic;
 
 		[Position(0), Required]
-		private static int PrivateStatic;
+		private static readonly int PrivateStatic;
 
 		public int PrivateInstanceAccessor => PrivateInstance;
 		public static int PrivateStaticAccessor => PrivateStatic;
@@ -55,16 +46,12 @@ namespace Decorator.Tests
 			=> GetInst<DiscoversPublicAndInstanceClass>()
 				.PublicInstance.Should().Be(SUCCESS);
 
-
-
 		public class DiscoversDefaultClass : DiscoverAttributeTestsBase { }
 
 		[Fact]
 		public void DiscoversDefault()
 			=> GetInst<DiscoversDefaultClass>()
 				.PublicInstance.Should().Be(SUCCESS);
-
-
 
 		[Discover(BindingFlags.NonPublic | BindingFlags.Instance)]
 		public class DiscoversPrivateAndInstanceClass : DiscoverAttributeTestsBase { }
@@ -73,8 +60,6 @@ namespace Decorator.Tests
 		public void DiscoversPrivateAndInstance()
 			=> GetInst<DiscoversPrivateAndInstanceClass>()
 				.PrivateInstanceAccessor.Should().Be(SUCCESS);
-
-
 
 		[Discover(BindingFlags.Public | BindingFlags.Static)]
 		public class DiscoversPublicAndStaticClass : DiscoverAttributeTestsBase { }
@@ -86,8 +71,6 @@ namespace Decorator.Tests
 			DiscoversPublicAndStaticClass.PublicStatic
 				.Should().Be(SUCCESS);
 		}
-
-
 
 		[Discover(BindingFlags.NonPublic | BindingFlags.Static)]
 		public class DiscoversPrivateAndStaticClass : DiscoverAttributeTestsBase { }

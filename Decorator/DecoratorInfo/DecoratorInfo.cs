@@ -1,9 +1,4 @@
-﻿using SwissILKnife;
-
-using System;
-using System.Reflection;
-
-namespace Decorator
+﻿namespace Decorator
 {
 	internal abstract class DecoratorInfo
 	{

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Decorator.Server
 {
@@ -10,7 +8,6 @@ namespace Decorator.Server
 	{
 		public NoMessageAttributesException(Type type) : base($"There are no '{typeof(MessageAttribute)}'s on the given {type}")
 		{
-
 		}
 	}
 

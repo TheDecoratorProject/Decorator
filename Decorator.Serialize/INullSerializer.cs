@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Decorator.Serialize
+﻿namespace Decorator.Serialize
 {
-    public interface INullSerializer : ISerializer
-    {
-    }
+	public interface INullSerializer : ISerializer
+	{
+	}
 }

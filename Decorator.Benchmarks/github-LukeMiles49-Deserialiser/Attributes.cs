@@ -20,15 +20,11 @@ namespace Deserialiser
 	{
 		public readonly object value;
 
-		public ConstAttribute(double position, object value, bool recurse = false) : base(position, recurse)
-		{
-			this.value = value;
-		}
+		public ConstAttribute(double position, object value, bool recurse = false) : base(position, recurse) => this.value = value;
 	}
 
 	[AttributeUsage(AttributeTargets.Class)]
 	public class DeserialisableAttribute : Attribute
 	{
-		
 	}
 }

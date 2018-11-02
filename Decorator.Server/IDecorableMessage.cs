@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace Decorator.Server
+﻿namespace Decorator.Server
 {
-    public interface IDecorableMessage : IDecorable
-    {
-    }
+	public interface IDecorableMessage : IDecorable
+	{
+	}
 }
