@@ -1,4 +1,5 @@
 ﻿using SwissILKnife;
+using System;
 
 namespace Decorator
 {
@@ -11,6 +12,12 @@ namespace Decorator
 
 		public static bool TryDeserialize(object[] array, out T result)
 		{
+			if (array == null)
+			{
+				result = default;
+				return false;
+			}
+
 			int arrayIndex = 0;
 
 			return TryDeserialize(array, ref arrayIndex, out result);
@@ -22,6 +29,8 @@ namespace Decorator
 
 			for (int memberIndex = 0; memberIndex < _members.Length; memberIndex++)
 			{
+				if (array.Length <= arrayIndex) return false;
+
 				if (!_members[memberIndex].Deserialize(result, ref array, ref arrayIndex)) return false;
 			}
 
