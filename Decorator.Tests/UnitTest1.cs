@@ -6,6 +6,7 @@ using Xunit;
 
 namespace Decorator.Tests
 {
+	/*
 	public class Test : IDecorable
 	{
 		[Position(0), Required]
@@ -221,5 +222,5 @@ namespace Decorator.Tests
 				.Should()
 				.Be(item.Woyo);
 		}
-	}
+	}*/
 }

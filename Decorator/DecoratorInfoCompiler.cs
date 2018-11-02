@@ -1,5 +1,5 @@
 ﻿using SwissILKnife;
-
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -19,22 +19,30 @@ namespace Decorator
 
 			IEnumerable<MemberInfo> members;
 
-			if (typeof(T).GetCustomAttributes(true).OfType<DiscoverAttribute>().Count() > 0)
+			var discoverAttributes = typeof(T)
+										.GetCustomAttributes(true)
+										.OfType<DiscoverAttribute>();
+
+			if (discoverAttributes.Count() > 0)
 			{
 				// there are discover attributes
 				// we will ONLY discover what they have specified in the discover attributes
 
-				members = typeof(T)
-							.GetCustomAttributes(true)
-							.OfType<DiscoverAttribute>()
-							.SelectMany(x => GetMembers(x.BindingFlags));
+				members = discoverAttributes
+							.SelectMany(x => GetMembers(typeof(T), x.BindingFlags))
+							.Where(x => x.GetCustomAttributes(true)
+											.OfType<PositionAttribute>()
+											.Count() > 0);
 			}
 			else
 			{
 				// no DiscoverAttribute?
 				// we will just search for all public and instance ones then
 
-				members = GetMembers(BindingFlags.Public | BindingFlags.Instance);
+				members = GetMembers(typeof(T), BindingFlags.Public | BindingFlags.Instance)
+							.Where(x => x.GetCustomAttributes(true)
+											.OfType<PositionAttribute>()
+											.Count() > 0);
 			}
 
 			var dict = new SortedDictionary<int, DecoratorInfo>();
@@ -68,13 +76,27 @@ namespace Decorator
 			Members = dict.Values.ToArray();
 		}
 
-		private static IEnumerable<MemberInfo> GetMembers(BindingFlags bindingFlags)
-			=> typeof(T)
-				.GetProperties(bindingFlags)
-				.Cast<MemberInfo>()
-				.Concat(typeof(T).GetFields(bindingFlags))
-				.Where(x => x.GetCustomAttributes(true)
-								.OfType<PositionAttribute>()
-								.Count() > 0);
+		private static IEnumerable<MemberInfo> GetMembers(Type type, BindingFlags bindingFlags)
+		{
+			var props = type
+							.GetProperties(bindingFlags)
+							.Cast<MemberInfo>();
+
+			var fields = type
+							.GetFields(bindingFlags)
+							.Cast<MemberInfo>();
+
+			var members = props.Concat(fields);
+
+			if (type.BaseType != default)
+			{
+				members = members.Concat(GetMembers(type.BaseType, bindingFlags));
+			}
+
+			return members
+					.Where(x => x.GetCustomAttributes(true)
+									.OfType<PositionAttribute>()
+									.Count() > 0);
+		}
 	}
 }
