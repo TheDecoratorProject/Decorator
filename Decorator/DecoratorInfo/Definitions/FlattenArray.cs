@@ -8,34 +8,46 @@ namespace Decorator
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 	public sealed class FlattenArrayAttribute : Attribute, IDecoratorInfoAttribute
 	{
+		public FlattenArrayAttribute(int maxArraySize = 0xFFFF)
+			=> MaxArraySize = maxArraySize;
+
+		public int MaxArraySize { get; set; }
+
 		DecoratorInfo IDecoratorInfoAttribute.GetDecoratorInfo(MemberInfo memberValue)
 		{
 			return Make.Class(typeof(FlattenArray<>)).Generic(memberValue.GetMemberType().GetElementType())
-					.CreateDecoratorInfo(memberValue);
+					.CreateDecoratorInfo(memberValue, MaxArraySize);
 		}
 	}
 
 	internal class FlattenArray<T> : DecoratorInfo
 		where T : IDecorable
 	{
-		public FlattenArray(MemberInfo memberInfo)
+		public FlattenArray(MemberInfo memberInfo, int maxSize)
 		{
+			_maxSize = maxSize;
 			_getValue = MemberUtils.GetGetMethod(memberInfo);
 			_setValue = MemberUtils.GetSetMethod(memberInfo);
 		}
 
 		protected Func<object, object> _getValue;
 		protected Action<object, object> _setValue;
+		private int _maxSize;
 
 		public override bool Deserialize(object instance, ref object[] array, ref int i)
 		{
 			if (array[i++] is int len)
 			{
+				if (len > _maxSize || len < 0) return false;
+
 				var desArray = new object[len];
 
 				for (int desArrayIndex = 0; desArrayIndex < len; desArrayIndex++)
 				{
-					if (!Converter<T>.TryDeserialize(array, ref i, out var item)) return false;
+					if (!Converter<T>.TryDeserialize(array, ref i, out var item))
+					{
+						return false;
+					}
 
 					desArray[desArrayIndex] = item;
 				}

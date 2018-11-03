@@ -21,14 +21,18 @@ namespace Decorator
 		{
 			_getValue = MemberUtils.GetGetMethod(memberInfo);
 			_setValue = MemberUtils.GetSetMethod(memberInfo);
+			_canBeNull = !memberInfo.GetMemberType().IsValueType;
 		}
 
 		protected Func<object, object> _getValue;
 		protected Action<object, object> _setValue;
+		private bool _canBeNull;
 
 		public override bool Deserialize(object instance, ref object[] array, ref int i)
 		{
-			if (array[i] is T)
+			if (array[i] is T ||
+				(_canBeNull &&
+				array[i] == null))
 			{
 				_setValue(instance, array[i++]);
 				return true;

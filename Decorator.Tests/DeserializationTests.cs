@@ -50,7 +50,7 @@ namespace Decorator.Tests
 			public DeserializationTestsRequiredAttributeBase[] RequiredDecorable { get; set; }
 
 			[Position(1), FlattenArray]
-			public DeserializationTestsArrayAttributeBase[] ArrayDecorable { get; set; }
+			public DeserializationTestsOptionalAttributeBase[] ArrayDecorable { get; set; }
 		}
 
 		[Theory]
@@ -70,6 +70,9 @@ namespace Decorator.Tests
 		[InlineData("Literally anything else", 0, 0)]
 		[InlineData("Literally anything else", null, 0)]
 		[InlineData("Literally anything else", 0, "")]
+		[InlineData("Not the right reference type", 5f, 0)]
+		[InlineData("Not the right value type", "", 5f)]
+		[InlineData("Not the right types", 5f, 5f)]
 		public void Optional(string comment, params object[] deserializeInfo)
 			=> Converter<DeserializationTestsOptionalAttributeBase>.TryDeserialize(deserializeInfo, out _)
 				.Should().BeTrue(comment);
@@ -77,6 +80,7 @@ namespace Decorator.Tests
 		[Theory]
 		[InlineData("Normal", 5, "a", "b", "c", "d", "e", 3, 1, 2, 3)]
 		[InlineData("Reference types can be null", 2, null, null, 3, 1, 2, 3)]
+		[InlineData("No array items", 0, 0)]
 		public void Array(string comment, params object[] deserializeInfo)
 			=> Converter<DeserializationTestsArrayAttributeBase>.TryDeserialize(deserializeInfo, out _)
 				.Should().BeTrue(comment);
@@ -97,7 +101,11 @@ namespace Decorator.Tests
 				.Should().BeTrue(comment);
 
 		[Theory]
-		[InlineData("it works, ok?", 4, "a", 1, "b", 2, "c", 3, "d", 4, 5, null, null, "b", 2, "c", "c", 4, 4, 5u, 5f, "f", 5f)]
+		[InlineData("No array items", 0, 0)]
+		[InlineData("Single Items", 1, "a", 1, 1, "b", 2)]
+		[InlineData("Null for reference type", 1, null, 1, 1, null, 2)]
+		[InlineData("Optional works", 1, "a", 1, 2, "", 1, null, null)]
+		[InlineData("Complex, should work", 4, "a", 1, "b", 2, "c", 3, "d", 4, 5, "c", 3, "b", 2, "c", "c", 4, 4, 5u, 5f, "f", 5f)]
 		public void FlattenArray(string comment, params object[] deserializeInfo)
 			=> Converter<DeserializationTestsFlattenArrayAttributeBase>.TryDeserialize(deserializeInfo, out _)
 				.Should().BeTrue(comment);

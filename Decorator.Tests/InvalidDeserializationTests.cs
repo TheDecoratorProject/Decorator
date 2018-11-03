@@ -61,6 +61,9 @@ namespace Decorator.Tests
 		[InlineData("Type Safety of Reference Type", "", "")]
 		[InlineData("Type Safety of Value Type", 0, 0)]
 		[InlineData("Can't set value types to null", "", null)]
+		[InlineData("Not the right type for value type", "", 5f)]
+		[InlineData("Not the right type for reference type", 5f, 0)]
+		[InlineData("Not the right types", 5f, 5f)]
 		public void Required(string comment, params object[] deserializeInfo)
 			=> Converter<InvalidDeserializationTestsRequiredAttributeBase>.TryDeserialize(deserializeInfo, out _)
 				.Should().BeFalse(comment);
@@ -83,6 +86,11 @@ namespace Decorator.Tests
 		[InlineData("Invalid value type array length", new object[] { 1, "", 20, 0 })]
 		[InlineData("No array length despite there being values", new object[] { 0, "", 0, 5 })]
 		[InlineData("Null in value types", new object[] { 0, 1, null })]
+		[InlineData("Not the right reference type", new object[] { 1, 5f, 0, 0 })]
+		[InlineData("Not the right value type", new object[] { 1, "", 5f, 0 })]
+		[InlineData("Not the right types", new object[] { 1, 5f, 5f, 0 })]
+		[InlineData("Largest array size", new object[] { 3, "a", "b", "c", int.MaxValue })]
+		[InlineData("Smallest array size", new object[] { 3, "a", "b", "c", int.MinValue })]
 		public void Array(string comment, params object[] deserializeInfo)
 			=> Converter<InvalidDeserializationTestsArrayAttributeBase>.TryDeserialize(deserializeInfo, out _)
 				.Should().BeFalse(comment);
@@ -105,6 +113,11 @@ namespace Decorator.Tests
 		[InlineData("No array length despite there being values", new object[] { 0, "", 0, 5, 0, 0 })]
 		[InlineData("Null in value types", new object[] { 0, 1, null })]
 		[InlineData("Illusion of there being objects", new object[] { 1, "", 0, 2 })]
+		[InlineData("Not the right types", new object[] { 1, 5f, 5f, 1, 1, "", 0 })]
+		[InlineData("Not the right reference type", new object[] { 1, "", 5f, 1, 1, "", 0 })]
+		[InlineData("Not the right value type", new object[] { 1, 5f, 0, 1, 1, "", 0 })]
+		[InlineData("Largest array size", new object[] { 3, "a", 1, "b", 2, "c", 3, int.MaxValue, int.MaxValue })]
+		[InlineData("Smallest array size", new object[] { 3, "a", 1, "b", 2, "c", 3, int.MinValue, int.MinValue })]
 		public void FlattenArray(string comment, params object[] deserializeInfo)
 			=> Converter<InvalidDeserializationTestsFlattenArrayAttributeBase>.TryDeserialize(deserializeInfo, out _)
 				.Should().BeFalse(comment);
