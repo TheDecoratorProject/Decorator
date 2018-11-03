@@ -8,6 +8,15 @@ namespace Decorator.Tests
 {
 	public class DeserializationTests
 	{
+		public class DeserializationTestsIgnoredAttributeBase : IDecorable
+		{
+			[Position(0), Ignored]
+			public string MyReferenceType { get; set; }
+
+			[Position(1), Ignored]
+			public int MyValueType { get; set; }
+		}
+
 		public class DeserializationTestsRequiredAttributeBase : IDecorable
 		{
 			[Position(0), Required]
@@ -52,6 +61,13 @@ namespace Decorator.Tests
 			[Position(1), FlattenArray]
 			public DeserializationTestsOptionalAttributeBase[] ArrayDecorable { get; set; }
 		}
+
+		[Theory]
+		[InlineData("Nothing", new object[] { null, null })]
+		[InlineData("Stuff", new object[] { "abcd", 1234, null })]
+		public void Ignored(string comment, params object[] deserializeInfo)
+			=> Converter<DeserializationTestsIgnoredAttributeBase>.TryDeserialize(deserializeInfo, out _)
+				.Should().BeTrue(comment);
 
 		[Theory]
 		[InlineData("Deserializes types", "", 0)]

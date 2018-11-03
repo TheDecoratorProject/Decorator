@@ -8,6 +8,15 @@ namespace Decorator.Tests
 {
 	public class InvalidDeserializationTests
 	{
+		public class InvalidDeserializationTestsIgnoredAttributeBase : IDecorable
+		{
+			[Position(0), Ignored]
+			public string MyReferenceType { get; set; }
+
+			[Position(1), Ignored]
+			public int MyValueType { get; set; }
+		}
+
 		public class InvalidDeserializationTestsRequiredAttributeBase : IDecorable
 		{
 			[Position(0), Required]
@@ -52,6 +61,14 @@ namespace Decorator.Tests
 			[Position(1), FlattenArray]
 			public InvalidDeserializationTestsArrayAttributeBase[] ArrayDecorable { get; set; }
 		}
+
+
+
+		[Theory]
+		[InlineData("Not enough args", "a")]
+		public void Ignored(string comment, params object[] deserializeInfo)
+			=> Converter<InvalidDeserializationTestsIgnoredAttributeBase>.TryDeserialize(deserializeInfo, out _)
+				.Should().BeFalse(comment);
 
 		[Theory]
 		[InlineData("Null parameter", null)]

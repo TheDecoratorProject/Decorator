@@ -8,6 +8,15 @@ namespace Decorator.Tests
 {
 	public class SerializationTests
 	{
+		public class SerializationTestsIgnoredAttributeBase : IDecorable
+		{
+			[Position(0), Ignored]
+			public string MyReferenceType { get; set; }
+
+			[Position(1), Ignored]
+			public int MyValueType { get; set; }
+		}
+
 		public class SerializationTestsRequiredAttributeBase : IDecorable
 		{
 			[Position(0), Required]
@@ -54,6 +63,42 @@ namespace Decorator.Tests
 		}
 
 
+		
+		[Theory]
+		[MemberData(nameof(IgnoredData))]
+		public void Ignored(SerializationTestsIgnoredAttributeBase test, object[] serializedData)
+		{
+			Converter<SerializationTestsIgnoredAttributeBase>.Serialize(test)
+				.Should().BeEquivalentTo(serializedData);
+		}
+
+		public static IEnumerable<object[]> IgnoredData()
+		{
+			yield return new object[]
+			{
+				new SerializationTestsIgnoredAttributeBase
+				{
+					MyReferenceType = "abcd",
+					MyValueType = 4567,
+				},
+				new object[]
+				{
+					null,
+					null
+				}
+			};
+			yield return new object[]
+			{
+				new SerializationTestsIgnoredAttributeBase
+				{
+				},
+				new object[]
+				{
+					null,
+					null
+				}
+			};
+		}
 
 		[Theory]
 		[MemberData(nameof(RequiredData))]
