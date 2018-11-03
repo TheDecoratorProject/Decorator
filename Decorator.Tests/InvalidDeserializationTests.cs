@@ -50,7 +50,7 @@ namespace Decorator.Tests
 			public InvalidDeserializationTestsRequiredAttributeBase[] RequiredDecorable { get; set; }
 
 			[Position(1), FlattenArray]
-			public InvalidDeserializationTestsOptionalAttributeBase[] OptionalDecorable { get; set; }
+			public InvalidDeserializationTestsArrayAttributeBase[] ArrayDecorable { get; set; }
 		}
 
 		[Theory]
@@ -104,6 +104,7 @@ namespace Decorator.Tests
 		[InlineData("Invalid value type array length", new object[] { 1, "", 0, 20, 0 })]
 		[InlineData("No array length despite there being values", new object[] { 0, "", 0, 5, 0, 0 })]
 		[InlineData("Null in value types", new object[] { 0, 1, null })]
+		[InlineData("Illusion of there being objects", new object[] { 1, "", 0, 2 })]
 		public void FlattenArray(string comment, params object[] deserializeInfo)
 			=> Converter<InvalidDeserializationTestsFlattenArrayAttributeBase>.TryDeserialize(deserializeInfo, out _)
 				.Should().BeFalse(comment);
