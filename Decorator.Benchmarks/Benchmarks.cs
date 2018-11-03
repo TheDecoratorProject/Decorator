@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Decorator.Benchmarks
 {
-	internal class ShouldNotHappenException : Exception
+	public class ShouldNotHappenException : Exception
 	{
 		public ShouldNotHappenException() : base("This shouldn't happen.")
 		{

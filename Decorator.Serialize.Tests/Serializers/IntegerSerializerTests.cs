@@ -1,5 +1,5 @@
 ﻿using Decorator.Serialize.Serializers;
-
+using Decorator.Tests;
 using System;
 using System.IO;
 
@@ -26,7 +26,7 @@ namespace Decorator.Serialize.Tests.Serializers
 
 				var bytes = new byte[4];
 
-				ms.Read(bytes, 0, 4);
+				if (ms.Read(bytes, 0, 4) != 4) throw new TestException();
 
 				Assert.Equal(data, BitConverter.ToInt32(bytes));
 			}

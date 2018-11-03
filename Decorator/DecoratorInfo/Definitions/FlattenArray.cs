@@ -8,7 +8,11 @@ namespace Decorator
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 	public sealed class FlattenArrayAttribute : Attribute, IDecoratorInfoAttribute
 	{
-		public FlattenArrayAttribute(int maxArraySize = 0xFFFF)
+		public FlattenArrayAttribute() : this(0xFFFF)
+		{
+		}
+
+		public FlattenArrayAttribute(int maxArraySize)
 			=> MaxArraySize = maxArraySize;
 
 		public int MaxArraySize { get; set; }
@@ -32,7 +36,7 @@ namespace Decorator
 
 		protected Func<object, object> _getValue;
 		protected Action<object, object> _setValue;
-		private int _maxSize;
+		private readonly int _maxSize;
 
 		public override bool Deserialize(object instance, ref object[] array, ref int i)
 		{
