@@ -26,7 +26,7 @@ namespace Decorator
 
 		protected Func<object, object> _getValue;
 		protected Action<object, object> _setValue;
-		private bool _canBeNull;
+		private readonly bool _canBeNull;
 
 		public override bool Deserialize(object instance, ref object[] array, ref int i)
 		{

@@ -14,13 +14,13 @@ namespace Decorator.Tests
 			public int PublicInstance;
 
 			[Position(0), Required]
-			private readonly int PrivateInstance;
+			private int PrivateInstance;
 
 			[Position(0), Required]
 			public static int PublicStatic;
 
 			[Position(0), Required]
-			private static readonly int PrivateStatic;
+			private static int PrivateStatic;
 
 			public int PrivateInstanceAccessor => PrivateInstance;
 			public static int PrivateStaticAccessor => PrivateStatic;
@@ -28,7 +28,7 @@ namespace Decorator.Tests
 
 		private const int SUCCESS = 5;
 
-		private T GetInst<T>() where T : IDecorable
+		private static T GetInst<T>() where T : IDecorable
 		{
 			if (!Converter<T>.TryDeserialize(new object[] { SUCCESS }, out var result))
 			{
