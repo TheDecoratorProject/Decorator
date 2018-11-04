@@ -72,10 +72,7 @@ namespace Decorator.Tests
 
 		public class NoDefaultConstructor : IDecorable
 		{
-			public NoDefaultConstructor(string s)
-			{
-				ReferenceType = s;
-			}
+			public NoDefaultConstructor(string s) => ReferenceType = s;
 
 			[Position(0), Required]
 			public string ReferenceType { get; set; }
@@ -132,7 +129,7 @@ namespace Decorator.Tests
 			})).Should().ThrowExactly<IrrationalAttributeException>();
 		}
 
-		
+
 
 		public class PerfectlyFineClass : IDecorable
 		{

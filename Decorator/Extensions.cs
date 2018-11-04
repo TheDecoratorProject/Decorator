@@ -9,9 +9,9 @@ namespace Decorator
 	{
 		public static int EstimateSize<T>(this DecoratorInfo[] decoratorInfos, T item)
 		{
-			int estimateSize = 0;
+			var estimateSize = 0;
 
-			for (int memberIndex = 0; memberIndex < decoratorInfos.Length; memberIndex++)
+			for (var memberIndex = 0; memberIndex < decoratorInfos.Length; memberIndex++)
 			{
 				decoratorInfos[memberIndex].EstimateSize(item, ref estimateSize);
 			}
@@ -47,7 +47,7 @@ namespace Decorator
 			if (type.BaseType != default)
 			{
 				var baseMembers = type.BaseType.GetMembersRecursively(bindingFlags);
-				
+
 				members = members
 							.Concat(baseMembers)
 							.DistinctBy((m) => m.Name);

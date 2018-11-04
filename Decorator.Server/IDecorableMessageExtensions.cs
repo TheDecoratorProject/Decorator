@@ -13,7 +13,7 @@ namespace Decorator.Server
 
 	public static class IDecorableMessageExtensions
 	{
-		private static ConcurrentDictionary<Type, string> _typeCache = new ConcurrentDictionary<Type, string>();
+		private static readonly ConcurrentDictionary<Type, string> _typeCache = new ConcurrentDictionary<Type, string>();
 
 		public static string GetMessageType(this IDecorableMessage decorableMessage)
 		{

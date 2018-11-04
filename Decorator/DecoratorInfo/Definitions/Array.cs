@@ -49,7 +49,7 @@ namespace Decorator
 
 				if (array.Length <= (i - 1) + len) return false;
 
-				for (int desArrayIndex = 0; desArrayIndex < len; desArrayIndex++)
+				for (var desArrayIndex = 0; desArrayIndex < len; desArrayIndex++)
 				{
 					if (!(array[i] is T || (_canBeNull && array[i] == null)))
 					{
@@ -72,7 +72,7 @@ namespace Decorator
 			var arrayVal = (T[])_getValue(instance);
 			array[i++] = arrayVal.Length;
 
-			for (int arrayValInex = 0; arrayValInex < arrayVal.Length; arrayValInex++)
+			for (var arrayValInex = 0; arrayValInex < arrayVal.Length; arrayValInex++)
 			{
 				array[i++] = arrayVal[arrayValInex];
 			}

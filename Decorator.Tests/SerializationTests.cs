@@ -63,7 +63,7 @@ namespace Decorator.Tests
 		}
 
 
-		
+
 		[Theory]
 		[MemberData(nameof(IgnoredData))]
 		public void Ignored(SerializationTestsIgnoredAttributeBase test, object[] serializedData)
@@ -89,9 +89,7 @@ namespace Decorator.Tests
 			};
 			yield return new object[]
 			{
-				new SerializationTestsIgnoredAttributeBase
-				{
-				},
+				new SerializationTestsIgnoredAttributeBase(),
 				new object[]
 				{
 					null,
@@ -165,9 +163,7 @@ namespace Decorator.Tests
 				};
 			yield return new object[]
 				{
-					new SerializationTestsOptionalAttributeBase
-					{
-					},
+					new SerializationTestsOptionalAttributeBase(),
 					new object[]
 					{
 						null,

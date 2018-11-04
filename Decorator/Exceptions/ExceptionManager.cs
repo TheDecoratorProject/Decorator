@@ -20,7 +20,7 @@ namespace Decorator
 
 		public const string IrrationalAttributeValueDefault
 			= "An invalid value has been specified for an attribute";
-		
+
 		public static IrrationalAttributeValueException GetIrrationalAttributeValue<T>(Type onType, object value, string comment)
 			where T : Attribute
 			=> new IrrationalAttributeValueException($"The attribute \"{typeof(T)}\" on type \"{onType}\" was given an invalid value \"{value}\"\r\n{comment}");

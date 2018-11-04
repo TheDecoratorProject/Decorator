@@ -9,11 +9,8 @@ namespace Decorator
 {
 	internal static class DecoratorInfoContainer<T>
 	{
-		static DecoratorInfoContainer()
-		{
-			Members = DecoratorInfoCompiler<T>.Compile();
-		}
-		
+		static DecoratorInfoContainer() => Members = DecoratorInfoCompiler<T>.Compile();
+
 		public static DecoratorInfo[] Members;
 	}
 
@@ -41,7 +38,7 @@ namespace Decorator
 			// fill up empty spaces with Ignored
 			var last = dict.Keys.LastOrDefault();
 
-			for (int i = 0; i < last; i++)
+			for (var i = 0; i < last; i++)
 			{
 				if (!dict.ContainsKey(i))
 				{

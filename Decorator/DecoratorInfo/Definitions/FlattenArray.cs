@@ -46,7 +46,7 @@ namespace Decorator
 
 				var desArray = new object[len];
 
-				for (int desArrayIndex = 0; desArrayIndex < len; desArrayIndex++)
+				for (var desArrayIndex = 0; desArrayIndex < len; desArrayIndex++)
 				{
 					if (!Converter<T>.TryDeserialize(array, ref i, out var item))
 					{
@@ -70,11 +70,11 @@ namespace Decorator
 
 			array[i++] = arrayVal.Length;
 
-			for (int arrayValIndex = 0; arrayValIndex < arrayVal.Length; arrayValIndex++)
+			for (var arrayValIndex = 0; arrayValIndex < arrayVal.Length; arrayValIndex++)
 			{
 				var data = Converter<T>.Serialize(arrayVal[arrayValIndex]);
 
-				for (int arrayIndex = 0; arrayIndex < data.Length; arrayIndex++)
+				for (var arrayIndex = 0; arrayIndex < data.Length; arrayIndex++)
 				{
 					array[i++] = data[arrayIndex];
 				}
@@ -87,7 +87,7 @@ namespace Decorator
 
 			i++;
 
-			for (int arrayIndex = 0; arrayIndex < array.Length; arrayIndex++)
+			for (var arrayIndex = 0; arrayIndex < array.Length; arrayIndex++)
 			{
 				i += DecoratorInfoContainer<T>.Members.EstimateSize(array[arrayIndex]);
 			}

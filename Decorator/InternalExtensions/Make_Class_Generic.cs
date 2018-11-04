@@ -31,7 +31,7 @@ namespace Decorator
 			}
 		}
 
-		private static ConcurrentDictionary<Type, IGenericMaker> _genericClassDictionary = new ConcurrentDictionary<Type, IGenericMaker>();
+		private static readonly ConcurrentDictionary<Type, IGenericMaker> _genericClassDictionary = new ConcurrentDictionary<Type, IGenericMaker>();
 
 		public static IGenericMaker Class(Type classType)
 		{

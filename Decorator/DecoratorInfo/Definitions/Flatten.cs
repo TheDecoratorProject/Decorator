@@ -47,7 +47,7 @@ namespace Decorator
 		{
 			var data = Converter<T>.Serialize((T)_getValue(instance));
 
-			for (int arrayIndex = 0; arrayIndex < data.Length; arrayIndex++)
+			for (var arrayIndex = 0; arrayIndex < data.Length; arrayIndex++)
 			{
 				array[i++] = data[arrayIndex];
 			}

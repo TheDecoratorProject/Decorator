@@ -14,7 +14,7 @@ namespace Decorator
 				return false;
 			}
 
-			int arrayIndex = 0;
+			var arrayIndex = 0;
 
 			return TryDeserialize(array, ref arrayIndex, out result);
 		}
@@ -23,7 +23,7 @@ namespace Decorator
 		{
 			result = InstanceOf<T>.Create();
 
-			for (int memberIndex = 0; memberIndex < DecoratorInfoContainer<T>.Members.Length; memberIndex++)
+			for (var memberIndex = 0; memberIndex < DecoratorInfoContainer<T>.Members.Length; memberIndex++)
 			{
 				if (array.Length <= arrayIndex) return false;
 
@@ -37,9 +37,9 @@ namespace Decorator
 		{
 			var array = new object[DecoratorInfoContainer<T>.Members.EstimateSize(item)];
 
-			int arrayIndex = 0;
+			var arrayIndex = 0;
 
-			for (int memberIndex = 0; memberIndex < DecoratorInfoContainer<T>.Members.Length; memberIndex++)
+			for (var memberIndex = 0; memberIndex < DecoratorInfoContainer<T>.Members.Length; memberIndex++)
 			{
 				DecoratorInfoContainer<T>.Members[memberIndex].Serialize(item, ref array, ref arrayIndex);
 			}
