@@ -10,6 +10,12 @@ namespace Decorator
 
 		public const string NoDefaultConstructorDefault = "There was no default constructor specified.";
 
+		public const string BrokenAttributePairingDefault = "There should be another attribute paired with the current attribute, however it is not there";
+
+		public const string IrrationalAttributeDefault = "The attribute(s) order, value(s), or usage(s) is/are irrational.";
+
+		public const string IrrationalAttributeValueDefault = "An invalid value has been specified for an attribute";
+
 		public static string BrokenAttributePairing()
 			=> "";
 

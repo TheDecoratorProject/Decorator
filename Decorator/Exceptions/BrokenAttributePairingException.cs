@@ -6,7 +6,7 @@ namespace Decorator
 {
 	public class BrokenAttributePairingException : IrrationalAttributeException
 	{
-		public BrokenAttributePairingException() : this("There should be another attribute paired with the current attribute, however it is not there")
+		public BrokenAttributePairingException() : this(ExceptionMessages.BrokenAttributePairingDefault)
 		{
 		}
 

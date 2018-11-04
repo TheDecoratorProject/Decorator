@@ -6,7 +6,7 @@ namespace Decorator
 {
 	public class IrrationalAttributeValueException : IrrationalAttributeException
 	{
-		public IrrationalAttributeValueException() : this("An invalid value has been specified for an attribute")
+		public IrrationalAttributeValueException() : this(ExceptionMessages.IrrationalAttributeValueDefault)
 		{
 		}
 
