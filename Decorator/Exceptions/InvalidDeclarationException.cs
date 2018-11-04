@@ -6,7 +6,7 @@ namespace Decorator
 {
 	public class InvalidDeclarationException : DecoratorCompilerException
 	{
-		public InvalidDeclarationException() : this(ExceptionMessages.InvalidDeclarationDefault)
+		public InvalidDeclarationException() : this(ExceptionManager.InvalidDeclarationDefault)
 		{
 		}
 

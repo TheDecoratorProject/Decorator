@@ -6,7 +6,7 @@ namespace Decorator
 {
 	public class BrokenAttributePairingException : IrrationalAttributeException
 	{
-		public BrokenAttributePairingException() : this(ExceptionMessages.BrokenAttributePairingDefault)
+		public BrokenAttributePairingException() : this(ExceptionManager.BrokenAttributePairingDefault)
 		{
 		}
 

@@ -24,7 +24,7 @@ namespace Decorator
 			if (typeof(T).GetConstructors()
 							.Count(x => x.GetParameters().Length == 0) == 0)
 			{
-				throw new NoDefaultConstructorException();
+				throw ExceptionManager.GetNoDefaultConstructor();
 			}
 
 			// cache constructor
@@ -32,58 +32,11 @@ namespace Decorator
 
 			// get all props/fields with pos attrib
 
-			IEnumerable<MemberInfo> members;
-
-			var discoverAttributes = typeof(T)
-										.GetCustomAttributes(true)
-										.OfType<DiscoverAttribute>();
-
-			if (discoverAttributes.Count() > 0)
-			{
-				// there are discover attributes
-				// we will ONLY discover what they have specified in the discover attributes
-
-				members = discoverAttributes
-							.SelectMany(x => typeof(T).GetMembersRecursively(x.BindingFlags))
-							.Where(x => x.GetCustomAttributes(true)
-											.OfType<PositionAttribute>()
-											.Count() > 0);
-			}
-			else
-			{
-				// no DiscoverAttribute?
-				// we will just search for all public and instance ones then
-
-				members = typeof(T).GetMembersRecursively(BindingFlags.Public | BindingFlags.Instance)
-							.Where(x => x.GetCustomAttributes(true)
-											.OfType<PositionAttribute>()
-											.Count() > 0);
-			}
+			var members = DiscoverMembers();
 
 			var dict = new SortedDictionary<int, DecoratorInfo>();
 
-			// for every member, get the DecoratorInfo and store it in dict
-			foreach (var i in members)
-			{
-				var decoratorInfo = GetPairingOf(i)
-									.GetDecoratorInfo(i);
-
-				var positionAttribute = i.GetCustomAttributes()
-											.OfType<PositionAttribute>()
-											.First();
-
-				if (positionAttribute.Position < 0)
-				{
-					throw new IrrationalAttributeValueException();
-				}
-
-				if (dict.ContainsKey(positionAttribute.Position))
-				{
-					throw new IrrationalAttributeValueException();
-				}
-
-				dict[positionAttribute.Position] = decoratorInfo;
-			}
+			SetDecoratorInfos(dict, members);
 
 			// fill up empty spaces with Ignored
 			var last = dict.Keys.LastOrDefault();
@@ -100,6 +53,64 @@ namespace Decorator
 			return dict.Values.ToArray();
 		}
 
+		private static void SetDecoratorInfos(SortedDictionary<int, DecoratorInfo> dictionary, IEnumerable<MemberInfo> members)
+		{
+
+			// for every member, get the DecoratorInfo and store it in dict
+			foreach (var i in members)
+			{
+				var decoratorInfo = GetPairingOf(i)
+									.GetDecoratorInfo(i);
+
+				var positionAttribute = i.GetCustomAttributes()
+											.OfType<PositionAttribute>()
+											.First();
+
+				if (positionAttribute.Position < 0)
+				{
+					throw ExceptionManager.GetIrrationalAttributeValue<PositionAttribute>
+						(typeof(T), positionAttribute.Position, "The value of the position attribute can't be less than 0");
+				}
+
+				if (dictionary.ContainsKey(positionAttribute.Position))
+				{
+					throw ExceptionManager.GetIrrationalAttributeValue<PositionAttribute>
+						(typeof(T), positionAttribute.Position, $"There is already a member that contains this value ({dictionary[positionAttribute.Position]})");
+				}
+
+				dictionary[positionAttribute.Position] = decoratorInfo;
+			}
+		}
+
+		private static IEnumerable<MemberInfo> DiscoverMembers()
+		{
+			var discoverAttributes = typeof(T)
+										.GetCustomAttributes(true)
+										.OfType<DiscoverAttribute>();
+
+			if (discoverAttributes.Count() > 0)
+			{
+				// there are discover attributes
+				// we will ONLY discover what they have specified in the discover attributes
+
+				return discoverAttributes
+							.SelectMany(x => typeof(T).GetMembersRecursively(x.BindingFlags))
+							.Where(x => x.GetCustomAttributes(true)
+											.OfType<PositionAttribute>()
+											.Count() > 0);
+			}
+			else
+			{
+				// no DiscoverAttribute?
+				// we will just search for all public and instance ones then
+
+				return typeof(T).GetMembersRecursively(BindingFlags.Public | BindingFlags.Instance)
+							.Where(x => x.GetCustomAttributes(true)
+											.OfType<PositionAttribute>()
+											.Count() > 0);
+			}
+		}
+
 		private static IDecoratorInfoAttribute GetPairingOf(MemberInfo member)
 		{
 			var attributes = member.GetCustomAttributes()
@@ -107,8 +118,16 @@ namespace Decorator
 
 			var attributesCount = attributes.Count();
 
-			if (attributesCount < 1) throw new BrokenAttributePairingException();
-			else if (attributesCount > 1) throw new IrrationalAttributeException();
+			if (attributesCount < 1)
+			{
+				throw ExceptionManager.GetBrokenAttributePairing<PositionAttribute>
+					(member.DeclaringType, member.Name, $"As a suggestion, could you add a {nameof(RequiredAttribute)} to it?");
+			}
+			else if (attributesCount > 1)
+			{
+				throw ExceptionManager.GetIrrationalAttribute
+					("There are more modifiers then necessary, try removing a few.");
+			}
 
 			return attributes.First();
 		}

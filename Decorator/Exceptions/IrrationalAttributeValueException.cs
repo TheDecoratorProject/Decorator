@@ -6,7 +6,7 @@ namespace Decorator
 {
 	public class IrrationalAttributeValueException : IrrationalAttributeException
 	{
-		public IrrationalAttributeValueException() : this(ExceptionMessages.IrrationalAttributeValueDefault)
+		public IrrationalAttributeValueException() : this(ExceptionManager.IrrationalAttributeValueDefault)
 		{
 		}
 

@@ -6,7 +6,7 @@ namespace Decorator
 {
 	public class DecoratorCompilerException : Exception
 	{
-		public DecoratorCompilerException(string message, Exception inner) : base(message, inner)
+		internal DecoratorCompilerException(string message, Exception inner) : base(message, inner)
 		{
 		}
 	}

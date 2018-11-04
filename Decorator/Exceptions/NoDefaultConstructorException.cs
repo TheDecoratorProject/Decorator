@@ -6,7 +6,7 @@ namespace Decorator
 {
 	public class NoDefaultConstructorException : InvalidDeclarationException
 	{
-		public NoDefaultConstructorException() : this(ExceptionMessages.NoDefaultConstructorDefault)
+		public NoDefaultConstructorException() : this(ExceptionManager.NoDefaultConstructorDefault)
 		{
 		}
 
