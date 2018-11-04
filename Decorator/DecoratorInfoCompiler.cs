@@ -7,12 +7,26 @@ using System.Reflection;
 
 namespace Decorator
 {
+	internal static class DecoratorInfoContainer<T>
+	{
+		static DecoratorInfoContainer()
+		{
+			Members = DecoratorInfoCompiler<T>.Compile();
+		}
+		
+		public static DecoratorInfo[] Members;
+	}
+
 	internal static class DecoratorInfoCompiler<T>
 	{
-		public static DecoratorInfo[] Members { get; }
-
-		static DecoratorInfoCompiler()
+		public static DecoratorInfo[] Compile()
 		{
+			if (typeof(T).GetConstructors()
+							.Count(x => x.GetParameters().Length == 0) == 0)
+			{
+				throw new NoDefaultConstructorException();
+			}
+
 			// cache constructor
 			InstanceOf<T>.Create();
 
@@ -30,7 +44,7 @@ namespace Decorator
 				// we will ONLY discover what they have specified in the discover attributes
 
 				members = discoverAttributes
-							.SelectMany(x => GetMembers(typeof(T), x.BindingFlags))
+							.SelectMany(x => typeof(T).GetMembersRecursively(x.BindingFlags))
 							.Where(x => x.GetCustomAttributes(true)
 											.OfType<PositionAttribute>()
 											.Count() > 0);
@@ -40,7 +54,7 @@ namespace Decorator
 				// no DiscoverAttribute?
 				// we will just search for all public and instance ones then
 
-				members = GetMembers(typeof(T), BindingFlags.Public | BindingFlags.Instance)
+				members = typeof(T).GetMembersRecursively(BindingFlags.Public | BindingFlags.Instance)
 							.Where(x => x.GetCustomAttributes(true)
 											.OfType<PositionAttribute>()
 											.Count() > 0);
@@ -51,15 +65,24 @@ namespace Decorator
 			// for every member, get the DecoratorInfo and store it in dict
 			foreach (var i in members)
 			{
-				var decoratorInfo = i.GetCustomAttributes()
-					.OfType<IDecoratorInfoAttribute>()
-					.First()
-					.GetDecoratorInfo(i);
+				var decoratorInfo = GetPairingOf(i)
+									.GetDecoratorInfo(i);
 
-				dict[i.GetCustomAttributes()
-						.OfType<PositionAttribute>()
-						.First()
-						.Position] = decoratorInfo;
+				var positionAttribute = i.GetCustomAttributes()
+											.OfType<PositionAttribute>()
+											.First();
+
+				if (positionAttribute.Position < 0)
+				{
+					throw new IrrationalAttributeValueException();
+				}
+
+				if (dict.ContainsKey(positionAttribute.Position))
+				{
+					throw new IrrationalAttributeValueException();
+				}
+
+				dict[positionAttribute.Position] = decoratorInfo;
 			}
 
 			// fill up empty spaces with Ignored
@@ -74,30 +97,20 @@ namespace Decorator
 			}
 
 			// save it as an array
-			Members = dict.Values.ToArray();
+			return dict.Values.ToArray();
 		}
 
-		private static IEnumerable<MemberInfo> GetMembers(Type type, BindingFlags bindingFlags)
+		private static IDecoratorInfoAttribute GetPairingOf(MemberInfo member)
 		{
-			var props = type
-							.GetProperties(bindingFlags)
-							.Cast<MemberInfo>();
+			var attributes = member.GetCustomAttributes()
+									.OfType<IDecoratorInfoAttribute>();
 
-			var fields = type
-							.GetFields(bindingFlags)
-							.Cast<MemberInfo>();
+			var attributesCount = attributes.Count();
 
-			var members = props.Concat(fields);
+			if (attributesCount < 1) throw new BrokenAttributePairingException();
+			else if (attributesCount > 1) throw new IrrationalAttributeException();
 
-			if (type.BaseType != default)
-			{
-				members = members.Concat(GetMembers(type.BaseType, bindingFlags));
-			}
-
-			return members
-					.Where(x => x.GetCustomAttributes(true)
-									.OfType<PositionAttribute>()
-									.Count() > 0);
+			return attributes.First();
 		}
 	}
 }

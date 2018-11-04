@@ -1,6 +1,7 @@
 ﻿using SwissILKnife;
 
 using System;
+using System.Linq;
 using System.Reflection;
 
 namespace Decorator
@@ -10,6 +11,14 @@ namespace Decorator
 	{
 		DecoratorInfo IDecoratorInfoAttribute.GetDecoratorInfo(MemberInfo memberValue)
 		{
+			var innerType = memberValue.GetMemberType();
+
+			if(!innerType.GetInterfaces()
+				.Contains(typeof(IDecorable)))
+			{
+				throw new InvalidDeclarationException();
+			}
+
 			return Make.Class(typeof(Flatten<>)).Generic(memberValue.GetMemberType())
 					.CreateDecoratorInfo(memberValue);
 		}
@@ -45,6 +54,6 @@ namespace Decorator
 		}
 
 		public override void EstimateSize(object instance, ref int i)
-			=> i += DecoratorInfoCompiler<T>.Members.EstimateSize((T)_getValue(instance));
+			=> i += DecoratorInfoContainer<T>.Members.EstimateSize((T)_getValue(instance));
 	}
 }

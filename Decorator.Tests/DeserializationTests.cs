@@ -125,5 +125,17 @@ namespace Decorator.Tests
 		public void FlattenArray(string comment, params object[] deserializeInfo)
 			=> Converter<DeserializationTestsFlattenArrayAttributeBase>.TryDeserialize(deserializeInfo, out _)
 				.Should().BeTrue(comment);
+
+		public class HasNoMembers : IDecorable
+		{
+		}
+
+		[Theory]
+		[InlineData("Nothing in object array", new object[] { })]
+		[InlineData("Stuff in object array", new object[] { 1, "2", 3, "4" })]
+		[InlineData("Everything should just work", new object[] { null })]
+		public void NoMembers(string comment, params object[] deserializeInfo)
+			=> Converter<HasNoMembers>.TryDeserialize(deserializeInfo, out _)
+				.Should().BeTrue(comment);
 	}
 }

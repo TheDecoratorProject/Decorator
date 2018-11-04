@@ -89,7 +89,7 @@ namespace Decorator
 
 			for (int arrayIndex = 0; arrayIndex < array.Length; arrayIndex++)
 			{
-				i += DecoratorInfoCompiler<T>.Members.EstimateSize(array[arrayIndex]);
+				i += DecoratorInfoContainer<T>.Members.EstimateSize(array[arrayIndex]);
 			}
 		}
 	}
