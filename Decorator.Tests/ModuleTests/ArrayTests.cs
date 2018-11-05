@@ -28,7 +28,7 @@ namespace Decorator.Tests.ModuleTests
 				1337, 1338, 1339, 13310
 			};
 	}
-	
+
 	public class ArrayTests
 	{
 		private object[] GetAndCorrupt(int pos)

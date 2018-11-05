@@ -52,7 +52,7 @@ namespace Decorator.Tests.ModuleTests
 				new InnerFlattenTypeTwo(),
 			};
 	}
-	
+
 	public class FlattenArrayTests
 	{
 		private object[] GetAndCorrupt(int pos)

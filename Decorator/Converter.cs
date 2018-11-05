@@ -7,10 +7,7 @@ namespace Decorator
 	{
 		private static readonly ModuleAPI.BaseDecoratorModule[] _members;
 
-		static Converter()
-		{
-			_members = DecoratorModuleContainer<T>.MembersValue;
-		}
+		static Converter() => _members = DecoratorModuleContainer<T>.MembersValue;
 
 		public static bool TryDeserialize(object[] array, out T result)
 		{

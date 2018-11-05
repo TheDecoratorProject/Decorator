@@ -1,9 +1,10 @@
 ﻿using Decorator.ModuleAPI;
+
 using FluentAssertions;
+
 using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
+
 using Xunit;
 
 namespace Decorator.Tests

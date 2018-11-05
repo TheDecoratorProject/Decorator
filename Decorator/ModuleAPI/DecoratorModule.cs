@@ -1,7 +1,6 @@
 ﻿using SwissILKnife;
 
 using System;
-using System.Reflection;
 
 namespace Decorator.ModuleAPI
 {

@@ -1,7 +1,6 @@
 ﻿using Decorator.ModuleAPI;
 
 using System;
-using System.Reflection;
 
 namespace Decorator
 {
@@ -13,7 +12,7 @@ namespace Decorator
 
 		public DecoratorModule<T> Build<T>(Type modifiedType, Member member)
 			=> modifiedType.IsValueType ?
-				(DecoratorModule<T>)new ValueTypeModule<T>(modifiedType, member)
+				new ValueTypeModule<T>(modifiedType, member)
 				: (DecoratorModule<T>)new ReferenceTypeModule<T>(modifiedType, member);
 
 		public class ValueTypeModule<T> : DecoratorModule<T>

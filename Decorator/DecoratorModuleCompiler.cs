@@ -8,7 +8,6 @@ using System.Reflection;
 
 namespace Decorator
 {
-
 	internal static class DecoratorModuleCompiler<T>
 	{
 		public static BaseDecoratorModule[] Compile()

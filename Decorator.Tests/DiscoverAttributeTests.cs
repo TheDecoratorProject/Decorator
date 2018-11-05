@@ -8,6 +8,13 @@ namespace Decorator.Tests
 {
 	public class DiscoverAttributeTests
 	{
+
+		// hey
+		// is a test failing with PrivateStatic?
+		// remove the 'readonly' text from it
+		// do the same for the PrivateInstance while you're at it
+		// thank you, come again
+
 		public class DiscoverAttributeTestsBase : IDecorable
 		{
 			[Position(0), Required]

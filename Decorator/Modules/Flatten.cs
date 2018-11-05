@@ -1,7 +1,6 @@
 ﻿using Decorator.ModuleAPI;
 
 using System;
-using System.Reflection;
 
 namespace Decorator
 {

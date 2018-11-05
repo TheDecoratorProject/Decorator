@@ -1,9 +1,10 @@
 ﻿using Decorator.ModuleAPI;
+
 using FluentAssertions;
+
 using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
+
 using Xunit;
 
 namespace Decorator.Tests
@@ -11,6 +12,7 @@ namespace Decorator.Tests
 	public class ModuleBuilderTests
 	{
 		public string TestMember { get; set; }
+
 		public PropertyInfo GetTestMember()
 			=> typeof(ModuleBuilderTests)
 				.GetProperty(nameof(TestMember));
