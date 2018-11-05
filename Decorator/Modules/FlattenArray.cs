@@ -6,7 +6,7 @@ using System.Reflection;
 namespace Decorator
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-	public sealed class FlattenArrayAttribute : Attribute, IDecoratorModuleBuilder, IOnlyDecorablesDecorableModuleBuilder
+	public sealed class FlattenArrayAttribute : Attribute, IDecoratorModuleBuilder, IDecoratorDecorableModuleBuilder
 	{
 		public FlattenArrayAttribute() : this(0xFFFF)
 		{
@@ -42,8 +42,10 @@ namespace Decorator
 
 			public override bool Deserialize(object instance, ref object[] array, ref int i)
 			{
-				if (array[i++] is int len)
+				if (array[i] is int len)
 				{
+					i++;
+
 					if (len > _maxSize || len < 0) return false;
 
 					var desArray = new object[len];

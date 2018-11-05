@@ -106,6 +106,18 @@ namespace Decorator.Benchmarks
 		}
 
 		[Benchmark]
+		public TestClass ECDecoratorDeserialize()
+		{
+			int i = 0;
+			if (Converter<TestClass>.TryDeserialize(_data, ref i, out var result))
+			{
+				return result;
+			}
+
+			throw new ShouldNotHappenException();
+		}
+
+		[Benchmark]
 		public TestClass ProtocolMessageDeserialize()
 			=> _pm.Convert<TestClass>(_data);
 

@@ -6,7 +6,7 @@ using System.Reflection;
 namespace Decorator
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-	public sealed class FlattenAttribute : Attribute, IDecoratorModuleBuilder, IOnlyDecorablesDecorableModuleBuilder
+	public sealed class FlattenAttribute : Attribute, IDecoratorModuleBuilder, IDecoratorDecorableModuleBuilder
 	{
 		public Type ModifyAppliedType(Type attributeAppliedTo)
 			=> attributeAppliedTo;

@@ -43,8 +43,10 @@ namespace Decorator
 
 			public override bool Deserialize(object instance, ref object[] array, ref int i)
 			{
-				if (array[i++] is int len)
+				if (array[i] is int len)
 				{
+					i++;
+
 					if (len > _maxSize || len < 0) return false;
 
 					var desArray = new object[len];
@@ -58,7 +60,9 @@ namespace Decorator
 							return false;
 						}
 
-						desArray[desArrayIndex] = array[i++];
+						desArray[desArrayIndex] = array[i];
+
+						i++;
 					}
 
 					SetValue(instance, desArray);

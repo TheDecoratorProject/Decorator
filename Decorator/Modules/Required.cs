@@ -12,26 +12,50 @@ namespace Decorator
 			=> attributeAppliedTo;
 
 		public DecoratorModule<T> Build<T>(Type modifiedType, MemberInfo memberInfo)
-			=> new Module<T>(modifiedType, memberInfo);
+			=> modifiedType.IsValueType ?
+				(DecoratorModule<T>)new ValueTypeModule<T>(modifiedType, memberInfo)
+				: (DecoratorModule<T>)new ReferenceTypeModule<T>(modifiedType, memberInfo);
 
-		public class Module<T> : DecoratorModule<T>
+		public class ValueTypeModule<T> : DecoratorModule<T>
 		{
-			public Module(Type modifiedType, MemberInfo memberInfo)
+			public ValueTypeModule(Type modifiedType, MemberInfo memberInfo)
 				: base(modifiedType, memberInfo)
 			{
-				if (!modifiedType.IsValueType)
-				{
-					_canBeNull = true;
-				}
 			}
-
-			private readonly bool _canBeNull;
 
 			public override bool Deserialize(object instance, ref object[] array, ref int i)
 			{
-				if (array[i] is T ||
-					(_canBeNull &&
-					array[i] == null))
+				if (array[i] is T)
+				{
+					SetValue(instance, array[i]);
+					i++;
+					return true;
+				}
+
+				return false;
+			}
+
+			public override void EstimateSize(object instance, ref int size) => size++;
+
+			public override void Serialize(object instance, ref object[] array, ref int i) => array[i++] = GetValue(instance);
+		}
+
+		public class ReferenceTypeModule<T> : DecoratorModule<T>
+		{
+			public ReferenceTypeModule(Type modifiedType, MemberInfo memberInfo)
+				: base(modifiedType, memberInfo)
+			{
+			}
+
+			public override bool Deserialize(object instance, ref object[] array, ref int i)
+			{
+				if (array[i] == null)
+				{
+					i++;
+					return true;
+				}
+
+				if (array[i] is T)
 				{
 					SetValue(instance, array[i++]);
 					return true;

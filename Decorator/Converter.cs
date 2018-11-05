@@ -5,6 +5,13 @@ namespace Decorator
 	public static class Converter<T>
 		where T : IDecorable
 	{
+		private static readonly ModuleAPI.BaseDecoratorModule[] _members;
+
+		static Converter()
+		{
+			_members = DecoratorInfoContainer<T>.Members;
+		}
+
 		public static bool TryDeserialize(object[] array, out T result)
 		{
 			if (array == null)
@@ -22,11 +29,11 @@ namespace Decorator
 		{
 			result = InstanceOf<T>.Create();
 
-			for (var memberIndex = 0; memberIndex < DecoratorInfoContainer<T>.Members.Length; memberIndex++)
+			for (var memberIndex = 0; memberIndex < _members.Length; memberIndex++)
 			{
 				if (array.Length <= arrayIndex) return false;
 
-				if (!DecoratorInfoContainer<T>.Members[memberIndex].Deserialize(result, ref array, ref arrayIndex)) return false;
+				if (!_members[memberIndex].Deserialize(result, ref array, ref arrayIndex)) return false;
 			}
 
 			return true;
@@ -34,13 +41,13 @@ namespace Decorator
 
 		public static object[] Serialize(T item)
 		{
-			var array = new object[DecoratorInfoContainer<T>.Members.EstimateSize(item)];
+			var array = new object[_members.EstimateSize(item)];
 
 			var arrayIndex = 0;
 
-			for (var memberIndex = 0; memberIndex < DecoratorInfoContainer<T>.Members.Length; memberIndex++)
+			for (var memberIndex = 0; memberIndex < _members.Length; memberIndex++)
 			{
-				DecoratorInfoContainer<T>.Members[memberIndex].Serialize(item, ref array, ref arrayIndex);
+				_members[memberIndex].Serialize(item, ref array, ref arrayIndex);
 			}
 
 			return array;

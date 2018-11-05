@@ -29,14 +29,14 @@ namespace Decorator
 
 			public override bool Deserialize(object instance, ref object[] array, ref int i)
 			{
-				var iBeforeInc = i;
-
-				if (array[i++] is T ||
+				if (array[i] is T ||
 					(_canBeNull &&
-					array[iBeforeInc] == null))
+					array[i] == null))
 				{
-					SetValue(instance, array[iBeforeInc]);
+					SetValue(instance, array[i]);
 				}
+
+				i++;
 
 				return true;
 			}

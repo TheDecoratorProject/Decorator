@@ -5,7 +5,7 @@ using System.Reflection;
 namespace Decorator.ModuleAPI
 {
 	public static class EnsureIDecorable<TBuildModule>
-		where TBuildModule : IOnlyDecorablesDecorableModuleBuilder
+		where TBuildModule : IDecoratorDecorableModuleBuilder
 	{
 		private static readonly Func<object, object[], object> _setter;
 
@@ -17,7 +17,7 @@ namespace Decorator.ModuleAPI
 			}
 
 			return (DecoratorModule<T>)typeof(TBuildModule)
-				.GetMethod(nameof(IOnlyDecorablesDecorableModuleBuilder.BuildDecorable),
+				.GetMethod(nameof(IDecoratorDecorableModuleBuilder.BuildDecorable),
 					BindingFlags.Public | BindingFlags.Instance,
 					Type.DefaultBinder,
 					new Type[]
