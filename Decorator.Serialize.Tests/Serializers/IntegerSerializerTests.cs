@@ -1,5 +1,6 @@
 ﻿using Decorator.Serialize.Serializers;
 using Decorator.Tests;
+
 using System;
 using System.IO;
 

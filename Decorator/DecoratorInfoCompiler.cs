@@ -1,7 +1,7 @@
 ﻿using Decorator.ModuleAPI;
+
 using SwissILKnife;
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -53,7 +53,6 @@ namespace Decorator
 
 		private static void SetDecoratorInfos(SortedDictionary<int, BaseDecoratorModule> dictionary, IEnumerable<MemberInfo> members)
 		{
-
 			// for every member, get the DecoratorInfo and store it in dict
 			foreach (var i in members)
 			{

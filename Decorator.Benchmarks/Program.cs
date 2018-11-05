@@ -1,5 +1,4 @@
-﻿using BenchmarkDotNet.Attributes;
-using System;
+﻿using System;
 
 namespace Decorator.Benchmarks
 {

@@ -1,4 +1,5 @@
 ﻿using Decorator.ModuleAPI;
+
 using System;
 using System.Reflection;
 
@@ -16,10 +17,7 @@ namespace Decorator
 		public class Module<T> : DecoratorModule<T>
 		{
 			public Module(Type modifiedType, MemberInfo memberInfo)
-				: base(modifiedType, memberInfo)
-			{
-				_logic = new IgnoredLogic();
-			}
+				: base(modifiedType, memberInfo) => _logic = new IgnoredLogic();
 
 			private IgnoredLogic _logic;
 

@@ -1,12 +1,11 @@
 ﻿using FluentAssertions;
+
 using System;
-using System.Collections.Generic;
-using System.Text;
+
 using Xunit;
 
 namespace Decorator.Tests
 {
-
 	// gotta get that 100% code coverage amirite
 
 	public class QuoteExceptionTestsEndQuote

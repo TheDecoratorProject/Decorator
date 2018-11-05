@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
 namespace Decorator.ModuleAPI
 {
@@ -14,16 +12,16 @@ namespace Decorator.ModuleAPI
 			try
 			{
 				return (BaseDecoratorModule)moduleBuilder.GetType()
-												.GetMethod(nameof(IDecoratorModuleBuilder.Build),
-															BindingFlags.Public | BindingFlags.Instance,
-															Type.DefaultBinder,
-															new Type[] {
-															typeof(Type),
-															typeof(MemberInfo)
-																},
-															null)
-												.MakeGenericMethod(modified)
-												.Invoke(moduleBuilder, new object[] { modified, member });
+							.GetMethod(nameof(IDecoratorModuleBuilder.Build),
+								BindingFlags.Public | BindingFlags.Instance,
+								Type.DefaultBinder,
+								new Type[] {
+									typeof(Type),
+									typeof(MemberInfo)
+								},
+								null)
+							.MakeGenericMethod(modified)
+							.Invoke(moduleBuilder, new object[] { modified, member });
 			}
 			catch (TargetInvocationException tie)
 			{

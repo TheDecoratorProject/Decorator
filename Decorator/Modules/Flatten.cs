@@ -1,5 +1,5 @@
 ﻿using Decorator.ModuleAPI;
-using SwissILKnife;
+
 using System;
 using System.Reflection;
 
@@ -11,16 +11,10 @@ namespace Decorator
 		public Type ModifyAppliedType(Type attributeAppliedTo)
 			=> attributeAppliedTo;
 
-		public DecoratorModule<T> Build<T>(Type modifiedType, MemberInfo memberInfo)
-		{
-			return EnsureIDecorable<FlattenAttribute>.InvokeBuild<T>(this, modifiedType, memberInfo);
-		}
+		public DecoratorModule<T> Build<T>(Type modifiedType, MemberInfo memberInfo) => EnsureIDecorable<FlattenAttribute>.InvokeBuild<T>(this, modifiedType, memberInfo);
 
 		public DecoratorModule<T> BuildDecorable<T>(Type modifiedType, MemberInfo memberInfo)
-			where T : IDecorable
-		{
-			return new Module<T>(modifiedType, memberInfo);
-		}
+			where T : IDecorable => new Module<T>(modifiedType, memberInfo);
 
 		public class Module<T> : DecoratorModule<T>
 			where T : IDecorable

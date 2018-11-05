@@ -1,16 +1,13 @@
-﻿using SwissILKnife;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Decorator.ModuleAPI
 {
 	public static class EnsureIDecorable<TBuildModule>
 		where TBuildModule : IOnlyDecorablesDecorableModuleBuilder
 	{
-		private static Func<object, object[], object> _setter;
+		private static readonly Func<object, object[], object> _setter;
 
 		public static DecoratorModule<T> InvokeBuild<T>(TBuildModule self, Type modifiedType, MemberInfo memberInfo)
 		{

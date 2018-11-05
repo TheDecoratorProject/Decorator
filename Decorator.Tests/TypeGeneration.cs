@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
+
 using System;
-using System.Collections.Generic;
-using System.Text;
+
 using Xunit;
 
 namespace Decorator.Tests
@@ -31,8 +31,6 @@ namespace Decorator.Tests
 			})).Should().ThrowExactly<InvalidDeclarationException>();
 		}
 
-
-
 		public class NoSpecificationOnPositionAttribute : IDecorable
 		{
 			[Position(0)]
@@ -47,8 +45,6 @@ namespace Decorator.Tests
 				EnsureCompiled<NoSpecificationOnPositionAttribute>.Ensure();
 			})).Should().ThrowExactly<BrokenAttributePairingException>();
 		}
-
-
 
 		public class DuplicatePositionAttributes : IDecorable
 		{
@@ -68,8 +64,6 @@ namespace Decorator.Tests
 			})).Should().ThrowExactly<IrrationalAttributeValueException>();
 		}
 
-
-
 		public class NoDefaultConstructor : IDecorable
 		{
 			public NoDefaultConstructor(string s) => ReferenceType = s;
@@ -86,8 +80,6 @@ namespace Decorator.Tests
 				EnsureCompiled<NoDefaultConstructor>.Ensure();
 			})).Should().ThrowExactly<NoDefaultConstructorException>();
 		}
-
-
 
 		public class IrrationalPositionAttribute : IDecorable
 		{
@@ -108,8 +100,6 @@ namespace Decorator.Tests
 			})).Should().ThrowExactly<IrrationalAttributeValueException>();
 		}
 
-
-
 		public class TooManyPairings : IDecorable
 		{
 			public TooManyPairings()
@@ -128,8 +118,6 @@ namespace Decorator.Tests
 				EnsureCompiled<TooManyPairings>.Ensure();
 			})).Should().ThrowExactly<IrrationalAttributeException>();
 		}
-
-
 
 		public class PerfectlyFineClass : IDecorable
 		{
@@ -151,8 +139,6 @@ namespace Decorator.Tests
 				EnsureCompiled<PerfectlyFineClass>.Ensure();
 			})).Should().NotThrow();
 		}
-
-
 
 		public class HasNoMembers : IDecorable
 		{

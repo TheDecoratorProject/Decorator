@@ -1,5 +1,5 @@
 ﻿using Decorator.ModuleAPI;
-using SwissILKnife;
+
 using System;
 using System.Reflection;
 
@@ -27,27 +27,18 @@ namespace Decorator
 			return attributeAppliedTo.GetElementType();
 		}
 
-		public DecoratorModule<T> Build<T>(Type modifiedType, MemberInfo memberInfo)
-		{
-			return EnsureIDecorable<FlattenArrayAttribute>.InvokeBuild<T>(this, modifiedType, memberInfo);
-		}
+		public DecoratorModule<T> Build<T>(Type modifiedType, MemberInfo memberInfo) => EnsureIDecorable<FlattenArrayAttribute>.InvokeBuild<T>(this, modifiedType, memberInfo);
 
 		public DecoratorModule<T> BuildDecorable<T>(Type modifiedType, MemberInfo memberInfo)
-			where T : IDecorable
-		{
-			return new Module<T>(modifiedType, memberInfo, MaxArraySize);
-		}
+			where T : IDecorable => new Module<T>(modifiedType, memberInfo, MaxArraySize);
 
 		public class Module<T> : DecoratorModule<T>
 			where T : IDecorable
 		{
 			public Module(Type modifiedType, MemberInfo memberInfo, int arraySize)
-				: base(modifiedType, memberInfo)
-			{
-				_maxSize = arraySize;
-			}
+				: base(modifiedType, memberInfo) => _maxSize = arraySize;
 
-			private int _maxSize;
+			private readonly int _maxSize;
 
 			public override bool Deserialize(object instance, ref object[] array, ref int i)
 			{

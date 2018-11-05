@@ -1,7 +1,8 @@
 ﻿using FluentAssertions;
+
 using System;
 using System.Collections.Generic;
-using System.Text;
+
 using Xunit;
 
 namespace Decorator.Tests
@@ -61,8 +62,6 @@ namespace Decorator.Tests
 			[Position(1), FlattenArray]
 			public SerializationTestsOptionalAttributeBase[] OptionalDecorable { get; set; }
 		}
-
-
 
 		[Theory]
 		[MemberData(nameof(IgnoredData))]
@@ -136,8 +135,6 @@ namespace Decorator.Tests
 				};
 		}
 
-
-
 		[Theory]
 		[MemberData(nameof(OptionalData))]
 		public void Optional(SerializationTestsOptionalAttributeBase test, object[] serializedData)
@@ -171,8 +168,6 @@ namespace Decorator.Tests
 					}
 				};
 		}
-
-
 
 		[Theory]
 		[MemberData(nameof(ArrayData))]
@@ -238,8 +233,6 @@ namespace Decorator.Tests
 				};
 		}
 
-
-
 		[Theory]
 		[MemberData(nameof(FlattenData))]
 		public void Flatten(SerializationTestsFlattenAttributeBase test, object[] serializedData)
@@ -294,8 +287,6 @@ namespace Decorator.Tests
 					}
 				};
 		}
-
-
 
 		[Theory]
 		[MemberData(nameof(FlattenArrayData))]

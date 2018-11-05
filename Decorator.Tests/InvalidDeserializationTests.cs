@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
+
 using System;
-using System.Collections.Generic;
-using System.Text;
+
 using Xunit;
 
 namespace Decorator.Tests
@@ -61,8 +61,6 @@ namespace Decorator.Tests
 			[Position(1), FlattenArray]
 			public InvalidDeserializationTestsArrayAttributeBase[] ArrayDecorable { get; set; }
 		}
-
-
 
 		[Theory]
 		[InlineData("Not enough args", "a")]

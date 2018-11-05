@@ -22,4 +22,3 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CC0031:Check for null before calling a delegate", Justification = "<Pending>", Scope = "member", Target = "~M:Decorator.Extensions.DistinctBy``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})~System.Collections.Generic.IEnumerable{``0}")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CC0031:Check for null before calling a delegate", Justification = "<Pending>", Scope = "member", Target = "~M:Decorator.Flatten`1.EstimateSize(System.Object,System.Int32@)")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CC0057:Unused parameters", Justification = "<Pending>", Scope = "member", Target = "~M:Decorator.Make.GenericTypeCacher.#ctor(System.Type)")]
-

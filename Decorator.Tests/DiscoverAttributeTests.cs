@@ -14,13 +14,13 @@ namespace Decorator.Tests
 			public int PublicInstance;
 
 			[Position(0), Required]
-			private int PrivateInstance;
+			private readonly int PrivateInstance;
 
 			[Position(0), Required]
 			public static int PublicStatic;
 
 			[Position(0), Required]
-			private static int PrivateStatic;
+			private static readonly int PrivateStatic;
 
 			public int PrivateInstanceAccessor => PrivateInstance;
 			public static int PrivateStaticAccessor => PrivateStatic;

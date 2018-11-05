@@ -13,8 +13,8 @@ namespace Decorator.ModuleAPI
 			_getVal = MemberUtils.GetGetMethod(memberInfo);
 		}
 
-		private Action<object, object> _setVal;
-		private Func<object, object> _getVal;
+		private readonly Action<object, object> _setVal;
+		private readonly Func<object, object> _getVal;
 
 		protected void SetValue(object instance, object value)
 			=> _setVal(instance, value);
