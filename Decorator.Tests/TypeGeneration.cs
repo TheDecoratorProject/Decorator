@@ -119,6 +119,36 @@ namespace Decorator.Tests
 			})).Should().ThrowExactly<IrrationalAttributeException>();
 		}
 
+		public class ArrayAppliedIncorrectly : IDecorable
+		{
+			[Position(0), Array]
+			public string RefereceType { get; set; }
+		}
+
+		[Fact]
+		public void Throws_InvalidDeclarationException_When_ArrayAppliedIncorrectly()
+		{
+			((Action)(() =>
+			{
+				EnsureCompiled<ArrayAppliedIncorrectly>.Ensure();
+			})).Should().ThrowExactly<InvalidDeclarationException>();
+		}
+
+		public class FlattenArrayAppliedIncorrectly : IDecorable
+		{
+			[Position(0), FlattenArray]
+			public string RefereceType { get; set; }
+		}
+
+		[Fact]
+		public void Throws_InvalidDeclarationException_When_FlattenArrayAppliedIncorrectly()
+		{
+			((Action)(() =>
+			{
+				EnsureCompiled<FlattenArrayAppliedIncorrectly>.Ensure();
+			})).Should().ThrowExactly<InvalidDeclarationException>();
+		}
+
 		public class PerfectlyFineClass : IDecorable
 		{
 			[Position(0), Required]
