@@ -9,7 +9,7 @@ namespace Decorator.ModuleAPI
 	{
 		private static readonly Func<object, object[], object> _setter;
 
-		public static DecoratorModule<T> InvokeBuild<T>(TBuildModule self, Type modifiedType, MemberInfo memberInfo)
+		public static DecoratorModule<T> InvokeBuild<T>(TBuildModule self, Type modifiedType, Member memberInfo)
 		{
 			if (typeof(T).GetInterfaces().Count(x => x == typeof(IDecorable)) == 0)
 			{
@@ -23,7 +23,7 @@ namespace Decorator.ModuleAPI
 					new Type[]
 					{
 						typeof(Type),
-						typeof(MemberInfo)
+						typeof(Member)
 					},
 					null)
 				.MakeGenericMethod(typeof(T))

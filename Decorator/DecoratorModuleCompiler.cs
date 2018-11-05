@@ -8,14 +8,8 @@ using System.Reflection;
 
 namespace Decorator
 {
-	internal static class DecoratorInfoContainer<T>
-	{
-		static DecoratorInfoContainer() => Members = DecoratorInfoCompiler<T>.Compile();
 
-		public static BaseDecoratorModule[] Members;
-	}
-
-	internal static class DecoratorInfoCompiler<T>
+	internal static class DecoratorModuleCompiler<T>
 	{
 		public static BaseDecoratorModule[] Compile()
 		{
@@ -34,7 +28,7 @@ namespace Decorator
 
 			var dict = new SortedDictionary<int, BaseDecoratorModule>();
 
-			SetDecoratorInfos(dict, members);
+			SetDecoratorModules(dict, members);
 
 			// fill up empty spaces with Ignored
 			var last = dict.Keys.LastOrDefault();
@@ -51,12 +45,13 @@ namespace Decorator
 			return dict.Values.ToArray();
 		}
 
-		private static void SetDecoratorInfos(SortedDictionary<int, BaseDecoratorModule> dictionary, IEnumerable<MemberInfo> members)
+		private static void SetDecoratorModules(SortedDictionary<int, BaseDecoratorModule> dictionary, IEnumerable<MemberInfo> members)
 		{
-			// for every member, get the DecoratorInfo and store it in dict
+			// for every member, get the DecoratorModule and store it in dict
 			foreach (var i in members)
 			{
-				var decoratorInfo = ModuleBuilder.Build(i.GetMemberType(), i, GetPairingOf(i));
+				var decoratorModule =
+					ModuleBuilder.Build(i, GetPairingOf(i));
 
 				var positionAttribute = i.GetCustomAttributes()
 											.OfType<PositionAttribute>()
@@ -74,7 +69,7 @@ namespace Decorator
 						(typeof(T), positionAttribute.Position, $"There is already a member that contains this value ({dictionary[positionAttribute.Position]})");
 				}
 
-				dictionary[positionAttribute.Position] = decoratorInfo;
+				dictionary[positionAttribute.Position] = decoratorModule;
 			}
 		}
 

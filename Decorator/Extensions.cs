@@ -9,13 +9,13 @@ namespace Decorator
 {
 	internal static class Extensions
 	{
-		public static int EstimateSize<T>(this BaseDecoratorModule[] decoratorInfos, T item)
+		public static int EstimateSize<T>(this BaseDecoratorModule[] decoratorModules, T item)
 		{
 			var estimateSize = 0;
 
-			for (var memberIndex = 0; memberIndex < decoratorInfos.Length; memberIndex++)
+			for (var memberIndex = 0; memberIndex < decoratorModules.Length; memberIndex++)
 			{
-				decoratorInfos[memberIndex].EstimateSize(item, ref estimateSize);
+				decoratorModules[memberIndex].EstimateSize(item, ref estimateSize);
 			}
 
 			return estimateSize;

@@ -5,8 +5,26 @@ namespace Decorator.ModuleAPI
 {
 	public static class ModuleBuilder
 	{
-		public static BaseDecoratorModule Build(Type appliedOn, MemberInfo member, IDecoratorModuleBuilder moduleBuilder)
+		public static BaseDecoratorModule Build(MemberInfo memberInfo, IDecoratorModuleBuilder moduleBuilder)
 		{
+			Type appliedOn;
+			Member member;
+
+			if (memberInfo is PropertyInfo propertyInfo)
+			{
+				appliedOn = propertyInfo.PropertyType;
+				member = new Member(propertyInfo);
+			}
+			else if (memberInfo is FieldInfo fieldInfo)
+			{
+				appliedOn = fieldInfo.FieldType;
+				member = new Member(fieldInfo);
+			}
+			else
+			{
+				throw new InvalidDeclarationException($"A module can only be applied to fields and properties. Not sure how you got this to throw, but lol.");
+			}
+
 			var modified = moduleBuilder.ModifyAppliedType(appliedOn);
 
 			try
@@ -17,7 +35,7 @@ namespace Decorator.ModuleAPI
 								Type.DefaultBinder,
 								new Type[] {
 									typeof(Type),
-									typeof(MemberInfo)
+									typeof(Member)
 								},
 								null)
 							.MakeGenericMethod(modified)

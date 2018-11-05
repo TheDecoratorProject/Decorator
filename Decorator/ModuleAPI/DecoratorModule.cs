@@ -7,11 +7,21 @@ namespace Decorator.ModuleAPI
 {
 	public abstract class DecoratorModule<T> : BaseDecoratorModule
 	{
-		protected DecoratorModule(Type modifiedType, MemberInfo memberInfo)
+		protected DecoratorModule(Type modifiedType, Member member)
 		{
-			_setVal = MemberUtils.GetSetMethod(memberInfo);
-			_getVal = MemberUtils.GetGetMethod(memberInfo);
+			var actualMember = member.GetMember;
+
+			_setVal = MemberUtils.GetSetMethod(actualMember);
+			_getVal = MemberUtils.GetGetMethod(actualMember);
+
+			OriginalType = member.GetMemberType();
+			ModifiedType = modifiedType;
+			Member = member;
 		}
+
+		public override Type ModifiedType { get; }
+		public override Type OriginalType { get; }
+		public override Member Member { get; }
 
 		private readonly Action<object, object> _setVal;
 		private readonly Func<object, object> _getVal;

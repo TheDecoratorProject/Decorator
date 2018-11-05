@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Decorator.Tests
 {
-	public class DecoratorInfoCompilerTests
+	public class DecoratorModuleCompilerTests
 	{
 		public class NeedsFillingIn : IDecorable
 		{

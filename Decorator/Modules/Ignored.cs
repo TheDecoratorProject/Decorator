@@ -11,13 +11,13 @@ namespace Decorator
 		public Type ModifyAppliedType(Type attributeAppliedTo)
 			=> attributeAppliedTo;
 
-		public DecoratorModule<T> Build<T>(Type modifiedType, MemberInfo memberInfo)
-			=> new Module<T>(modifiedType, memberInfo);
+		public DecoratorModule<T> Build<T>(Type modifiedType, Member member)
+			=> new Module<T>(modifiedType, member);
 
 		public class Module<T> : DecoratorModule<T>
 		{
-			public Module(Type modifiedType, MemberInfo memberInfo)
-				: base(modifiedType, memberInfo) => _logic = new IgnoredLogic();
+			public Module(Type modifiedType, Member member)
+				: base(modifiedType, member) => _logic = new IgnoredLogic();
 
 			private IgnoredLogic _logic;
 
@@ -33,6 +33,10 @@ namespace Decorator
 
 		internal class IgnoredLogic : BaseDecoratorModule
 		{
+			public override Type OriginalType => null;
+			public override Type ModifiedType => null;
+			public override Member Member => default;
+
 			public override bool Deserialize(object instance, ref object[] array, ref int i)
 			{
 				i++;
@@ -45,28 +49,3 @@ namespace Decorator
 		}
 	}
 }
-
-/*using System;
-using System.Reflection;
-
-namespace Decorator
-{
-	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-	public sealed class IgnoredAttribute : Attribute, IDecoratorInfoAttribute
-	{
-		DecoratorInfo IDecoratorInfoAttribute.GetDecoratorInfo(MemberInfo memberValue) => new Ignored();
-	}
-
-	internal class Ignored : DecoratorInfo
-	{
-		public override bool Deserialize(object instance, ref object[] array, ref int i)
-		{
-			i++;
-			return true;
-		}
-
-		public override void Serialize(object instance, ref object[] array, ref int i) => i++;
-
-		public override void EstimateSize(object instance, ref int i) => i++;
-	}
-}*/

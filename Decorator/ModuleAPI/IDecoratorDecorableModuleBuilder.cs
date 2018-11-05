@@ -5,7 +5,7 @@ namespace Decorator.ModuleAPI
 {
 	public interface IDecoratorDecorableModuleBuilder
 	{
-		DecoratorModule<T> BuildDecorable<T>(Type modifiedType, MemberInfo memberInfo)
+		DecoratorModule<T> BuildDecorable<T>(Type modifiedType, Member memberInfo)
 			where T : IDecorable;
 	}
 }
