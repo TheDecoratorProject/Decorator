@@ -1,4 +1,5 @@
-﻿using SwissILKnife;
+﻿using Decorator.ModuleAPI;
+using SwissILKnife;
 
 using System;
 using System.Collections.Generic;
@@ -11,12 +12,12 @@ namespace Decorator
 	{
 		static DecoratorInfoContainer() => Members = DecoratorInfoCompiler<T>.Compile();
 
-		public static DecoratorInfo[] Members;
+		public static BaseDecoratorModule[] Members;
 	}
 
 	internal static class DecoratorInfoCompiler<T>
 	{
-		public static DecoratorInfo[] Compile()
+		public static BaseDecoratorModule[] Compile()
 		{
 			if (typeof(T).GetConstructors()
 							.Count(x => x.GetParameters().Length == 0) == 0)
@@ -31,7 +32,7 @@ namespace Decorator
 
 			var members = DiscoverMembers();
 
-			var dict = new SortedDictionary<int, DecoratorInfo>();
+			var dict = new SortedDictionary<int, BaseDecoratorModule>();
 
 			SetDecoratorInfos(dict, members);
 
@@ -42,7 +43,7 @@ namespace Decorator
 			{
 				if (!dict.ContainsKey(i))
 				{
-					dict[i] = new Ignored();
+					dict[i] = new IgnoredAttribute.IgnoredLogic();
 				}
 			}
 
@@ -50,14 +51,13 @@ namespace Decorator
 			return dict.Values.ToArray();
 		}
 
-		private static void SetDecoratorInfos(SortedDictionary<int, DecoratorInfo> dictionary, IEnumerable<MemberInfo> members)
+		private static void SetDecoratorInfos(SortedDictionary<int, BaseDecoratorModule> dictionary, IEnumerable<MemberInfo> members)
 		{
 
 			// for every member, get the DecoratorInfo and store it in dict
 			foreach (var i in members)
 			{
-				var decoratorInfo = GetPairingOf(i)
-									.GetDecoratorInfo(i);
+				var decoratorInfo = ModuleBuilder.Build(i.GetMemberType(), i, GetPairingOf(i));
 
 				var positionAttribute = i.GetCustomAttributes()
 											.OfType<PositionAttribute>()
@@ -108,10 +108,10 @@ namespace Decorator
 			}
 		}
 
-		private static IDecoratorInfoAttribute GetPairingOf(MemberInfo member)
+		private static IDecoratorModuleBuilder GetPairingOf(MemberInfo member)
 		{
 			var attributes = member.GetCustomAttributes()
-									.OfType<IDecoratorInfoAttribute>();
+									.OfType<IDecoratorModuleBuilder>();
 
 			var attributesCount = attributes.Count();
 

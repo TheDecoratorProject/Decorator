@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Decorator.ModuleAPI;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -7,7 +8,7 @@ namespace Decorator
 {
 	internal static class Extensions
 	{
-		public static int EstimateSize<T>(this DecoratorInfo[] decoratorInfos, T item)
+		public static int EstimateSize<T>(this BaseDecoratorModule[] decoratorInfos, T item)
 		{
 			var estimateSize = 0;
 
