@@ -24,13 +24,6 @@ namespace Decorator.ModuleAPI
 			Property = null;
 		}
 
-		internal Member(bool ignored)
-		{
-			GetMember = null;
-			Field = null;
-			Property = null;
-		}
-
 		public MemberInfo GetMember { get; }
 
 		public Type GetMemberType()

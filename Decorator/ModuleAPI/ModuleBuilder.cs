@@ -25,6 +25,11 @@ namespace Decorator.ModuleAPI
 				throw new InvalidDeclarationException($"A module can only be applied to fields and properties. Not sure how you got this to throw, but lol.");
 			}
 
+			if (moduleBuilder == null)
+			{
+				throw new ArgumentNullException(nameof(moduleBuilder));
+			}
+
 			var modified = moduleBuilder.ModifyAppliedType(appliedOn);
 
 			try
