@@ -18,7 +18,7 @@ namespace Decorator
 			public Module(Type modifiedType, Member member)
 				: base(modifiedType, member) => _logic = new IgnoredLogic();
 
-			private IgnoredLogic _logic;
+			private readonly IgnoredLogic _logic;
 
 			public override bool Deserialize(object instance, ref object[] array, ref int i)
 				=> _logic.Deserialize(instance, ref array, ref i);
@@ -30,7 +30,7 @@ namespace Decorator
 				=> _logic.EstimateSize(instance, ref i);
 		}
 
-		internal class IgnoredLogic : BaseDecoratorModule
+		public class IgnoredLogic : BaseDecoratorModule
 		{
 			public override Type OriginalType => null;
 			public override Type ModifiedType => null;

@@ -1,4 +1,6 @@
 ﻿using FluentAssertions;
+using System.Linq;
+using System.Reflection;
 
 namespace Decorator.Tests.ModuleTests
 {
@@ -36,5 +38,14 @@ namespace Decorator.Tests.ModuleTests
 		public static int LengthOfDefault<T>()
 			where T : IDecorable, new()
 			=> Converter<T>.Serialize(new T()).Length;
+
+		public static PropertyInfo[] GetProperties<T>()
+			where T : IDecorable
+			=> typeof(T)
+				.GetProperties()
+				.Where(x => x.GetCustomAttributes(true).OfType<PositionAttribute>().Count() > 0)
+				.OrderBy(x => x.GetCustomAttributes(true).OfType<PositionAttribute>().First().Position)
+				.ToArray();
+				
 	}
 }

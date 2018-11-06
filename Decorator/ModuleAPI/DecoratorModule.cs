@@ -18,9 +18,9 @@ namespace Decorator.ModuleAPI
 			Member = member;
 		}
 
-		public override Type ModifiedType { get; }
-		public override Type OriginalType { get; }
-		public override Member Member { get; }
+		public sealed override Type ModifiedType { get; }
+		public sealed override Type OriginalType { get; }
+		public sealed override Member Member { get; }
 
 		private readonly Action<object, object> _setVal;
 		private readonly Func<object, object> _getVal;
