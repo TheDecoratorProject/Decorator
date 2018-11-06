@@ -10,9 +10,12 @@ The current readme is for Decorator 1.x.x, please view the entire repo in 1.x.x 
 
 Decorate classes with attributes and serialize object arrays into a concrete classes.
 
-[![Nuget Version](https://img.shields.io/nuget/v/SirJosh3917.Decorator.svg) ![Nuget Downloads](https://img.shields.io/nuget/dt/SirJosh3917.Decorator.svg)](https://www.nuget.org/packages/SirJosh3917.Decorator/)
-
-[![Build status](https://ci.appveyor.com/api/projects/status/6ooio3rqlsbhs1q2?svg=true)](https://ci.appveyor.com/project/SirJosh3917/decorator) [![codecov](https://codecov.io/gh/SirJosh3917/Decorator/branch/master/graph/badge.svg)](https://codecov.io/gh/SirJosh3917/Decorator) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/43061e7f10a04bfd8dd91f185fc1303a)](https://www.codacy.com/app/SirJosh3917/Decorator?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=SirJosh3917/Decorator&amp;utm_campaign=Badge_Grade)
+[![NuGet version][badge_nuget_version]][link_nuget]
+[![NuGet downloads][badge_nuget_downloads]][link_nuget]
+[![Build status][badge_appveyor_build]][link_appveyor_build]
+[![AppVeyor tests][badge_appveyor_tests]][link_appveyor_build]
+[![Codecov coverage][badge_codecov]][link_codecov_dashboard]
+[![Codacy grade][badge_codacy_grade]][link_codacy_dashboard]
 
 ```
 PM> Package-Install SirJosh3917.Decorator
@@ -144,4 +147,19 @@ BaseMessage bm = Serializer.Serialize<Example>(new Example {
 
 ## License
 
-[MIT License (MIT)](./LICENSE)
+
+[![MIT License (MIT)][badge_license]][link_license]
+
+[badge_nuget_version]: https://img.shields.io/nuget/v/SirJosh3917.Decorator.svg
+[badge_nuget_downloads]: https://img.shields.io/nuget/dt/SirJosh3917.Decorator.svg
+[badge_appveyor_build]: https://ci.appveyor.com/api/projects/status/6ooio3rqlsbhs1q2?svg=true
+[badge_appveyor_tests]: https://img.shields.io/appveyor/tests/SirJosh3917/Decorator/master.svg
+[badge_codacy_grade]: https://api.codacy.com/project/badge/Grade/43061e7f10a04bfd8dd91f185fc1303a
+[badge_codecov]: https://img.shields.io/codecov/c/github/SirJosh3917/Decorator.svg
+[badge_license]: https://img.shields.io/github/license/SirJosh3917/Decorator.svg
+
+[link_nuget]: https://www.nuget.org/packages/SirJosh3917.Decorator/
+[link_appveyor_build]: https://ci.appveyor.com/project/SirJosh3917/Decorator
+[link_codacy_dashboard]: https://app.codacy.com/project/SirJosh3917/Decorator/dashboard
+[link_codecov_dashboard]: https://codecov.io/gh/SirJosh3917/Decorator
+[link_license]: ./LICENSE
