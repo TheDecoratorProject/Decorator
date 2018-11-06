@@ -2,6 +2,7 @@
 using SwissILKnife;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace Decorator
@@ -9,12 +10,15 @@ namespace Decorator
 	public class Converter<T> : IConverter<T>
 		where T : IDecorable, new()
 	{
-		public Converter()
+		public Converter(BaseDecoratorModule[] members)
 		{
-			_members = DecoratorModuleCompiler<T>.Compile();
+			_members = members;
+			Members = new ReadOnlyCollection<BaseDecoratorModule>(_members);
 		}
 
 		private BaseDecoratorModule[] _members;
+
+		public ReadOnlyCollection<BaseDecoratorModule> Members { get; }
 
 		public object[] Serialize(T item)
 		{

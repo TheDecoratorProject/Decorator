@@ -32,6 +32,8 @@ namespace Decorator
 					yield return element;
 				}
 			}
+
+			yield break;
 		}
 
 		public static IEnumerable<MemberInfo> GetMembersRecursively(this Type type, BindingFlags bindingFlags)

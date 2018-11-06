@@ -26,15 +26,15 @@ namespace Decorator
 			return attributeAppliedTo.GetElementType();
 		}
 
-		public DecoratorModule<T> Build<T>(Type modifiedType, Member member)
-			=> new Module<T>(modifiedType, member, MaxArraySize);
+		public DecoratorModule<T> Build<T>(ModuleContainer modContainer)
+			=> new Module<T>(modContainer, MaxArraySize);
 
 		public class Module<T> : DecoratorModule<T>
 		{
-			public Module(Type modifiedType, Member member, int maxSize) : base(modifiedType, member)
+			public Module(ModuleContainer modContainer, int maxSize) : base(modContainer)
 			{
 				_maxSize = maxSize;
-				_canBeNull = !member.GetMemberType().GetElementType().IsValueType;
+				_canBeNull = !Member.GetMemberType().GetElementType().IsValueType;
 			}
 
 			private readonly bool _canBeNull;

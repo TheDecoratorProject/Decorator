@@ -10,15 +10,15 @@ namespace Decorator
 		public Type ModifyAppliedType(Type attributeAppliedTo)
 			=> attributeAppliedTo;
 
-		public DecoratorModule<T> Build<T>(Type modifiedType, Member member)
-			=> modifiedType.IsValueType ?
-				new ValueTypeModule<T>(modifiedType, member)
-				: (DecoratorModule<T>)new ReferenceTypeModule<T>(modifiedType, member);
+		public DecoratorModule<T> Build<T>(ModuleContainer modContainer)
+			=> modContainer.ModifiedType.IsValueType ?
+				new ValueTypeModule<T>(modContainer)
+				: (DecoratorModule<T>)new ReferenceTypeModule<T>(modContainer);
 
 		public class ValueTypeModule<T> : DecoratorModule<T>
 		{
-			public ValueTypeModule(Type modifiedType, Member member)
-				: base(modifiedType, member)
+			public ValueTypeModule(ModuleContainer modContainer)
+				: base(modContainer)
 			{
 			}
 
@@ -41,8 +41,8 @@ namespace Decorator
 
 		public class ReferenceTypeModule<T> : DecoratorModule<T>
 		{
-			public ReferenceTypeModule(Type modifiedType, Member member)
-				: base(modifiedType, member)
+			public ReferenceTypeModule(ModuleContainer modContainer)
+				: base(modContainer)
 			{
 			}
 

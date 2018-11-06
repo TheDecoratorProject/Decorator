@@ -1,4 +1,7 @@
-﻿using SwissILKnife;
+﻿using Decorator.ModuleAPI;
+using SwissILKnife;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Decorator
 {
@@ -12,7 +15,10 @@ namespace Decorator
 		{
 			_container = new ConverterContainer();
 			_converter = (Converter<T>)_container.Request<T>();
+			Members = _converter.Members;
 		}
+
+		public static ReadOnlyCollection<BaseDecoratorModule> Members { get; }
 
 		public static bool TryDeserialize(object[] array, out T result)
 			=> _converter.TryDeserialize(array, out result);

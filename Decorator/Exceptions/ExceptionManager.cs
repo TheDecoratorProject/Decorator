@@ -29,8 +29,5 @@ namespace Decorator
 
 		public static IrrationalAttributeException GetIrrationalAttribute(string comment)
 			=> new IrrationalAttributeException(comment);
-
-		public static NoDefaultConstructorException GetNoDefaultConstructor()
-			=> new NoDefaultConstructorException();
 	}
 }

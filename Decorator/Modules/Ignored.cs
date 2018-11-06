@@ -10,13 +10,13 @@ namespace Decorator
 		public Type ModifyAppliedType(Type attributeAppliedTo)
 			=> attributeAppliedTo;
 
-		public DecoratorModule<T> Build<T>(Type modifiedType, Member member)
-			=> new Module<T>(modifiedType, member);
+		public DecoratorModule<T> Build<T>(ModuleContainer modContainer)
+			=> new Module<T>(modContainer);
 
 		public class Module<T> : DecoratorModule<T>
 		{
-			public Module(Type modifiedType, Member member)
-				: base(modifiedType, member) => _logic = new IgnoredLogic();
+			public Module(ModuleContainer modContainer)
+				: base(modContainer) => _logic = new IgnoredLogic();
 
 			private readonly IgnoredLogic _logic;
 
@@ -35,6 +35,7 @@ namespace Decorator
 			public override Type OriginalType => null;
 			public override Type ModifiedType => null;
 			public override Member Member => default;
+			public override IConverterContainer Container => null;
 
 			public override bool Deserialize(object instance, ref object[] array, ref int i)
 			{

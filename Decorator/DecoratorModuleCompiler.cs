@@ -8,10 +8,16 @@ using System.Reflection;
 
 namespace Decorator
 {
-	public static class DecoratorModuleCompiler<T>
+	public interface IDecoratorModuleCompiler<T>
 		where T : IDecorable, new()
 	{
-		public static BaseDecoratorModule[] Compile()
+		BaseDecoratorModule[] Compile(IConverterContainer container);
+	}
+
+	public class DecoratorModuleCompiler<T> : IDecoratorModuleCompiler<T>
+		where T : IDecorable, new()
+	{
+		public BaseDecoratorModule[] Compile(IConverterContainer container)
 		{
 			// cache constructor
 			InstanceOf<T>.Create();
@@ -22,7 +28,7 @@ namespace Decorator
 
 			var dict = new SortedDictionary<int, BaseDecoratorModule>();
 
-			SetDecoratorModules(dict, members);
+			SetDecoratorModules(dict, members, container);
 
 			// fill up empty spaces with Ignored
 			var last = dict.Keys.LastOrDefault();
@@ -39,13 +45,13 @@ namespace Decorator
 			return dict.Values.ToArray();
 		}
 
-		private static void SetDecoratorModules(SortedDictionary<int, BaseDecoratorModule> dictionary, IEnumerable<MemberInfo> members)
+		private static void SetDecoratorModules(SortedDictionary<int, BaseDecoratorModule> dictionary, IEnumerable<MemberInfo> members, IConverterContainer container)
 		{
 			// for every member, get the DecoratorModule and store it in dict
 			foreach (var i in members)
 			{
 				var decoratorModule =
-					ModuleBuilder.Build(i, GetPairingOf(i));
+					ModuleBuilder.Build(i, container, GetPairingOf(i));
 
 				var positionAttribute = i.GetCustomAttributes()
 											.OfType<PositionAttribute>()

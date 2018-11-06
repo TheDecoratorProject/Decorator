@@ -41,7 +41,7 @@ namespace Decorator.Tests.ModuleTests
 		public void TypesAreCorrect()
 		{
 			var props = Helpers.GetProperties<ArrayClass>();
-			var members = DecoratorModuleContainer<ArrayClass>.Members;
+			var members = DConverter<ArrayClass>.Members;
 
 			for(var i = 0; i < ArrayClass.TypeSetup.Length; i++)
 			{

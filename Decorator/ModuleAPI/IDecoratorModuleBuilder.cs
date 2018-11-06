@@ -6,6 +6,6 @@ namespace Decorator.ModuleAPI
 	{
 		Type ModifyAppliedType(Type attributeAppliedTo);
 
-		DecoratorModule<T> Build<T>(Type modifiedType, Member memberInfo);
+		DecoratorModule<T> Build<T>(ModuleContainer modContainer);
 	}
 }

@@ -65,7 +65,7 @@ namespace Decorator.Tests.ModuleTests
 		public void TypesAreCorrect()
 		{
 			var props = Helpers.GetProperties<FlattenArrayClass>();
-			var members = DecoratorModuleContainer<FlattenArrayClass>.Members;
+			var members = DConverter<FlattenArrayClass>.Members;
 
 			for (var i = 0; i < FlattenArrayClass.TypeSetup.Length; i++)
 			{

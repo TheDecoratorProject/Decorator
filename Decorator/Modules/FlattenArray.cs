@@ -1,6 +1,7 @@
 ﻿using Decorator.ModuleAPI;
 
 using System;
+using System.Linq;
 
 namespace Decorator
 {
@@ -26,17 +27,24 @@ namespace Decorator
 			return attributeAppliedTo.GetElementType();
 		}
 
-		public DecoratorModule<T> Build<T>(Type modifiedType, Member member) => EnsureIDecorable<FlattenArrayAttribute>.InvokeBuild<T>(this, modifiedType, member);
+		public DecoratorModule<T> Build<T>(ModuleContainer modContainer) => EnsureIDecorable<FlattenArrayAttribute>.InvokeBuild<T>(this, modContainer);
 
-		public DecoratorModule<T> BuildDecorable<T>(Type modifiedType, Member member)
-			where T : IDecorable, new() => new Module<T>(modifiedType, member, MaxArraySize);
+		public DecoratorModule<T> BuildDecorable<T>(ModuleContainer modContainer)
+			where T : IDecorable, new() => new Module<T>(modContainer, MaxArraySize);
 
 		public class Module<T> : DecoratorModule<T>
 			where T : IDecorable, new()
 		{
-			public Module(Type modifiedType, Member member, int arraySize)
-				: base(modifiedType, member) => _maxSize = arraySize;
+			public Module(ModuleContainer modContainer, int arraySize)
+				: base(modContainer)
+			{
+				_converter = Container.Request<T>();
+				_modules = _converter.Members.ToArray();
+				_maxSize = arraySize;
+			}
 
+			private IConverter<T> _converter;
+			private BaseDecoratorModule[] _modules;
 			private readonly int _maxSize;
 
 			public override bool Deserialize(object instance, ref object[] array, ref int i)
@@ -92,7 +100,7 @@ namespace Decorator
 
 				for (var arrayIndex = 0; arrayIndex < array.Length; arrayIndex++)
 				{
-					i += DecoratorModuleContainer<T>.MembersValue.EstimateSize(array[arrayIndex]);
+					i += _modules.EstimateSize(array[arrayIndex]);
 				}
 			}
 		}

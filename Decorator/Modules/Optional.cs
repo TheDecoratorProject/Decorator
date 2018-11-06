@@ -10,15 +10,15 @@ namespace Decorator
 		public Type ModifyAppliedType(Type attributeAppliedTo)
 			=> attributeAppliedTo;
 
-		public DecoratorModule<T> Build<T>(Type modifiedType, Member member)
-			=> new Module<T>(modifiedType, member);
+		public DecoratorModule<T> Build<T>(ModuleContainer modContainer)
+			=> new Module<T>(modContainer);
 
 		public class Module<T> : DecoratorModule<T>
 		{
-			public Module(Type modifiedType, Member member)
-				: base(modifiedType, member)
+			public Module(ModuleContainer modContainer)
+				: base(modContainer)
 			{
-				if (!modifiedType.IsValueType)
+				if (!ModifiedType.IsValueType)
 				{
 					_canBeNull = true;
 				}

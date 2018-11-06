@@ -6,21 +6,23 @@ namespace Decorator.ModuleAPI
 {
 	public abstract class DecoratorModule<T> : BaseDecoratorModule
 	{
-		protected DecoratorModule(Type modifiedType, Member member)
+		protected DecoratorModule(ModuleContainer container)
 		{
-			var actualMember = member.GetMember;
+			var actualMember = container.Member.GetMember;
 
 			_setVal = MemberUtils.GetSetMethod(actualMember);
 			_getVal = MemberUtils.GetGetMethod(actualMember);
 
-			OriginalType = member.GetMemberType();
-			ModifiedType = modifiedType;
-			Member = member;
+			OriginalType = container.Member.GetMemberType();
+			ModifiedType = container.ModifiedType;
+			Member = container.Member;
+			Container = container.Container;
 		}
 
 		public sealed override Type ModifiedType { get; }
 		public sealed override Type OriginalType { get; }
 		public sealed override Member Member { get; }
+		public sealed override IConverterContainer Container { get; }
 
 		private readonly Action<object, object> _setVal;
 		private readonly Func<object, object> _getVal;

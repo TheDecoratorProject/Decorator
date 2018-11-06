@@ -5,7 +5,7 @@ namespace Decorator.ModuleAPI
 {
 	public static class ModuleBuilder
 	{
-		public static BaseDecoratorModule Build(MemberInfo memberInfo, IDecoratorModuleBuilder moduleBuilder)
+		public static BaseDecoratorModule Build(MemberInfo memberInfo, IConverterContainer container, IDecoratorModuleBuilder moduleBuilder)
 		{
 			Type appliedOn;
 			Member member;
@@ -32,6 +32,8 @@ namespace Decorator.ModuleAPI
 
 			var modified = moduleBuilder.ModifyAppliedType(appliedOn);
 
+			var mod = new ModuleContainer(appliedOn, modified, member, container);
+
 			try
 			{
 				return (BaseDecoratorModule)moduleBuilder.GetType()
@@ -39,12 +41,11 @@ namespace Decorator.ModuleAPI
 								BindingFlags.Public | BindingFlags.Instance,
 								Type.DefaultBinder,
 								new Type[] {
-									typeof(Type),
-									typeof(Member)
+									typeof(ModuleContainer),
 								},
 								null)
 							.MakeGenericMethod(modified)
-							.Invoke(moduleBuilder, new object[] { modified, member });
+							.Invoke(moduleBuilder, new object[] { mod });
 			}
 			catch (TargetInvocationException tie)
 			{

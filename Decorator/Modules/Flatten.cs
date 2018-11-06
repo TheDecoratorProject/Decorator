@@ -1,6 +1,7 @@
 ﻿using Decorator.ModuleAPI;
 
 using System;
+using System.Linq;
 
 namespace Decorator
 {
@@ -10,18 +11,23 @@ namespace Decorator
 		public Type ModifyAppliedType(Type attributeAppliedTo)
 			=> attributeAppliedTo;
 
-		public DecoratorModule<T> Build<T>(Type modifiedType, Member member) => EnsureIDecorable<FlattenAttribute>.InvokeBuild<T>(this, modifiedType, member);
+		public DecoratorModule<T> Build<T>(ModuleContainer modContainer) => EnsureIDecorable<FlattenAttribute>.InvokeBuild<T>(this, modContainer);
 
-		public DecoratorModule<T> BuildDecorable<T>(Type modifiedType, Member member)
-			where T : IDecorable, new() => new Module<T>(modifiedType, member);
+		public DecoratorModule<T> BuildDecorable<T>(ModuleContainer modContainer)
+			where T : IDecorable, new() => new Module<T>(modContainer);
 
 		public class Module<T> : DecoratorModule<T>
 			where T : IDecorable, new()
 		{
-			public Module(Type modifiedType, Member member)
-				: base(modifiedType, member)
+			public Module(ModuleContainer modContainer)
+				: base(modContainer)
 			{
+				_converter = Container.Request<T>();
+				_modules = _converter.Members.ToArray();
 			}
+
+			private IConverter<T> _converter;
+			private BaseDecoratorModule[] _modules;
 
 			public override bool Deserialize(object instance, ref object[] array, ref int i)
 			{
@@ -41,7 +47,7 @@ namespace Decorator
 			}
 
 			public override void EstimateSize(object instance, ref int i)
-				=> i += DecoratorModuleContainer<T>.MembersValue.EstimateSize((T)GetValue(instance));
+				=> i += _modules.EstimateSize((T)GetValue(instance));
 		}
 	}
 }

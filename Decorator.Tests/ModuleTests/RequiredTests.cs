@@ -40,7 +40,7 @@ namespace Decorator.Tests.ModuleTests
 		public void TypesAreCorrect()
 		{
 			var props = Helpers.GetProperties<RequiredClass>();
-			var members = DecoratorModuleContainer<RequiredClass>.Members;
+			var members = DConverter<RequiredClass>.Members;
 
 			for (var i = 0; i < FlattenArrayClass.TypeSetup.Length; i++)
 			{
