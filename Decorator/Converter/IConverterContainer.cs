@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Decorator
+﻿namespace Decorator
 {
 	public interface IConverterContainer
 	{

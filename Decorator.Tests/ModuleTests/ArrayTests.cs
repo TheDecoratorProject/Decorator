@@ -43,7 +43,7 @@ namespace Decorator.Tests.ModuleTests
 			var props = Helpers.GetProperties<ArrayClass>();
 			var members = DConverter<ArrayClass>.Members;
 
-			for(var i = 0; i < ArrayClass.TypeSetup.Length; i++)
+			for (var i = 0; i < ArrayClass.TypeSetup.Length; i++)
 			{
 				members[i].Member.GetMember
 					.Should().Be(props[i]);

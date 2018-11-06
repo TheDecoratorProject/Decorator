@@ -8,7 +8,6 @@ namespace Decorator.Tests
 {
 	public class DiscoverAttributeTests
 	{
-
 		// hey
 		// is a test failing with PrivateStatic?
 		// remove the 'readonly' text from it
@@ -31,6 +30,12 @@ namespace Decorator.Tests
 
 			public int PrivateInstanceAccessor => PrivateInstance;
 			public static int PrivateStaticAccessor => PrivateStatic;
+
+			public void PreventReadonly()
+			{
+				PrivateInstance = 0;
+				PrivateStatic = 0;
+			}
 		}
 
 		private const int SUCCESS = 5;

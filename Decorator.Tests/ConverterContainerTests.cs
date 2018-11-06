@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using Decorator.ModuleAPI;
+﻿using Decorator.ModuleAPI;
+
 using FluentAssertions;
+
+using System.Collections.ObjectModel;
+
 using Xunit;
 
 namespace Decorator.Tests
@@ -16,8 +18,11 @@ namespace Decorator.Tests
 			public int Id { get; }
 
 			public ReadOnlyCollection<BaseDecoratorModule> Members => throw new System.NotImplementedException();
+
 			public object[] Serialize(T item) => throw new System.NotImplementedException();
+
 			public bool TryDeserialize(object[] array, out T result) => throw new System.NotImplementedException();
+
 			public bool TryDeserialize(object[] array, ref int arrayIndex, out T result) => throw new System.NotImplementedException();
 		}
 

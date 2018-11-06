@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+
 using System.Linq;
 using System.Reflection;
 
@@ -46,6 +47,5 @@ namespace Decorator.Tests.ModuleTests
 				.Where(x => x.GetCustomAttributes(true).OfType<PositionAttribute>().Count() > 0)
 				.OrderBy(x => x.GetCustomAttributes(true).OfType<PositionAttribute>().First().Position)
 				.ToArray();
-				
 	}
 }

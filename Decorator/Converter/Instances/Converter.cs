@@ -1,9 +1,8 @@
 ﻿using Decorator.ModuleAPI;
+
 using SwissILKnife;
-using System;
-using System.Collections.Generic;
+
 using System.Collections.ObjectModel;
-using System.Text;
 
 namespace Decorator
 {

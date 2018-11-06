@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Decorator.ModuleAPI
+﻿namespace Decorator.ModuleAPI
 {
 	public interface IDecoratorDecorableModuleBuilder
 	{
