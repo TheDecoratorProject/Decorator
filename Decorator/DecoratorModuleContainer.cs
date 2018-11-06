@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 namespace Decorator
 {
 	public static class DecoratorModuleContainer<T>
+		where T : IDecorable, new()
 	{
 		static DecoratorModuleContainer() => MembersValue = DecoratorModuleCompiler<T>.Compile();
 

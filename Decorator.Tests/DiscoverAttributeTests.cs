@@ -35,9 +35,9 @@ namespace Decorator.Tests
 
 		private const int SUCCESS = 5;
 
-		private static T GetInst<T>() where T : IDecorable
+		private static T GetInst<T>() where T : IDecorable, new()
 		{
-			if (!Converter<T>.TryDeserialize(new object[] { SUCCESS }, out var result))
+			if (!DConverter<T>.TryDeserialize(new object[] { SUCCESS }, out var result))
 			{
 				throw new TestException(nameof(GetInst) + ", " + typeof(T));
 			}

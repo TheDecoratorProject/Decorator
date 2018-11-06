@@ -29,10 +29,10 @@ namespace Decorator
 		public DecoratorModule<T> Build<T>(Type modifiedType, Member member) => EnsureIDecorable<FlattenArrayAttribute>.InvokeBuild<T>(this, modifiedType, member);
 
 		public DecoratorModule<T> BuildDecorable<T>(Type modifiedType, Member member)
-			where T : IDecorable => new Module<T>(modifiedType, member, MaxArraySize);
+			where T : IDecorable, new() => new Module<T>(modifiedType, member, MaxArraySize);
 
 		public class Module<T> : DecoratorModule<T>
-			where T : IDecorable
+			where T : IDecorable, new()
 		{
 			public Module(Type modifiedType, Member member, int arraySize)
 				: base(modifiedType, member) => _maxSize = arraySize;
@@ -51,7 +51,7 @@ namespace Decorator
 
 					for (var desArrayIndex = 0; desArrayIndex < len; desArrayIndex++)
 					{
-						if (!Converter<T>.TryDeserialize(array, ref i, out var item))
+						if (!DConverter<T>.TryDeserialize(array, ref i, out var item))
 						{
 							return false;
 						}
@@ -75,7 +75,7 @@ namespace Decorator
 
 				for (var arrayValIndex = 0; arrayValIndex < arrayVal.Length; arrayValIndex++)
 				{
-					var data = Converter<T>.Serialize(arrayVal[arrayValIndex]);
+					var data = DConverter<T>.Serialize(arrayVal[arrayValIndex]);
 
 					for (var arrayIndex = 0; arrayIndex < data.Length; arrayIndex++)
 					{

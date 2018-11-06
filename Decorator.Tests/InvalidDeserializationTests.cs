@@ -65,7 +65,7 @@ namespace Decorator.Tests
 		[Theory]
 		[InlineData("Not enough args", "a")]
 		public void Ignored(string comment, params object[] deserializeInfo)
-			=> Converter<InvalidDeserializationTestsIgnoredAttributeBase>.TryDeserialize(deserializeInfo, out _)
+			=> DConverter<InvalidDeserializationTestsIgnoredAttributeBase>.TryDeserialize(deserializeInfo, out _)
 				.Should().BeFalse(comment);
 
 		[Theory]
@@ -80,7 +80,7 @@ namespace Decorator.Tests
 		[InlineData("Not the right type for reference type", 5f, 0)]
 		[InlineData("Not the right types", 5f, 5f)]
 		public void Required(string comment, params object[] deserializeInfo)
-			=> Converter<InvalidDeserializationTestsRequiredAttributeBase>.TryDeserialize(deserializeInfo, out _)
+			=> DConverter<InvalidDeserializationTestsRequiredAttributeBase>.TryDeserialize(deserializeInfo, out _)
 				.Should().BeFalse(comment);
 
 		[Theory]
@@ -90,7 +90,7 @@ namespace Decorator.Tests
 		[InlineData("Single valid parameter", new object[] { "" })]
 		[InlineData("Single invalid parameter", new object[] { 0 })]
 		public void Optional(string comment, params object[] deserializeInfo)
-			=> Converter<InvalidDeserializationTestsOptionalAttributeBase>.TryDeserialize(deserializeInfo, out _)
+			=> DConverter<InvalidDeserializationTestsOptionalAttributeBase>.TryDeserialize(deserializeInfo, out _)
 				.Should().BeFalse(comment);
 
 		[Theory]
@@ -107,7 +107,7 @@ namespace Decorator.Tests
 		[InlineData("Largest array size", new object[] { 3, "a", "b", "c", int.MaxValue })]
 		[InlineData("Smallest array size", new object[] { 3, "a", "b", "c", int.MinValue })]
 		public void Array(string comment, params object[] deserializeInfo)
-			=> Converter<InvalidDeserializationTestsArrayAttributeBase>.TryDeserialize(deserializeInfo, out _)
+			=> DConverter<InvalidDeserializationTestsArrayAttributeBase>.TryDeserialize(deserializeInfo, out _)
 				.Should().BeFalse(comment);
 
 		[Theory]
@@ -116,7 +116,7 @@ namespace Decorator.Tests
 		[InlineData("Single null parameter", new object[] { null })]
 		[InlineData("Optionals aren't fufilled", new object[] { "", 0 })]
 		public void Flatten(string comment, params object[] deserializeInfo)
-			=> Converter<InvalidDeserializationTestsFlattenAttributeBase>.TryDeserialize(deserializeInfo, out _)
+			=> DConverter<InvalidDeserializationTestsFlattenAttributeBase>.TryDeserialize(deserializeInfo, out _)
 				.Should().BeFalse(comment);
 
 		[Theory]
@@ -134,7 +134,7 @@ namespace Decorator.Tests
 		[InlineData("Largest array size", new object[] { 3, "a", 1, "b", 2, "c", 3, int.MaxValue, int.MaxValue })]
 		[InlineData("Smallest array size", new object[] { 3, "a", 1, "b", 2, "c", 3, int.MinValue, int.MinValue })]
 		public void FlattenArray(string comment, params object[] deserializeInfo)
-			=> Converter<InvalidDeserializationTestsFlattenArrayAttributeBase>.TryDeserialize(deserializeInfo, out _)
+			=> DConverter<InvalidDeserializationTestsFlattenArrayAttributeBase>.TryDeserialize(deserializeInfo, out _)
 				.Should().BeFalse(comment);
 	}
 }

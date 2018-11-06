@@ -67,7 +67,7 @@ namespace Decorator.Tests
 		[MemberData(nameof(IgnoredData))]
 		public void Ignored(SerializationTestsIgnoredAttributeBase test, object[] serializedData)
 		{
-			Converter<SerializationTestsIgnoredAttributeBase>.Serialize(test)
+			DConverter<SerializationTestsIgnoredAttributeBase>.Serialize(test)
 				.Should().BeEquivalentTo(serializedData);
 		}
 
@@ -101,7 +101,7 @@ namespace Decorator.Tests
 		[MemberData(nameof(RequiredData))]
 		public void Required(SerializationTestsRequiredAttributeBase test, object[] serializedData)
 		{
-			Converter<SerializationTestsRequiredAttributeBase>.Serialize(test)
+			DConverter<SerializationTestsRequiredAttributeBase>.Serialize(test)
 				.Should().BeEquivalentTo(serializedData);
 		}
 
@@ -139,7 +139,7 @@ namespace Decorator.Tests
 		[MemberData(nameof(OptionalData))]
 		public void Optional(SerializationTestsOptionalAttributeBase test, object[] serializedData)
 		{
-			Converter<SerializationTestsOptionalAttributeBase>.Serialize(test)
+			DConverter<SerializationTestsOptionalAttributeBase>.Serialize(test)
 				.Should().BeEquivalentTo(serializedData);
 		}
 
@@ -173,7 +173,7 @@ namespace Decorator.Tests
 		[MemberData(nameof(ArrayData))]
 		public void Array(SerializationTestsArrayAttributeBase test, object[] serializedData)
 		{
-			Converter<SerializationTestsArrayAttributeBase>.Serialize(test)
+			DConverter<SerializationTestsArrayAttributeBase>.Serialize(test)
 				.Should().BeEquivalentTo(serializedData);
 		}
 
@@ -237,7 +237,7 @@ namespace Decorator.Tests
 		[MemberData(nameof(FlattenData))]
 		public void Flatten(SerializationTestsFlattenAttributeBase test, object[] serializedData)
 		{
-			Converter<SerializationTestsFlattenAttributeBase>.Serialize(test)
+			DConverter<SerializationTestsFlattenAttributeBase>.Serialize(test)
 				.Should().BeEquivalentTo(serializedData);
 		}
 
@@ -292,7 +292,7 @@ namespace Decorator.Tests
 		[MemberData(nameof(FlattenArrayData))]
 		public void FlattenArray(SerializationTestsFlattenArrayAttributeBase test, object[] serializedData)
 		{
-			Converter<SerializationTestsFlattenArrayAttributeBase>.Serialize(test)
+			DConverter<SerializationTestsFlattenArrayAttributeBase>.Serialize(test)
 				.Should().BeEquivalentTo(serializedData);
 		}
 

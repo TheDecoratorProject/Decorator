@@ -64,23 +64,6 @@ namespace Decorator.Tests
 			})).Should().ThrowExactly<IrrationalAttributeValueException>();
 		}
 
-		public class NoDefaultConstructor : IDecorable
-		{
-			public NoDefaultConstructor(string s) => ReferenceType = s;
-
-			[Position(0), Required]
-			public string ReferenceType { get; set; }
-		}
-
-		[Fact]
-		public void Throws_NoDefaultConstructorException()
-		{
-			((Action)(() =>
-			{
-				EnsureCompiled<NoDefaultConstructor>.Ensure();
-			})).Should().ThrowExactly<NoDefaultConstructorException>();
-		}
-
 		public class IrrationalPositionAttribute : IDecorable
 		{
 			public IrrationalPositionAttribute()

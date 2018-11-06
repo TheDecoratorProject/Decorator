@@ -8,16 +8,11 @@ using System.Reflection;
 
 namespace Decorator
 {
-	internal static class DecoratorModuleCompiler<T>
+	public static class DecoratorModuleCompiler<T>
+		where T : IDecorable, new()
 	{
 		public static BaseDecoratorModule[] Compile()
 		{
-			if (typeof(T).GetConstructors()
-							.Count(x => x.GetParameters().Length == 0) == 0)
-			{
-				throw ExceptionManager.GetNoDefaultConstructor();
-			}
-
 			// cache constructor
 			InstanceOf<T>.Create();
 

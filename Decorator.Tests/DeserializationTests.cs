@@ -66,14 +66,14 @@ namespace Decorator.Tests
 		[InlineData("Nothing", new object[] { null, null })]
 		[InlineData("Stuff", new object[] { "abcd", 1234, null })]
 		public void Ignored(string comment, params object[] deserializeInfo)
-			=> Converter<DeserializationTestsIgnoredAttributeBase>.TryDeserialize(deserializeInfo, out _)
+			=> DConverter<DeserializationTestsIgnoredAttributeBase>.TryDeserialize(deserializeInfo, out _)
 				.Should().BeTrue(comment);
 
 		[Theory]
 		[InlineData("Deserializes types", "", 0)]
 		[InlineData("Can set reference types to null", null, 0)]
 		public void Required(string comment, params object[] deserializeInfo)
-			=> Converter<DeserializationTestsRequiredAttributeBase>.TryDeserialize(deserializeInfo, out _)
+			=> DConverter<DeserializationTestsRequiredAttributeBase>.TryDeserialize(deserializeInfo, out _)
 				.Should().BeTrue(comment);
 
 		[Theory]
@@ -90,7 +90,7 @@ namespace Decorator.Tests
 		[InlineData("Not the right value type", "", 5f)]
 		[InlineData("Not the right types", 5f, 5f)]
 		public void Optional(string comment, params object[] deserializeInfo)
-			=> Converter<DeserializationTestsOptionalAttributeBase>.TryDeserialize(deserializeInfo, out _)
+			=> DConverter<DeserializationTestsOptionalAttributeBase>.TryDeserialize(deserializeInfo, out _)
 				.Should().BeTrue(comment);
 
 		[Theory]
@@ -98,7 +98,7 @@ namespace Decorator.Tests
 		[InlineData("Reference types can be null", 2, null, null, 3, 1, 2, 3)]
 		[InlineData("No array items", 0, 0)]
 		public void Array(string comment, params object[] deserializeInfo)
-			=> Converter<DeserializationTestsArrayAttributeBase>.TryDeserialize(deserializeInfo, out _)
+			=> DConverter<DeserializationTestsArrayAttributeBase>.TryDeserialize(deserializeInfo, out _)
 				.Should().BeTrue(comment);
 
 		[Theory]
@@ -113,7 +113,7 @@ namespace Decorator.Tests
 		[InlineData("Literally anything else", "", 0, 0, "")]
 		[InlineData("With null", null, 0, "", 0)]
 		public void Flatten(string comment, params object[] deserializeInfo)
-			=> Converter<DeserializationTestsFlattenAttributeBase>.TryDeserialize(deserializeInfo, out _)
+			=> DConverter<DeserializationTestsFlattenAttributeBase>.TryDeserialize(deserializeInfo, out _)
 				.Should().BeTrue(comment);
 
 		[Theory]
@@ -123,7 +123,7 @@ namespace Decorator.Tests
 		[InlineData("Optional works", 1, "a", 1, 2, "", 1, null, null)]
 		[InlineData("Complex, should work", 4, "a", 1, "b", 2, "c", 3, "d", 4, 5, "c", 3, "b", 2, "c", "c", 4, 4, 5u, 5f, "f", 5f)]
 		public void FlattenArray(string comment, params object[] deserializeInfo)
-			=> Converter<DeserializationTestsFlattenArrayAttributeBase>.TryDeserialize(deserializeInfo, out _)
+			=> DConverter<DeserializationTestsFlattenArrayAttributeBase>.TryDeserialize(deserializeInfo, out _)
 				.Should().BeTrue(comment);
 
 		public class HasNoMembers : IDecorable
@@ -135,7 +135,7 @@ namespace Decorator.Tests
 		[InlineData("Stuff in object array", new object[] { 1, "2", 3, "4" })]
 		[InlineData("Everything should just work", new object[] { null })]
 		public void NoMembers(string comment, params object[] deserializeInfo)
-			=> Converter<HasNoMembers>.TryDeserialize(deserializeInfo, out _)
+			=> DConverter<HasNoMembers>.TryDeserialize(deserializeInfo, out _)
 				.Should().BeTrue(comment);
 	}
 }

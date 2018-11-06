@@ -76,7 +76,7 @@ namespace Decorator.Benchmarks
 				SuperUselessByte = 0x0A,
 			};
 
-			_data = Converter<TestClass>.Serialize(_testClass);
+			_data = DConverter<TestClass>.Serialize(_testClass);
 
 			_pm = new ProtocolMessage.ProtocolMessageManager();
 
@@ -92,12 +92,12 @@ namespace Decorator.Benchmarks
 
 		[Benchmark]
 		public object[] DecoratorSerialize()
-			=> Converter<TestClass>.Serialize(_testClass);
+			=> DConverter<TestClass>.Serialize(_testClass);
 
 		[Benchmark]
 		public TestClass DecoratorDeserialize()
 		{
-			if (Converter<TestClass>.TryDeserialize(_data, out var result))
+			if (DConverter<TestClass>.TryDeserialize(_data, out var result))
 			{
 				return result;
 			}
@@ -109,7 +109,7 @@ namespace Decorator.Benchmarks
 		public TestClass ECDecoratorDeserialize()
 		{
 			int i = 0;
-			if (Converter<TestClass>.TryDeserialize(_data, ref i, out var result))
+			if (DConverter<TestClass>.TryDeserialize(_data, ref i, out var result))
 			{
 				return result;
 			}

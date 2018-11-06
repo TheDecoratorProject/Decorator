@@ -20,7 +20,7 @@ namespace Decorator.Tests
 		{
 			var data = new object[] { 1, null, null, null, null, null, null, null, null, null, 10 };
 
-			Converter<NeedsFillingIn>.TryDeserialize(data, out var result)
+			DConverter<NeedsFillingIn>.TryDeserialize(data, out var result)
 				.Should().Be(true);
 
 			result

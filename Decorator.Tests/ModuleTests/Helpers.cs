@@ -10,7 +10,7 @@ namespace Decorator.Tests.ModuleTests
 			where T : IDecorable, new()
 		{
 			var item = new T();
-			var result = Converter<T>.Serialize(item);
+			var result = DConverter<T>.Serialize(item);
 
 			if (result[pos].GetType() == typeof(int))
 			{
@@ -29,7 +29,7 @@ namespace Decorator.Tests.ModuleTests
 		{
 			int position = 0;
 
-			Converter<T>.TryDeserialize(deserialize, ref position, out _)
+			DConverter<T>.TryDeserialize(deserialize, ref position, out _)
 				.Should().Be(false, "Ensure the data being modified is corrupt.\r\nIf this happens to sometimes pass, please revise the data corruptor.");
 
 			return position;
@@ -37,7 +37,7 @@ namespace Decorator.Tests.ModuleTests
 
 		public static int LengthOfDefault<T>()
 			where T : IDecorable, new()
-			=> Converter<T>.Serialize(new T()).Length;
+			=> DConverter<T>.Serialize(new T()).Length;
 
 		public static PropertyInfo[] GetProperties<T>()
 			where T : IDecorable
