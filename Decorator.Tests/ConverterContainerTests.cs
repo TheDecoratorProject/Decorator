@@ -30,7 +30,7 @@ namespace Decorator.Tests
 		{
 			private int _counter;
 
-			public IConverter<T> Create<T>(IDecoratorModuleCompiler<T> compiler, IConverterContainer container) where T : IDecorable, new()
+			public IConverter<T> Create<T>(BaseDecoratorModule[] members) where T : IDecorable, new()
 				=> new MockConverter<T>(_counter++);
 
 			public IDecoratorModuleCompiler<T> CreateCompiler<T>() where T : IDecorable, new()

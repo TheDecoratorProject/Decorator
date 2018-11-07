@@ -4,11 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace Decorator
 {
-	public interface IConverter
-	{
-	}
-
-	public interface IConverter<T> : IConverter
+	public interface IConverter<T>
 		where T : IDecorable, new()
 	{
 		ReadOnlyCollection<BaseDecoratorModule> Members { get; }
