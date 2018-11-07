@@ -1,5 +1,4 @@
-﻿using Decorator.ModuleAPI;
-
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,20 +6,8 @@ using System.Reflection;
 
 namespace Decorator
 {
-	internal static class Extensions
-	{
-		public static int EstimateSize<T>(this BaseDecoratorModule[] decoratorModules, T item)
-		{
-			var estimateSize = 0;
-
-			for (var memberIndex = 0; memberIndex < decoratorModules.Length; memberIndex++)
-			{
-				decoratorModules[memberIndex].EstimateSize(item, ref estimateSize);
-			}
-
-			return estimateSize;
-		}
-
+	internal static class InternalExtensions
+	{ 
 		public static IEnumerable<TSource> DistinctBy<TSource, TKey>
 			(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
 		{

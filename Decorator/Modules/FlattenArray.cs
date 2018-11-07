@@ -27,7 +27,7 @@ namespace Decorator
 			return attributeAppliedTo.GetElementType();
 		}
 
-		public DecoratorModule<T> Build<T>(ModuleContainer modContainer) => EnsureIDecorable<FlattenArrayAttribute>.InvokeBuild<T>(this, modContainer);
+		public DecoratorModule<T> Build<T>(ModuleContainer modContainer) => ModuleBuilder.InvokeBuild<FlattenArrayAttribute, T>(this, modContainer);
 
 		public DecoratorModule<T> BuildDecorable<T>(ModuleContainer modContainer)
 			where T : IDecorable, new() => new Module<T>(modContainer, MaxArraySize);

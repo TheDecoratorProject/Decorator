@@ -4,16 +4,15 @@ using System.Collections.ObjectModel;
 
 namespace Decorator
 {
+
 	public static class DConverter<T>
 		where T : IDecorable, new()
 	{
-		private static ConverterContainer _container;
 		private static Converter<T> _converter;
 
 		static DConverter()
 		{
-			_container = new ConverterContainer();
-			_converter = (Converter<T>)_container.Request<T>();
+			_converter = (Converter<T>)StaticProvider.Container.Request<T>();
 			Members = _converter.Members;
 		}
 

@@ -1,6 +1,6 @@
 ﻿using Decorator.ModuleAPI;
 
-namespace Decorator
+namespace Decorator.ModuleAPI
 {
 	public class ConverterInstanceCreator : IConverterInstanceCreator
 	{

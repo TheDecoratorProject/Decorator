@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Decorator
+namespace Decorator.ModuleAPI
 {
 	public class ModuleContainer
 	{

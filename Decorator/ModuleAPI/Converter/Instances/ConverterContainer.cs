@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 
-namespace Decorator
+namespace Decorator.ModuleAPI
 {
 	public class ConverterContainer : IConverterContainer
 	{

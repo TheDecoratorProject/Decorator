@@ -6,13 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Decorator
+namespace Decorator.ModuleAPI
 {
-	public interface IDecoratorModuleCompiler<T>
-		where T : IDecorable, new()
-	{
-		BaseDecoratorModule[] Compile(IConverterContainer container);
-	}
 
 	public class DecoratorModuleCompiler<T> : IDecoratorModuleCompiler<T>
 		where T : IDecorable, new()

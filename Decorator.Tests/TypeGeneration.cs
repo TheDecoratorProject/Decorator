@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using Decorator.ModuleAPI;
+using FluentAssertions;
 
 using System;
 

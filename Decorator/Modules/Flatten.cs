@@ -11,7 +11,7 @@ namespace Decorator
 		public Type ModifyAppliedType(Type attributeAppliedTo)
 			=> attributeAppliedTo;
 
-		public DecoratorModule<T> Build<T>(ModuleContainer modContainer) => EnsureIDecorable<FlattenAttribute>.InvokeBuild<T>(this, modContainer);
+		public DecoratorModule<T> Build<T>(ModuleContainer modContainer) => ModuleBuilder.InvokeBuild<FlattenAttribute, T>(this, modContainer);
 
 		public DecoratorModule<T> BuildDecorable<T>(ModuleContainer modContainer)
 			where T : IDecorable, new() => new Module<T>(modContainer);
