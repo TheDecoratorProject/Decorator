@@ -43,8 +43,8 @@ namespace Decorator
 				_maxSize = arraySize;
 			}
 
-			private IConverter<T> _converter;
-			private BaseDecoratorModule[] _modules;
+			private readonly IConverter<T> _converter;
+			private readonly BaseDecoratorModule[] _modules;
 			private readonly int _maxSize;
 
 			public override bool Deserialize(object instance, ref object[] array, ref int i)

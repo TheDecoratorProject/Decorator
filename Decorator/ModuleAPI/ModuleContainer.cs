@@ -1,6 +1,4 @@
-﻿using Decorator.ModuleAPI;
-
-using System;
+﻿using System;
 
 namespace Decorator.ModuleAPI
 {

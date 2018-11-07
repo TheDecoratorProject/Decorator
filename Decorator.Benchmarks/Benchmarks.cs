@@ -108,7 +108,7 @@ namespace Decorator.Benchmarks
 		[Benchmark]
 		public TestClass ECDecoratorDeserialize()
 		{
-			int i = 0;
+			var i = 0;
 			if (DConverter<TestClass>.TryDeserialize(_data, ref i, out var result))
 			{
 				return result;

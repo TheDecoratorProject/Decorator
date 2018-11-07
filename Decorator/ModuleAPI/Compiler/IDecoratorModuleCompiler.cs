@@ -1,6 +1,4 @@
-﻿using Decorator.ModuleAPI;
-
-namespace Decorator.ModuleAPI
+﻿namespace Decorator.ModuleAPI
 {
 	public interface IDecoratorModuleCompiler<T>
 		where T : IDecorable, new()

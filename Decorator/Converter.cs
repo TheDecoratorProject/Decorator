@@ -15,7 +15,7 @@ namespace Decorator
 			Members = new ReadOnlyCollection<BaseDecoratorModule>(_members);
 		}
 
-		private BaseDecoratorModule[] _members;
+		private readonly BaseDecoratorModule[] _members;
 
 		public ReadOnlyCollection<BaseDecoratorModule> Members { get; }
 

@@ -31,10 +31,10 @@ namespace Decorator.Tests.ModuleTests
 
 	public class ArrayTests
 	{
-		private object[] GetAndCorrupt(int pos)
+		private static object[] GetAndCorrupt(int pos)
 			=> Helpers.GenerateAndCorrupt<ArrayClass>(pos);
 
-		private int GetEndsOn(object[] pos)
+		private static int GetEndsOn(object[] pos)
 			=> Helpers.EndsOn<ArrayClass>(pos);
 
 		[Fact]

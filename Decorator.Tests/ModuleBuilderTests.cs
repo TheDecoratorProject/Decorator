@@ -13,7 +13,7 @@ namespace Decorator.Tests
 	{
 		public string TestMember { get; set; }
 
-		public PropertyInfo GetTestMember()
+		public static PropertyInfo GetTestMember()
 			=> typeof(ModuleBuilderTests)
 				.GetProperty(nameof(TestMember));
 

@@ -55,10 +55,10 @@ namespace Decorator.Tests.ModuleTests
 
 	public class FlattenArrayTests
 	{
-		private object[] GetAndCorrupt(int pos)
+		private static object[] GetAndCorrupt(int pos)
 			=> Helpers.GenerateAndCorrupt<FlattenArrayClass>(pos);
 
-		private int GetEndsOn(object[] pos)
+		private static int GetEndsOn(object[] pos)
 			=> Helpers.EndsOn<FlattenArrayClass>(pos);
 
 		[Fact]

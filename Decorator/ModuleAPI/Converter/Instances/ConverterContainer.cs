@@ -9,10 +9,7 @@ namespace Decorator.ModuleAPI
 		{
 		}
 
-		public ConverterContainer(IConverterInstanceCreator instantiator)
-		{
-			_instantiator = instantiator;
-		}
+		public ConverterContainer(IConverterInstanceCreator instantiator) => _instantiator = instantiator;
 
 		private readonly IConverterInstanceCreator _instantiator;
 

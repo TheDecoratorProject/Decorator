@@ -37,10 +37,10 @@ namespace Decorator.Tests
 				=> new DecoratorModuleCompiler<T>();
 		}
 
-		public ConverterContainer CreateContainer()
+		public static ConverterContainer CreateContainer()
 			=> new ConverterContainer(new MockConverterInstanceCreator());
 
-		public void EnsureIdIs<T>(IConverter<T> converter, int id)
+		public static void EnsureIdIs<T>(IConverter<T> converter, int id)
 			where T : IDecorable, new()
 			=> ((MockConverter<T>)converter).Id
 				.Should()
@@ -74,13 +74,13 @@ namespace Decorator.Tests
 			var container = CreateContainer();
 
 			var req0 = (MockConverter<DeserializationTests.DeserializationTestsArrayAttributeBase>)container.Request<DeserializationTests.DeserializationTestsArrayAttributeBase>();
-			
+
 			EnsureIdIs(
 				req0,
 				req0.Id);
 
 			var req1 = (MockConverter<DeserializationTests.DeserializationTestsFlattenArrayAttributeBase>)container.Request<DeserializationTests.DeserializationTestsFlattenArrayAttributeBase>();
-			
+
 			EnsureIdIs(
 				container.Request<DeserializationTests.DeserializationTestsArrayAttributeBase>(),
 			req0.Id);
@@ -102,7 +102,7 @@ namespace Decorator.Tests
 			EnsureIdIs(
 				req2,
 				req2.Id);
-			
+
 
 
 			EnsureIdIs(

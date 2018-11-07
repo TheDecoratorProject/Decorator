@@ -1,6 +1,4 @@
-﻿using Decorator.ModuleAPI;
-
-using SwissILKnife;
+﻿using SwissILKnife;
 
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +6,6 @@ using System.Reflection;
 
 namespace Decorator.ModuleAPI
 {
-
 	public class DecoratorModuleCompiler<T> : IDecoratorModuleCompiler<T>
 		where T : IDecorable, new()
 	{

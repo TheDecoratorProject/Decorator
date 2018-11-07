@@ -30,10 +30,10 @@ namespace Decorator.Tests.ModuleTests
 
 	public class RequiredTests
 	{
-		private object[] GetAndCorrupt(int pos)
+		private static object[] GetAndCorrupt(int pos)
 			=> Helpers.GenerateAndCorrupt<RequiredClass>(pos);
 
-		private int GetEndsOn(object[] pos)
+		private static int GetEndsOn(object[] pos)
 			=> Helpers.EndsOn<RequiredClass>(pos);
 
 		[Fact]

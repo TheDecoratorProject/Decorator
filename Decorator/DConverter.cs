@@ -4,11 +4,10 @@ using System.Collections.ObjectModel;
 
 namespace Decorator
 {
-
 	public static class DConverter<T>
 		where T : IDecorable, new()
 	{
-		private static Converter<T> _converter;
+		private static readonly Converter<T> _converter;
 
 		static DConverter()
 		{

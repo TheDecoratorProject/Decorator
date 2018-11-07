@@ -26,8 +26,8 @@ namespace Decorator
 				_modules = _converter.Members.ToArray();
 			}
 
-			private IConverter<T> _converter;
-			private BaseDecoratorModule[] _modules;
+			private readonly IConverter<T> _converter;
+			private readonly BaseDecoratorModule[] _modules;
 
 			public override bool Deserialize(object instance, ref object[] array, ref int i)
 			{
