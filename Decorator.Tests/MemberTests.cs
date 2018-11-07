@@ -11,15 +11,6 @@ namespace Decorator.Tests
 {
 	public class MemberTests
 	{
-		[Fact]
-		public void Throws_AccessViolationException_When_AccessingNullPropertyAndField()
-		{
-			((Action)(() =>
-			{
-				default(Member).GetMemberType();
-			})).Should().ThrowExactly<AccessViolationException>();
-		}
-
 		// i'm testing this stuff to make sure it works, but i really don't appreciate if you do what i'm doing :(
 
 		[Fact]

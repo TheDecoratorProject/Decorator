@@ -17,7 +17,7 @@ namespace Decorator.Tests
 
 			public int Id { get; }
 
-			public ReadOnlyCollection<BaseDecoratorModule> Members => throw new System.NotImplementedException();
+			public ReadOnlyCollection<BaseDecoratorModule> Members => new ReadOnlyCollection<BaseDecoratorModule>(new BaseDecoratorModule[] { });
 
 			public object[] Serialize(T item) => throw new System.NotImplementedException();
 
@@ -51,17 +51,21 @@ namespace Decorator.Tests
 		{
 			var container = CreateContainer();
 
-			EnsureIdIs(
-				container.Request<DeserializationTests.DeserializationTestsArrayAttributeBase>(),
-				0);
+			var req0 = (MockConverter<DeserializationTests.DeserializationTestsArrayAttributeBase>)container.Request<DeserializationTests.DeserializationTestsArrayAttributeBase>();
+			var req1 = (MockConverter<DeserializationTests.DeserializationTestsFlattenArrayAttributeBase>)container.Request<DeserializationTests.DeserializationTestsFlattenArrayAttributeBase>();
+			var req2 = (MockConverter<DeserializationTests.DeserializationTestsFlattenAttributeBase>)container.Request<DeserializationTests.DeserializationTestsFlattenAttributeBase>();
 
 			EnsureIdIs(
-				container.Request<DeserializationTests.DeserializationTestsFlattenArrayAttributeBase>(),
-				1);
+				req0,
+				req0.Id);
 
 			EnsureIdIs(
-				container.Request<DeserializationTests.DeserializationTestsFlattenAttributeBase>(),
-				2);
+				req1,
+				req1.Id);
+
+			EnsureIdIs(
+				req2,
+				req2.Id);
 		}
 
 		[Fact]
@@ -69,37 +73,49 @@ namespace Decorator.Tests
 		{
 			var container = CreateContainer();
 
+			var req0 = (MockConverter<DeserializationTests.DeserializationTestsArrayAttributeBase>)container.Request<DeserializationTests.DeserializationTestsArrayAttributeBase>();
+			
+			EnsureIdIs(
+				req0,
+				req0.Id);
+
+			var req1 = (MockConverter<DeserializationTests.DeserializationTestsFlattenArrayAttributeBase>)container.Request<DeserializationTests.DeserializationTestsFlattenArrayAttributeBase>();
+			
 			EnsureIdIs(
 				container.Request<DeserializationTests.DeserializationTestsArrayAttributeBase>(),
-				0);
+			req0.Id);
+
+			EnsureIdIs(
+				req1,
+				req1.Id);
+
+			var req2 = (MockConverter<DeserializationTests.DeserializationTestsFlattenAttributeBase>)container.Request<DeserializationTests.DeserializationTestsFlattenAttributeBase>();
+
+			EnsureIdIs(
+				container.Request<DeserializationTests.DeserializationTestsArrayAttributeBase>(),
+			req0.Id);
 
 			EnsureIdIs(
 				container.Request<DeserializationTests.DeserializationTestsFlattenArrayAttributeBase>(),
-				1);
+			req1.Id);
+
+			EnsureIdIs(
+				req2,
+				req2.Id);
+			
+
 
 			EnsureIdIs(
 				container.Request<DeserializationTests.DeserializationTestsArrayAttributeBase>(),
-				0);
+				req0.Id);
 
 			EnsureIdIs(
 				container.Request<DeserializationTests.DeserializationTestsFlattenArrayAttributeBase>(),
-				1);
+				req1.Id);
 
 			EnsureIdIs(
 				container.Request<DeserializationTests.DeserializationTestsFlattenAttributeBase>(),
-				2);
-
-			EnsureIdIs(
-				container.Request<DeserializationTests.DeserializationTestsArrayAttributeBase>(),
-				0);
-
-			EnsureIdIs(
-				container.Request<DeserializationTests.DeserializationTestsFlattenArrayAttributeBase>(),
-				1);
-
-			EnsureIdIs(
-				container.Request<DeserializationTests.DeserializationTestsFlattenAttributeBase>(),
-				2);
+				req2.Id);
 		}
 	}
 }

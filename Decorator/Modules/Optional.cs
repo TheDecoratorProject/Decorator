@@ -18,7 +18,7 @@ namespace Decorator
 			public Module(ModuleContainer modContainer)
 				: base(modContainer)
 			{
-				if (!ModifiedType.IsValueType)
+				if (!ModuleContainer.ModifiedType.IsValueType)
 				{
 					_canBeNull = true;
 				}

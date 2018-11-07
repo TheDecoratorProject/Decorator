@@ -11,6 +11,8 @@ namespace Decorator.ModuleAPI
 			Property = property;
 
 			Field = null;
+
+			MemberType = property.PropertyType;
 		}
 
 		internal Member(FieldInfo field)
@@ -20,29 +22,16 @@ namespace Decorator.ModuleAPI
 			Field = field;
 
 			Property = null;
+
+			MemberType = field.FieldType;
 		}
 
 		public MemberInfo GetMember { get; }
 
-		public Type GetMemberType()
-		{
-			// impossible to not have a property or field
-
-			if (Property != null)
-			{
-				return Property.PropertyType;
-			}
-			else if (Field != null)
-			{
-				return Field.FieldType;
-			}
-			else
-			{
-				throw new AccessViolationException($"You cannot get the type of a member whose property and field values are null.");
-			}
-		}
+		public Type MemberType { get; }
 
 		public PropertyInfo Property { get; }
+
 		public FieldInfo Field { get; }
 	}
 }

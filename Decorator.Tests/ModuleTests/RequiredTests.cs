@@ -44,16 +44,16 @@ namespace Decorator.Tests.ModuleTests
 
 			for (var i = 0; i < FlattenArrayClass.TypeSetup.Length; i++)
 			{
-				members[i].Member.GetMember
+				members[i].ModuleContainer.Member.GetMember
 					.Should().Be(props[i]);
 			}
 
 			for (var i = 0; i < members.Count; i++)
 			{
-				members[i].OriginalType
+				members[i].ModuleContainer.Member.MemberType
 					.Should().Be(RequiredClass.TypeSetup[i]);
 
-				members[i].ModifiedType
+				members[i].ModuleContainer.ModifiedType
 					.Should().Be(RequiredClass.TypeSetup[i]);
 			}
 		}

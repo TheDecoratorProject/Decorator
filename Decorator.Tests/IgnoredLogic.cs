@@ -13,17 +13,9 @@ namespace Decorator.Tests
 		{
 			var t = new IgnoredAttribute.IgnoredLogic();
 
-			t.OriginalType
+			t.ModuleContainer
 				.Should()
 				.BeNull();
-
-			t.ModifiedType
-				.Should()
-				.BeNull();
-
-			t.Member
-				.Should()
-				.Be(default(Member));
 		}
 	}
 }

@@ -22,7 +22,7 @@ namespace Decorator.Tests
 			=> ((Action)(() =>
 			{
 				ModuleBuilder.Build(null, null, null);
-			})).Should().ThrowExactly<InvalidDeclarationException>();
+			})).Should().ThrowExactly<ArgumentNullException>();
 
 		[Fact]
 		public void Throws_ArgumentNullException_When_ConverterContainerIsNull()

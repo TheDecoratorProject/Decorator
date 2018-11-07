@@ -34,7 +34,7 @@ namespace Decorator
 			public Module(ModuleContainer modContainer, int maxSize) : base(modContainer)
 			{
 				_maxSize = maxSize;
-				_canBeNull = !Member.GetMemberType().GetElementType().IsValueType;
+				_canBeNull = !ModuleContainer.Member.MemberType.GetElementType().IsValueType;
 			}
 
 			private readonly bool _canBeNull;

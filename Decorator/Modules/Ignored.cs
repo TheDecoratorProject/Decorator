@@ -32,10 +32,7 @@ namespace Decorator
 
 		public class IgnoredLogic : BaseDecoratorModule
 		{
-			public override Type OriginalType => null;
-			public override Type ModifiedType => null;
-			public override Member Member => default;
-			public override IConverterContainer Container => null;
+			public override ModuleContainer ModuleContainer => null;
 
 			public override bool Deserialize(object instance, ref object[] array, ref int i)
 			{

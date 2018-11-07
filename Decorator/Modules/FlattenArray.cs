@@ -38,7 +38,7 @@ namespace Decorator
 			public Module(ModuleContainer modContainer, int arraySize)
 				: base(modContainer)
 			{
-				_converter = Container.Request<T>();
+				_converter = ModuleContainer.Container.Request<T>();
 				_modules = _converter.Members.ToArray();
 				_maxSize = arraySize;
 			}
