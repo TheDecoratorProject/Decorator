@@ -1,8 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
     <LangVersion>7.1</LangVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>2.0.0-pre</Version>
+    <Authors>SirJosh3917</Authors>
+    <PackageLicenseUrl>https://github.com/SirJosh3917/Decorator/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/SirJosh3917/Decorator/</PackageProjectUrl>
+    <Description>Decorate classes with attributes and parse an array of objects and a string type into a class - forget about handling bad input forever.</Description>
+    <RepositoryUrl>https://github.com/SirJosh3917/Decorator/</RepositoryUrl>
+    <PackageId>SirJosh3917.Decorator</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
