@@ -1,11 +1,3 @@
-# ATTENTION!
-
-Decorator is undergoing a major change, from 1.x.x to 2.x.x
-
-The current readme is for Decorator 1.x.x, please view the entire repo in 1.x.x mode.
-
-[Please view the entire repo in 1.x.x mode](https://github.com/SirJosh3917/Decorator/tree/bd3954577be2abbb2e358b1345d73c2d5e1ca4ae)
-
 # Decorator
 
 Decorate classes with attributes and serialize object arrays into a concrete classes.
@@ -21,129 +13,19 @@ Decorate classes with attributes and serialize object arrays into a concrete cla
 PM> Package-Install SirJosh3917.Decorator
 ```
 
-## Deserialization
+# Why object[]?
 
-Create a message type.
+Decorator was originally built for the purpose of taking loosely created, possibly incorrectly formulated `object[]`s and convert them into strictly typed classes and back.
 
-```cs
-[Message("ping")]
-public class PingMessage {
+# Any examples?
 
-    [Position(0), Required]
-    public DateTime ReplyTime { get; set; }
-}
-```
+Unfortunently, not at the moment.
 
-Deserialize an `object[]` to this class.
+You can, however, browse the [work in progress example project][link_examples]
 
-```cs
-DateTime time = DateTime.UtcNow;
-object[] array = new object[] { time }
+### Older Decorator
 
-PingMessage deserialized = null;
-
-Deserializer.TryDeserializeItem<PingMessage>(new BasicMessage("ping", array), out deserialized);
-// 1.2.0-pre: Deserializer<PingMessage>.TryDeserializeItem(new BasicMessage("ping", array), out deserialized);
-
-// deserialized.ReplyTime contains now the value from time
-```
-
-## Serialization
-
-### For a single class instance
-
-Create a message type.
-```cs
-[Message("chat"), Repeatable]
-public class Chat {
-    [Position(0), Required]
-    public string Message { get; set; }
-}
-```
-
-
-Serialize into a BaseMessage. ``BaseMessage.Arguments`` is an ``object[]``. Its content would be ``object[] {"Test!"}``.
-
-```cs
-BaseMessage msg = Serializer.SerializeItem<Chat>(new Chat {
-    Message = "Test!"
-});
-```
-
-### For multiple class instances of the same type
-
-Create an Enumerable of messages.
-```cs
-var messages = new Chat[] {
-    new Chat { Message = "Test!" },
-    new Chat { Message = "Multiple" },
-    new Chat { Message = "Things!" },
-}
-```
-
-Serialize into a BaseMessage. ``BaseMessage.Arguments`` is an ``object[]``. Its content would be ``object[] { "Test!", "Multiple", "Things!" }``
-
-```cs
-BaseMessage msg = Serializer.SerializeItems<Chat>(messages);
-```
-
-## Optional
-
-The `[Optional]` attribute, can be used to mark a property nonobligatory.
-
-```cs
-[Message("test")]
-public class Example {
-    [Position(0), Optional]
-    public string Value { get; set; }
-}
-
-Example exmp = null;
-
-//1.2.0-pre note: Replace Deserializer.TryDeserializeItem<Example> with Deserializer<Example>.TryDeserializeItem
-
-Deserializer.TryDeserializeItem<Example>(new BasicMessage("test"), out exmp);
-// the above line of code will throw an exception, the message count must be 1
-
-Deserializer.TryDeserializeItem<Example>(new BasicMessage("test", null), out exmp);
-// exmp.Value is 'default(string)', a.k.a. 'null'
-
-Deserializer.TryDeserializeItem<Example>(new BasicMessage("test", 1929495), out exmp);
-// exmp.Value is 'default(string)', a.k.a. 'null'
-
-Deserializer.TryDeserializeItem<Example>(new BasicMessage("test", "value"), out exmp);
-// exmp.Value is "value"
-```
-
-## Position
-
-`[Position(x)]` specifies which index in the `object[]` holds the corresponding value.
-
-```cs
-[Message("example")]
-public class Example {
-    [Position(3)]
-    public string MyValue { get; set; }
-    
-    [Position(1)]
-    public int TestInt { get; set; }
-    
-    [Position(2)]
-    public DateTime Date { get; set; }
-    
-    [Position(0)]
-    public short ShortValue { get; set; }
-}
-
-BaseMessage bm = Serializer.Serialize<Example>(new Example {
-    MyValue = "string",
-    TestInt = 1337,
-    Date = DateTime.UtcNow,
-    ShortValue = short.MaxValue
-});
-
-// bm.Arguments = new object[] { short.MaxValue, 1337, DateTime.UtcNow, "string" };
-```
+This is the final commit made to the Decorator 1.x.x series. If you'd like to view the repository in that mode, [feel free to do so][link_final_1xx].
 
 ## License
 
@@ -163,3 +45,6 @@ BaseMessage bm = Serializer.Serialize<Example>(new Example {
 [link_codacy_dashboard]: https://app.codacy.com/project/SirJosh3917/Decorator/dashboard
 [link_codecov_dashboard]: https://codecov.io/gh/SirJosh3917/Decorator
 [link_license]: ./LICENSE
+
+[link_examples]: ./Decorator.Examples/Examples/
+[link_final_1xx]: https://github.com/SirJosh3917/Decorator/tree/bd3954577be2abbb2e358b1345d73c2d5e1ca4ae

@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decorator.Serialize.Tests",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decorator.Tests", "Decorator.Tests\Decorator.Tests.csproj", "{295EDEC5-E025-4DBA-8650-734D975EAB30}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Decorator.Benchmarks", "Decorator.Benchmarks\Decorator.Benchmarks.csproj", "{5521176E-3620-42FC-938B-F39368AAB8E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decorator.Benchmarks", "Decorator.Benchmarks\Decorator.Benchmarks.csproj", "{5521176E-3620-42FC-938B-F39368AAB8E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Decorator.Examples", "Decorator.Examples\Decorator.Examples.csproj", "{8DC5C974-707D-47BB-8E6A-37CEF54C849C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{5521176E-3620-42FC-938B-F39368AAB8E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5521176E-3620-42FC-938B-F39368AAB8E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5521176E-3620-42FC-938B-F39368AAB8E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DC5C974-707D-47BB-8E6A-37CEF54C849C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DC5C974-707D-47BB-8E6A-37CEF54C849C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DC5C974-707D-47BB-8E6A-37CEF54C849C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DC5C974-707D-47BB-8E6A-37CEF54C849C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
