@@ -36,8 +36,9 @@ namespace Decorator.Examples
 
 					Console.WriteLine($"\r\nExample Finished!");
 					Console.ReadKey();
+					Console.Clear();
 
-					break;
+					input = "";
 				}
 				else
 				{
