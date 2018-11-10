@@ -117,5 +117,15 @@ namespace Decorator.Tests
 				container.Request<DeserializationTests.DeserializationTestsFlattenAttributeBase>(),
 				req2.Id);
 		}
+
+		[Fact]
+		public void ReGetsCompilerUponReRequesting()
+		{
+			var container = CreateContainer();
+
+			var comp = container.RequestCompiler<DeserializationTests.DeserializationTestsArrayAttributeBase>();
+
+			comp.Should().BeEquivalentTo(container.RequestCompiler<DeserializationTests.DeserializationTestsArrayAttributeBase>());
+		}
 	}
 }
