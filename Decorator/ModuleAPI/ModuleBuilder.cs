@@ -6,7 +6,7 @@ namespace Decorator.ModuleAPI
 {
 	public static class ModuleBuilder
 	{
-		public static BaseDecoratorModule Build(MemberInfo memberInfo, IConverterContainer container, IDecoratorModuleBuilder moduleBuilder)
+		public static BaseModule Build(MemberInfo memberInfo, IConverterContainer container, IModuleBuilder moduleBuilder)
 		{
 			if (memberInfo == null) throw new ArgumentNullException(nameof(memberInfo));
 			if (container == null) throw new ArgumentNullException(nameof(container));
@@ -18,10 +18,10 @@ namespace Decorator.ModuleAPI
 
 			try
 			{
-				return (BaseDecoratorModule)InvokeBuildMethod(
+				return (BaseModule)InvokeBuildMethod(
 					moduleBuilder.GetType(),
 					modContainer.ModifiedType,
-					nameof(IDecoratorModuleBuilder.Build),
+					nameof(IModuleBuilder.Build),
 					moduleBuilder,
 					modContainer);
 			}

@@ -2,10 +2,10 @@
 
 namespace Decorator.ModuleAPI
 {
-	public interface IDecoratorModuleBuilder
+	public interface IModuleBuilder
 	{
 		Type ModifyAppliedType(Type attributeAppliedTo);
 
-		DecoratorModule<T> Build<T>(ModuleContainer modContainer);
+		Module<T> Build<T>(ModuleContainer modContainer);
 	}
 }

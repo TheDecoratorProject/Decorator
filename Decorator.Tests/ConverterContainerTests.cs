@@ -17,7 +17,7 @@ namespace Decorator.Tests
 
 			public int Id { get; }
 
-			public ReadOnlyCollection<BaseDecoratorModule> Members => new ReadOnlyCollection<BaseDecoratorModule>(new BaseDecoratorModule[] { });
+			public ReadOnlyCollection<BaseModule> Members => new ReadOnlyCollection<BaseModule>(new BaseModule[] { });
 
 			public object[] Serialize(T item) => throw new System.NotImplementedException();
 
@@ -30,11 +30,11 @@ namespace Decorator.Tests
 		{
 			private int _counter;
 
-			public IConverter<T> Create<T>(BaseDecoratorModule[] members) where T : IDecorable, new()
+			public IConverter<T> Create<T>(BaseModule[] members) where T : IDecorable, new()
 				=> new MockConverter<T>(_counter++);
 
-			public IDecoratorModuleCompiler<T> CreateCompiler<T>() where T : IDecorable, new()
-				=> new DecoratorModuleCompiler<T>();
+			public ICompiler<T> CreateCompiler<T>() where T : IDecorable, new()
+				=> new Compiler<T>();
 		}
 
 		public static ConverterContainer CreateContainer()
@@ -51,9 +51,9 @@ namespace Decorator.Tests
 		{
 			var container = CreateContainer();
 
-			var req0 = (MockConverter<DeserializationTests.DeserializationTestsArrayAttributeBase>)container.Request<DeserializationTests.DeserializationTestsArrayAttributeBase>();
-			var req1 = (MockConverter<DeserializationTests.DeserializationTestsFlattenArrayAttributeBase>)container.Request<DeserializationTests.DeserializationTestsFlattenArrayAttributeBase>();
-			var req2 = (MockConverter<DeserializationTests.DeserializationTestsFlattenAttributeBase>)container.Request<DeserializationTests.DeserializationTestsFlattenAttributeBase>();
+			var req0 = (MockConverter<DeserializationTests.DeserializationTestsArrayAttributeBase>)container.RequestConverter<DeserializationTests.DeserializationTestsArrayAttributeBase>();
+			var req1 = (MockConverter<DeserializationTests.DeserializationTestsFlattenArrayAttributeBase>)container.RequestConverter<DeserializationTests.DeserializationTestsFlattenArrayAttributeBase>();
+			var req2 = (MockConverter<DeserializationTests.DeserializationTestsFlattenAttributeBase>)container.RequestConverter<DeserializationTests.DeserializationTestsFlattenAttributeBase>();
 
 			EnsureIdIs(
 				req0,
@@ -73,30 +73,30 @@ namespace Decorator.Tests
 		{
 			var container = CreateContainer();
 
-			var req0 = (MockConverter<DeserializationTests.DeserializationTestsArrayAttributeBase>)container.Request<DeserializationTests.DeserializationTestsArrayAttributeBase>();
+			var req0 = (MockConverter<DeserializationTests.DeserializationTestsArrayAttributeBase>)container.RequestConverter<DeserializationTests.DeserializationTestsArrayAttributeBase>();
 
 			EnsureIdIs(
 				req0,
 				req0.Id);
 
-			var req1 = (MockConverter<DeserializationTests.DeserializationTestsFlattenArrayAttributeBase>)container.Request<DeserializationTests.DeserializationTestsFlattenArrayAttributeBase>();
+			var req1 = (MockConverter<DeserializationTests.DeserializationTestsFlattenArrayAttributeBase>)container.RequestConverter<DeserializationTests.DeserializationTestsFlattenArrayAttributeBase>();
 
 			EnsureIdIs(
-				container.Request<DeserializationTests.DeserializationTestsArrayAttributeBase>(),
+				container.RequestConverter<DeserializationTests.DeserializationTestsArrayAttributeBase>(),
 			req0.Id);
 
 			EnsureIdIs(
 				req1,
 				req1.Id);
 
-			var req2 = (MockConverter<DeserializationTests.DeserializationTestsFlattenAttributeBase>)container.Request<DeserializationTests.DeserializationTestsFlattenAttributeBase>();
+			var req2 = (MockConverter<DeserializationTests.DeserializationTestsFlattenAttributeBase>)container.RequestConverter<DeserializationTests.DeserializationTestsFlattenAttributeBase>();
 
 			EnsureIdIs(
-				container.Request<DeserializationTests.DeserializationTestsArrayAttributeBase>(),
+				container.RequestConverter<DeserializationTests.DeserializationTestsArrayAttributeBase>(),
 			req0.Id);
 
 			EnsureIdIs(
-				container.Request<DeserializationTests.DeserializationTestsFlattenArrayAttributeBase>(),
+				container.RequestConverter<DeserializationTests.DeserializationTestsFlattenArrayAttributeBase>(),
 			req1.Id);
 
 			EnsureIdIs(
@@ -106,15 +106,15 @@ namespace Decorator.Tests
 
 
 			EnsureIdIs(
-				container.Request<DeserializationTests.DeserializationTestsArrayAttributeBase>(),
+				container.RequestConverter<DeserializationTests.DeserializationTestsArrayAttributeBase>(),
 				req0.Id);
 
 			EnsureIdIs(
-				container.Request<DeserializationTests.DeserializationTestsFlattenArrayAttributeBase>(),
+				container.RequestConverter<DeserializationTests.DeserializationTestsFlattenArrayAttributeBase>(),
 				req1.Id);
 
 			EnsureIdIs(
-				container.Request<DeserializationTests.DeserializationTestsFlattenAttributeBase>(),
+				container.RequestConverter<DeserializationTests.DeserializationTestsFlattenAttributeBase>(),
 				req2.Id);
 		}
 

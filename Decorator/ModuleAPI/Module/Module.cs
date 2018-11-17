@@ -4,9 +4,9 @@ using System;
 
 namespace Decorator.ModuleAPI
 {
-	public abstract class DecoratorModule<T> : BaseDecoratorModule
+	public abstract class Module<T> : BaseModule
 	{
-		protected DecoratorModule(ModuleContainer container)
+		protected Module(ModuleContainer container)
 		{
 			var actualMember = container.Member.GetMember;
 

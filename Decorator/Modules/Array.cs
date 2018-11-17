@@ -5,7 +5,7 @@ using System;
 namespace Decorator
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-	public sealed class ArrayAttribute : Attribute, IDecoratorModuleBuilder
+	public sealed class ArrayAttribute : Attribute, IModuleBuilder
 	{
 		public ArrayAttribute() : this(0xFFFF)
 		{
@@ -26,12 +26,12 @@ namespace Decorator
 			return attributeAppliedTo.GetElementType();
 		}
 
-		public DecoratorModule<T> Build<T>(ModuleContainer modContainer)
-			=> new Module<T>(modContainer, MaxArraySize);
+		public Module<T> Build<T>(ModuleContainer modContainer)
+			=> new ArrayModule<T>(modContainer, MaxArraySize);
 
-		public class Module<T> : DecoratorModule<T>
+		public class ArrayModule<T> : Module<T>
 		{
-			public Module(ModuleContainer modContainer, int maxSize) : base(modContainer)
+			public ArrayModule(ModuleContainer modContainer, int maxSize) : base(modContainer)
 			{
 				_maxSize = maxSize;
 				_canBeNull = !ModuleContainer.Member.MemberType.GetElementType().IsValueType;

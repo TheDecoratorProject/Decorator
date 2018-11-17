@@ -9,15 +9,15 @@ namespace Decorator
 	public class Converter<T> : IConverter<T>
 		where T : IDecorable, new()
 	{
-		public Converter(BaseDecoratorModule[] members)
+		public Converter(BaseModule[] members)
 		{
 			_members = members;
-			Members = new ReadOnlyCollection<BaseDecoratorModule>(_members);
+			Members = new ReadOnlyCollection<BaseModule>(_members);
 		}
 
-		private readonly BaseDecoratorModule[] _members;
+		private readonly BaseModule[] _members;
 
-		public ReadOnlyCollection<BaseDecoratorModule> Members { get; }
+		public ReadOnlyCollection<BaseModule> Members { get; }
 
 		public object[] Serialize(T item)
 		{

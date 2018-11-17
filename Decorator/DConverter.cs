@@ -11,11 +11,11 @@ namespace Decorator
 
 		static DConverter()
 		{
-			_converter = (Converter<T>)StaticProvider.Container.Request<T>();
+			_converter = (Converter<T>)StaticProvider.Container.RequestConverter<T>();
 			Members = _converter.Members;
 		}
 
-		public static ReadOnlyCollection<BaseDecoratorModule> Members { get; }
+		public static ReadOnlyCollection<BaseModule> Members { get; }
 
 		public static bool TryDeserialize(object[] array, out T result)
 			=> _converter.TryDeserialize(array, out result);

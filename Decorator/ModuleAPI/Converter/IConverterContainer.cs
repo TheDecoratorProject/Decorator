@@ -2,10 +2,10 @@
 {
 	public interface IConverterContainer
 	{
-		IConverter<T> Request<T>()
+		IConverter<T> RequestConverter<T>()
 			where T : IDecorable, new();
 
-		IDecoratorModuleCompiler<T> RequestCompiler<T>()
+		ICompiler<T> RequestCompiler<T>()
 			where T : IDecorable, new();
 	}
 }

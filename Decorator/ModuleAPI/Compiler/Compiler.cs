@@ -6,10 +6,10 @@ using System.Reflection;
 
 namespace Decorator.ModuleAPI
 {
-	public class DecoratorModuleCompiler<T> : IDecoratorModuleCompiler<T>
+	public class Compiler<T> : ICompiler<T>
 		where T : IDecorable, new()
 	{
-		public BaseDecoratorModule[] Compile(IConverterContainer container)
+		public BaseModule[] Compile(IConverterContainer container)
 		{
 			// cache constructor
 			InstanceOf<T>.Create();
@@ -18,7 +18,7 @@ namespace Decorator.ModuleAPI
 
 			var members = DiscoverMembers();
 
-			var dict = new SortedDictionary<int, BaseDecoratorModule>();
+			var dict = new SortedDictionary<int, BaseModule>();
 
 			SetDecoratorModules(dict, members, container);
 
@@ -37,7 +37,7 @@ namespace Decorator.ModuleAPI
 			return dict.Values.ToArray();
 		}
 
-		private static void SetDecoratorModules(SortedDictionary<int, BaseDecoratorModule> dictionary, IEnumerable<MemberInfo> members, IConverterContainer container)
+		private static void SetDecoratorModules(SortedDictionary<int, BaseModule> dictionary, IEnumerable<MemberInfo> members, IConverterContainer container)
 		{
 			// for every member, get the DecoratorModule and store it in dict
 			foreach (var i in members)
@@ -94,10 +94,10 @@ namespace Decorator.ModuleAPI
 			}
 		}
 
-		private static IDecoratorModuleBuilder GetPairingOf(MemberInfo member)
+		private static IModuleBuilder GetPairingOf(MemberInfo member)
 		{
 			var attributes = member.GetCustomAttributes()
-									.OfType<IDecoratorModuleBuilder>();
+									.OfType<IModuleBuilder>();
 
 			var attributesCount = attributes.Count();
 

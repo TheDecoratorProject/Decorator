@@ -5,17 +5,17 @@ using System;
 namespace Decorator
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-	public sealed class OptionalAttribute : Attribute, IDecoratorModuleBuilder
+	public sealed class OptionalAttribute : Attribute, IModuleBuilder
 	{
 		public Type ModifyAppliedType(Type attributeAppliedTo)
 			=> attributeAppliedTo;
 
-		public DecoratorModule<T> Build<T>(ModuleContainer modContainer)
-			=> new Module<T>(modContainer);
+		public Module<T> Build<T>(ModuleContainer modContainer)
+			=> new OptionalModule<T>(modContainer);
 
-		public class Module<T> : DecoratorModule<T>
+		public class OptionalModule<T> : Module<T>
 		{
-			public Module(ModuleContainer modContainer)
+			public OptionalModule(ModuleContainer modContainer)
 				: base(modContainer)
 			{
 				if (!ModuleContainer.ModifiedType.IsValueType)

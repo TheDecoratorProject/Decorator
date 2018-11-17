@@ -5,19 +5,19 @@ using System;
 namespace Decorator
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-	public sealed class RequiredAttribute : Attribute, IDecoratorModuleBuilder
+	public sealed class RequiredAttribute : Attribute, IModuleBuilder
 	{
 		public Type ModifyAppliedType(Type attributeAppliedTo)
 			=> attributeAppliedTo;
 
-		public DecoratorModule<T> Build<T>(ModuleContainer modContainer)
+		public Module<T> Build<T>(ModuleContainer modContainer)
 			=> modContainer.ModifiedType.IsValueType ?
-				(DecoratorModule<T>)new ValueTypeModule<T>(modContainer)
-				: (DecoratorModule<T>)new ReferenceTypeModule<T>(modContainer);
+				(Module<T>)new RequiredValueTypeModule<T>(modContainer)
+				: (Module<T>)new RequiredReferenceTypeModule<T>(modContainer);
 
-		public class ValueTypeModule<T> : DecoratorModule<T>
+		public class RequiredValueTypeModule<T> : Module<T>
 		{
-			public ValueTypeModule(ModuleContainer modContainer)
+			public RequiredValueTypeModule(ModuleContainer modContainer)
 				: base(modContainer)
 			{
 			}
@@ -39,9 +39,9 @@ namespace Decorator
 			public override void Serialize(object instance, ref object[] array, ref int i) => array[i++] = GetValue(instance);
 		}
 
-		public class ReferenceTypeModule<T> : DecoratorModule<T>
+		public class RequiredReferenceTypeModule<T> : Module<T>
 		{
-			public ReferenceTypeModule(ModuleContainer modContainer)
+			public RequiredReferenceTypeModule(ModuleContainer modContainer)
 				: base(modContainer)
 			{
 			}

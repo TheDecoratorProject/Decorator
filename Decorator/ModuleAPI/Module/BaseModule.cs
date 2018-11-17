@@ -1,6 +1,6 @@
 ﻿namespace Decorator.ModuleAPI
 {
-	public abstract class BaseDecoratorModule
+	public abstract class BaseModule
 	{
 		public abstract ModuleContainer ModuleContainer { get; }
 

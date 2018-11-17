@@ -7,7 +7,7 @@ namespace Decorator
 	public interface IConverter<T>
 		where T : IDecorable, new()
 	{
-		ReadOnlyCollection<BaseDecoratorModule> Members { get; }
+		ReadOnlyCollection<BaseModule> Members { get; }
 
 		bool TryDeserialize(object[] array, out T result);
 

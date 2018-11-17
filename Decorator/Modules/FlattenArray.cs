@@ -6,7 +6,7 @@ using System.Linq;
 namespace Decorator
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-	public sealed class FlattenArrayAttribute : Attribute, IDecoratorModuleBuilder
+	public sealed class FlattenArrayAttribute : Attribute, IModuleBuilder
 	{
 		public FlattenArrayAttribute() : this(0xFFFF)
 		{
@@ -35,28 +35,28 @@ namespace Decorator
 			return elementType;
 		}
 
-		public DecoratorModule<T> Build<T>(ModuleContainer modContainer)
+		public Module<T> Build<T>(ModuleContainer modContainer)
 		{
-			return (DecoratorModule<T>)typeof(Module<>)
+			return (Module<T>)typeof(FlattenArrayModule<>)
 				.MakeGenericType(typeof(T))
 				.GetConstructors()
 				.First()
 				.Invoke(new object[] { modContainer, MaxArraySize });
 		}
 
-		public class Module<T> : DecoratorModule<T>
+		public class FlattenArrayModule<T> : Module<T>
 			where T : IDecorable, new()
 		{
-			public Module(ModuleContainer modContainer, int arraySize)
+			public FlattenArrayModule(ModuleContainer modContainer, int arraySize)
 				: base(modContainer)
 			{
-				_converter = ModuleContainer.Container.Request<T>();
+				_converter = ModuleContainer.Container.RequestConverter<T>();
 				_modules = _converter.Members.ToArray();
 				_maxSize = arraySize;
 			}
 
 			private readonly IConverter<T> _converter;
-			private readonly BaseDecoratorModule[] _modules;
+			private readonly BaseModule[] _modules;
 			private readonly int _maxSize;
 
 			//TODO: Unit test to ensure DConverter<T> ism't being called, and _converter is

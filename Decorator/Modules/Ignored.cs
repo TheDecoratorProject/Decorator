@@ -5,17 +5,17 @@ using System;
 namespace Decorator
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-	public sealed class IgnoredAttribute : Attribute, IDecoratorModuleBuilder
+	public sealed class IgnoredAttribute : Attribute, IModuleBuilder
 	{
 		public Type ModifyAppliedType(Type attributeAppliedTo)
 			=> attributeAppliedTo;
 
-		public DecoratorModule<T> Build<T>(ModuleContainer modContainer)
-			=> new Module<T>(modContainer);
+		public Module<T> Build<T>(ModuleContainer modContainer)
+			=> new IgnoredModule<T>(modContainer);
 
-		public class Module<T> : DecoratorModule<T>
+		public class IgnoredModule<T> : Module<T>
 		{
-			public Module(ModuleContainer modContainer)
+			public IgnoredModule(ModuleContainer modContainer)
 				: base(modContainer) => _logic = new IgnoredLogic();
 
 			private readonly IgnoredLogic _logic;
@@ -30,7 +30,7 @@ namespace Decorator
 				=> _logic.EstimateSize(instance, ref i);
 		}
 
-		public class IgnoredLogic : BaseDecoratorModule
+		public class IgnoredLogic : BaseModule
 		{
 			public override ModuleContainer ModuleContainer => default;
 

@@ -2,10 +2,10 @@
 {
 	public class ConverterInstanceCreator : IConverterInstanceCreator
 	{
-		IConverter<T> IConverterInstanceCreator.Create<T>(BaseDecoratorModule[] members)
+		IConverter<T> IConverterInstanceCreator.Create<T>(BaseModule[] members)
 			=> new Converter<T>(members);
 
-		IDecoratorModuleCompiler<T> IConverterInstanceCreator.CreateCompiler<T>()
-			=> new DecoratorModuleCompiler<T>();
+		ICompiler<T> IConverterInstanceCreator.CreateCompiler<T>()
+			=> new Compiler<T>();
 	}
 }

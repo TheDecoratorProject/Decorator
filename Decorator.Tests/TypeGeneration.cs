@@ -29,7 +29,7 @@ namespace Decorator.Tests
 			((Action)(() =>
 			{
 				new ConverterContainer()
-					.Request<FlattensNonDecorable>();
+					.RequestConverter<FlattensNonDecorable>();
 			})).Should().ThrowExactly<InvalidDeclarationException>();
 		}
 
@@ -44,7 +44,7 @@ namespace Decorator.Tests
 		{
 			((Action)(() =>
 			{
-				new ConverterContainer().Request<NoSpecificationOnPositionAttribute>();
+				new ConverterContainer().RequestConverter<NoSpecificationOnPositionAttribute>();
 			})).Should().ThrowExactly<BrokenAttributePairingException>();
 		}
 
@@ -62,7 +62,7 @@ namespace Decorator.Tests
 		{
 			((Action)(() =>
 			{
-				new ConverterContainer().Request<DuplicatePositionAttributes>();
+				new ConverterContainer().RequestConverter<DuplicatePositionAttributes>();
 			})).Should().ThrowExactly<IrrationalAttributeValueException>();
 		}
 
@@ -81,7 +81,7 @@ namespace Decorator.Tests
 		{
 			((Action)(() =>
 			{
-				new ConverterContainer().Request<IrrationalPositionAttribute>();
+				new ConverterContainer().RequestConverter<IrrationalPositionAttribute>();
 			})).Should().ThrowExactly<IrrationalAttributeValueException>();
 		}
 
@@ -100,7 +100,7 @@ namespace Decorator.Tests
 		{
 			((Action)(() =>
 			{
-				new ConverterContainer().Request<TooManyPairings>();
+				new ConverterContainer().RequestConverter<TooManyPairings>();
 			})).Should().ThrowExactly<IrrationalAttributeException>();
 		}
 
@@ -115,7 +115,7 @@ namespace Decorator.Tests
 		{
 			((Action)(() =>
 			{
-				new ConverterContainer().Request<ArrayAppliedIncorrectly>();
+				new ConverterContainer().RequestConverter<ArrayAppliedIncorrectly>();
 			})).Should().ThrowExactly<InvalidDeclarationException>();
 		}
 
@@ -130,7 +130,7 @@ namespace Decorator.Tests
 		{
 			((Action)(() =>
 			{
-				new ConverterContainer().Request<FlattenArrayAppliedIncorrectly>();
+				new ConverterContainer().RequestConverter<FlattenArrayAppliedIncorrectly>();
 			})).Should().ThrowExactly<InvalidDeclarationException>();
 		}
 
@@ -151,7 +151,7 @@ namespace Decorator.Tests
 		{
 			((Action)(() =>
 			{
-				new ConverterContainer().Request<PerfectlyFineClass>();
+				new ConverterContainer().RequestConverter<PerfectlyFineClass>();
 			})).Should().NotThrow();
 		}
 
@@ -168,7 +168,7 @@ namespace Decorator.Tests
 		{
 			((Action)(() =>
 			{
-				new ConverterContainer().Request<AlsoHasNoMembers>();
+				new ConverterContainer().RequestConverter<AlsoHasNoMembers>();
 			})).Should().NotThrow();
 		}
 	}

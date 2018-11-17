@@ -4,7 +4,7 @@ namespace Decorator
 {
 	public static class Extensions
 	{
-		public static int EstimateSize<T>(this BaseDecoratorModule[] decoratorModules, T item)
+		public static int EstimateSize<T>(this BaseModule[] decoratorModules, T item)
 		{
 			var estimateSize = 0;
 

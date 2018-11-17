@@ -13,40 +13,35 @@ namespace Decorator.ModuleAPI
 
 		private readonly IConverterInstanceCreator _instantiator;
 
-		private readonly ConcurrentDictionary<Type, object> _converterStorage
+		private readonly Cache _converters = new Cache();
+		private readonly Cache _compilers = new Cache();
+
+		public IConverter<T> RequestConverter<T>()
+			where T : IDecorable, new()
+			=> (IConverter<T>)_converters.Request(() => _instantiator.Create<T>(RequestCompiler<T>().Compile(this)));
+
+		public ICompiler<T> RequestCompiler<T>()
+			where T : IDecorable, new()
+			=> (ICompiler<T>)_compilers.Request(() => _instantiator.CreateCompiler<T>());
+	}
+
+	public class Cache
+	{
+		private readonly ConcurrentDictionary<Type, object> _storage
 			= new ConcurrentDictionary<Type, object>();
 
-		private readonly ConcurrentDictionary<Type, object> _compilerStorage
-			= new ConcurrentDictionary<Type, object>();
-
-		public IConverter<T> Request<T>()
-			where T : IDecorable, new()
+		public object Request<TType>(Func<TType> create)
 		{
-			if (_converterStorage.TryGetValue(typeof(T), out var result))
+			if(_storage.TryGetValue(typeof(TType), out var result))
 			{
-				return (IConverter<T>)result;
+				return result;
 			}
 
-			result = _instantiator.Create<T>(RequestCompiler<T>().Compile(this));
+			result = create();
 
-			_converterStorage.TryAdd(typeof(T), result);
+			_storage.TryAdd(typeof(TType), result);
 
-			return (IConverter<T>)result;
-		}
-
-		public IDecoratorModuleCompiler<T> RequestCompiler<T>()
-			where T : IDecorable, new()
-		{
-			if (_compilerStorage.TryGetValue(typeof(T), out var result))
-			{
-				return (IDecoratorModuleCompiler<T>)result;
-			}
-
-			result = _instantiator.CreateCompiler<T>();
-
-			_compilerStorage.TryAdd(typeof(T), result);
-
-			return (IDecoratorModuleCompiler<T>)result;
+			return result;
 		}
 	}
 }

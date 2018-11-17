@@ -2,10 +2,10 @@
 {
 	public interface IConverterInstanceCreator
 	{
-		IConverter<T> Create<T>(BaseDecoratorModule[] members)
+		IConverter<T> Create<T>(BaseModule[] members)
 			where T : IDecorable, new();
 
-		IDecoratorModuleCompiler<T> CreateCompiler<T>()
+		ICompiler<T> CreateCompiler<T>()
 			where T : IDecorable, new();
 	}
 }
