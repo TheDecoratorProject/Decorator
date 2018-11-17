@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using Decorator.Attributes;
+using Decorator.Modules;
+using FluentAssertions;
 
 using System;
 
