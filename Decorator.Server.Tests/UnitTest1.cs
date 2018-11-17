@@ -26,8 +26,8 @@ namespace Decorator.Server.Tests
 
 	public class Test
 	{
-		private bool _invokedOne = false;
-		private bool _invokedTwo = false;
+		private bool _invokedOne;
+		private bool _invokedTwo;
 
 		[Fact]
 		public void CanInvokeProperly()
@@ -36,7 +36,7 @@ namespace Decorator.Server.Tests
 				.Should().BeNull();
 
 			_invokedOne.Should().BeTrue();
-			
+
 			((bool)(MessageInvoker<Test>.Invoke(this, new BaseMessage("b", new object[] { 1234, 5678 }))))
 				.Should().BeTrue();
 

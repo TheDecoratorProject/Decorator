@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Decorator
 {
-	internal static class InternalExtensions
+	internal static class IrregularExtensions
 	{
 		public static IEnumerable<TSource> DistinctBy<TSource, TKey>
 			(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)

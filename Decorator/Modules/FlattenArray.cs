@@ -8,7 +8,7 @@ namespace Decorator
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 	public sealed class FlattenArrayAttribute : Attribute, IModuleBuilder
 	{
-		public FlattenArrayAttribute() : this(0xFFFF)
+		public FlattenArrayAttribute() : this((int)ushort.MaxValue)
 		{
 		}
 
@@ -57,30 +57,30 @@ namespace Decorator
 
 			public override bool Deserialize(object instance, ref object[] array, ref int i)
 			{
-				if (array[i] is int len)
+				if (!(array[i] is int len))
 				{
-					i++;
+					return false;
+				}
+				
+				i++;
 
-					if (len > _maxSize || len < 0) return false;
+				if (len > _maxSize || len < 0) return false;
 
-					var desArray = new object[len];
+				var desArray = new object[len];
 
-					for (var desArrayIndex = 0; desArrayIndex < len; desArrayIndex++)
+				for (var desArrayIndex = 0; desArrayIndex < len; desArrayIndex++)
+				{
+					if (!DConverter<T>.TryDeserialize(array, ref i, out var item))
 					{
-						if (!DConverter<T>.TryDeserialize(array, ref i, out var item))
-						{
-							return false;
-						}
-
-						desArray[desArrayIndex] = item;
+						return false;
 					}
 
-					SetValue(instance, desArray);
-
-					return true;
+					desArray[desArrayIndex] = item;
 				}
 
-				return false;
+				SetValue(instance, desArray);
+
+				return true;
 			}
 
 			public override void Serialize(object instance, ref object[] array, ref int i)

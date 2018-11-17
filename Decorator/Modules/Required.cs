@@ -24,14 +24,15 @@ namespace Decorator
 
 			public override bool Deserialize(object instance, ref object[] array, ref int i)
 			{
-				if (array[i] is T)
+				if (!(array[i] is T))
 				{
-					SetValue(instance, array[i]);
-					i++;
-					return true;
+					return false;
 				}
 
-				return false;
+				SetValue(instance, array[i]);
+				i++;
+
+				return true;
 			}
 
 			public override void EstimateSize(object instance, ref int size) => size++;

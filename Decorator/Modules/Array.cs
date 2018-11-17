@@ -7,7 +7,7 @@ namespace Decorator
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 	public sealed class ArrayAttribute : Attribute, IModuleBuilder
 	{
-		public ArrayAttribute() : this(0xFFFF)
+		public ArrayAttribute() : this((int)ushort.MaxValue)
 		{
 		}
 
@@ -42,37 +42,37 @@ namespace Decorator
 
 			public override bool Deserialize(object instance, ref object[] array, ref int i)
 			{
-				if (array[i] is int len)
+				if (!(array[i] is int len))
 				{
-					if (len > _maxSize || len < 0 ||
-						(array.Length <= i + len))
+					return false;
+				}
+
+				if (len > _maxSize || len < 0 ||
+					(array.Length <= i + len))
+				{
+					return false;
+				}
+
+				var desArray = new object[len];
+
+				i++;
+
+				for (var desArrayIndex = 0; desArrayIndex < len; desArrayIndex++)
+				{
+					if (!(array[i] is T ||
+						(_canBeNull && array[i] == null)))
 					{
 						return false;
 					}
 
-					var desArray = new object[len];
+					desArray[desArrayIndex] = array[i];
 
 					i++;
-
-					for (var desArrayIndex = 0; desArrayIndex < len; desArrayIndex++)
-					{
-						if (!(array[i] is T ||
-							(_canBeNull && array[i] == null)))
-						{
-							return false;
-						}
-
-						desArray[desArrayIndex] = array[i];
-
-						i++;
-					}
-
-					SetValue(instance, desArray);
-
-					return true;
 				}
 
-				return false;
+				SetValue(instance, desArray);
+
+				return true;
 			}
 
 			public override void Serialize(object instance, ref object[] array, ref int i)
