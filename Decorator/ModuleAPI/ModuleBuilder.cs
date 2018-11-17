@@ -31,23 +31,6 @@ namespace Decorator.ModuleAPI
 			}
 		}
 
-		public static DecoratorModule<T> InvokeBuild<TBuildModule, T>(TBuildModule self, ModuleContainer modContainer)
-			where TBuildModule : IDecoratorDecorableModuleBuilder
-		{
-			if (typeof(T).GetInterfaces().Count(x => x == typeof(IDecorable)) == 0 ||
-				typeof(T).GetConstructors().Count(x => x.GetParameters().Length == 0) == 0)
-			{
-				throw new InvalidDeclarationException($"{typeof(T)} does not (properly) inherit from {typeof(IDecorable)}.");
-			}
-
-			return (DecoratorModule<T>)InvokeBuildMethod(
-					typeof(TBuildModule),
-					typeof(T),
-					nameof(IDecoratorDecorableModuleBuilder.BuildDecorable),
-					self,
-					modContainer);
-		}
-
 		private static object InvokeBuildMethod(Type onType, Type makeGeneric, string name, object instance, ModuleContainer modContainer)
 			=> onType
 				.GetMethod(name,

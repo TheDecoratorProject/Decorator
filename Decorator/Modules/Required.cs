@@ -12,7 +12,7 @@ namespace Decorator
 
 		public DecoratorModule<T> Build<T>(ModuleContainer modContainer)
 			=> modContainer.ModifiedType.IsValueType ?
-				new ValueTypeModule<T>(modContainer)
+				(DecoratorModule<T>)new ValueTypeModule<T>(modContainer)
 				: (DecoratorModule<T>)new ReferenceTypeModule<T>(modContainer);
 
 		public class ValueTypeModule<T> : DecoratorModule<T>

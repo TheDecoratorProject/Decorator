@@ -32,7 +32,7 @@ namespace Decorator
 
 		public class IgnoredLogic : BaseDecoratorModule
 		{
-			public override ModuleContainer ModuleContainer => null;
+			public override ModuleContainer ModuleContainer => default;
 
 			public override bool Deserialize(object instance, ref object[] array, ref int i)
 			{

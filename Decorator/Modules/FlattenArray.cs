@@ -6,7 +6,7 @@ using System.Linq;
 namespace Decorator
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-	public sealed class FlattenArrayAttribute : Attribute, IDecoratorModuleBuilder, IDecoratorDecorableModuleBuilder
+	public sealed class FlattenArrayAttribute : Attribute, IDecoratorModuleBuilder
 	{
 		public FlattenArrayAttribute() : this(0xFFFF)
 		{
@@ -24,13 +24,25 @@ namespace Decorator
 				throw new InvalidDeclarationException($"{attributeAppliedTo} must be an array!");
 			}
 
-			return attributeAppliedTo.GetElementType();
+			var elementType = attributeAppliedTo.GetElementType();
+
+			if (!elementType.GetInterfaces()
+									.Contains(typeof(IDecorable)))
+			{
+				throw new InvalidDeclarationException($"{attributeAppliedTo} does not (properly) inherit from {typeof(IDecorable)}.");
+			}
+
+			return elementType;
 		}
 
-		public DecoratorModule<T> Build<T>(ModuleContainer modContainer) => ModuleBuilder.InvokeBuild<FlattenArrayAttribute, T>(this, modContainer);
-
-		public DecoratorModule<T> BuildDecorable<T>(ModuleContainer modContainer)
-			where T : IDecorable, new() => new Module<T>(modContainer, MaxArraySize);
+		public DecoratorModule<T> Build<T>(ModuleContainer modContainer)
+		{
+			return (DecoratorModule<T>)typeof(Module<>)
+				.MakeGenericType(typeof(T))
+				.GetConstructors()
+				.First()
+				.Invoke(new object[] { modContainer, MaxArraySize });
+		}
 
 		public class Module<T> : DecoratorModule<T>
 			where T : IDecorable, new()
@@ -46,6 +58,8 @@ namespace Decorator
 			private readonly IConverter<T> _converter;
 			private readonly BaseDecoratorModule[] _modules;
 			private readonly int _maxSize;
+
+			//TODO: Unit test to ensure DConverter<T> ism't being called, and _converter is
 
 			public override bool Deserialize(object instance, ref object[] array, ref int i)
 			{

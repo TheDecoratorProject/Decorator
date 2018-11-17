@@ -2,20 +2,33 @@
 
 using System;
 using System.Linq;
+using System.Reflection;
 
 namespace Decorator
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-	public sealed class FlattenAttribute : Attribute, IDecoratorModuleBuilder, IDecoratorDecorableModuleBuilder
+	public sealed class FlattenAttribute : Attribute, IDecoratorModuleBuilder
 	{
 		public Type ModifyAppliedType(Type attributeAppliedTo)
-			=> attributeAppliedTo;
+		{
+			if (!attributeAppliedTo.GetInterfaces()
+									.Contains(typeof(IDecorable)))
+			{
+				throw new InvalidDeclarationException($"{attributeAppliedTo} does not (properly) inherit from {typeof(IDecorable)}.");
+			}
 
-		public DecoratorModule<T> Build<T>(ModuleContainer modContainer) => ModuleBuilder.InvokeBuild<FlattenAttribute, T>(this, modContainer);
+			return attributeAppliedTo;
+		}
 
-		public DecoratorModule<T> BuildDecorable<T>(ModuleContainer modContainer)
-			where T : IDecorable, new() => new Module<T>(modContainer);
-
+		public DecoratorModule<T> Build<T>(ModuleContainer modContainer)
+		{
+			return (DecoratorModule<T>)typeof(Module<>)
+				.MakeGenericType(typeof(T))
+				.GetConstructors()
+				.First()
+				.Invoke(new object[] { modContainer });
+		}
+		
 		public class Module<T> : DecoratorModule<T>
 			where T : IDecorable, new()
 		{
@@ -31,14 +44,14 @@ namespace Decorator
 
 			public override bool Deserialize(object instance, ref object[] array, ref int i)
 			{
-				if (!DConverter<T>.TryDeserialize(array, ref i, out var result)) return false;
+				if (!_converter.TryDeserialize(array, ref i, out var result)) return false;
 				SetValue(instance, result);
 				return true;
 			}
 
 			public override void Serialize(object instance, ref object[] array, ref int i)
 			{
-				var data = DConverter<T>.Serialize((T)GetValue(instance));
+				var data = _converter.Serialize((T)GetValue(instance));
 
 				for (var arrayIndex = 0; arrayIndex < data.Length; arrayIndex++)
 				{
