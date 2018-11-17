@@ -1,4 +1,5 @@
 ﻿using Decorator.Exceptions;
+
 using FluentAssertions;
 
 using System;
