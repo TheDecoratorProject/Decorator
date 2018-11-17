@@ -2,7 +2,7 @@
 
 using System.Collections.ObjectModel;
 
-namespace Decorator
+namespace Decorator.Converter
 {
 	public interface IConverter<T>
 		where T : new()

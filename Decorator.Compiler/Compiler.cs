@@ -1,10 +1,15 @@
-﻿using SwissILKnife;
+﻿using Decorator.Attributes;
+using Decorator.Exceptions;
+using Decorator.ModuleAPI;
+
+using SwissILKnife;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Decorator.ModuleAPI
+namespace Decorator.Compiler
 {
 	public class Compiler<T> : ICompiler<T>
 		where T : new()
@@ -96,10 +101,10 @@ namespace Decorator.ModuleAPI
 			}
 		}
 
-		private static IModuleBuilder GetPairingOf(MemberInfo member)
+		private static IModuleAttribute GetPairingOf(MemberInfo member)
 		{
 			var attributes = member.GetCustomAttributes()
-									.OfType<IModuleBuilder>();
+									.OfType<IModuleAttribute>();
 
 			var attributesCount = attributes.Count();
 

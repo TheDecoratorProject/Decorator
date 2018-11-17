@@ -1,4 +1,6 @@
-﻿using Decorator.ModuleAPI;
+﻿using Decorator.Compiler;
+using Decorator.Converter;
+using Decorator.ModuleAPI;
 
 using FluentAssertions;
 
@@ -102,8 +104,6 @@ namespace Decorator.Tests
 			EnsureIdIs(
 				req2,
 				req2.Id);
-
-
 
 			EnsureIdIs(
 				container.RequestConverter<DeserializationTests.DeserializationTestsArrayAttributeBase>(),

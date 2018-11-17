@@ -2,10 +2,10 @@
 
 using System;
 
-namespace Decorator
+namespace Decorator.Modules
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-	public sealed class IgnoredAttribute : Attribute, IModuleBuilder
+	public sealed class IgnoredAttribute : Attribute, IModuleAttribute
 	{
 		public Type ModifyAppliedType(Type attributeAppliedTo)
 			=> attributeAppliedTo;

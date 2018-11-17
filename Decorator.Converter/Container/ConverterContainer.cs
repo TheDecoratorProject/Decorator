@@ -1,8 +1,10 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using Decorator.Compiler;
+using Decorator.ModuleAPI;
+
+using System;
 using System.Reflection;
 
-namespace Decorator.ModuleAPI
+namespace Decorator.Converter
 {
 	public class ConverterContainer : IConverterContainer
 	{
@@ -24,7 +26,7 @@ namespace Decorator.ModuleAPI
 		private readonly Cache _converters = new Cache();
 		private readonly Cache _compilers = new Cache();
 
-		private Func<MemberInfo, BaseContainer> _genContainer;
+		private readonly Func<MemberInfo, BaseContainer> _genContainer;
 
 		public IConverter<T> RequestConverter<T>()
 			where T : new()

@@ -2,17 +2,17 @@
 
 using System;
 
-namespace Decorator
+namespace Decorator.Modules
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-	public sealed class RequiredAttribute : Attribute, IModuleBuilder
+	public sealed class RequiredAttribute : Attribute, IModuleAttribute
 	{
 		public Type ModifyAppliedType(Type attributeAppliedTo)
 			=> attributeAppliedTo;
 
 		public Module<T> Build<T>(BaseContainer modContainer)
 			=> typeof(T).IsValueType ?
-				(Module<T>)new RequiredValueTypeModule<T>(modContainer)
+				new RequiredValueTypeModule<T>(modContainer)
 				: (Module<T>)new RequiredReferenceTypeModule<T>(modContainer);
 
 		public class RequiredValueTypeModule<T> : Module<T>

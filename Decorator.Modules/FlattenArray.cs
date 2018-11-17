@@ -1,12 +1,14 @@
-﻿using Decorator.ModuleAPI;
+﻿using Decorator.Converter;
+using Decorator.Exceptions;
+using Decorator.ModuleAPI;
 
 using System;
 using System.Linq;
 
-namespace Decorator
+namespace Decorator.Modules
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-	public sealed class FlattenArrayAttribute : Attribute, IModuleBuilder
+	public sealed class FlattenArrayAttribute : Attribute, IModuleAttribute
 	{
 		public FlattenArrayAttribute() : this(ushort.MaxValue)
 		{

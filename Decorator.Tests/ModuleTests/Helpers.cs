@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using Decorator.Attributes;
+
+using FluentAssertions;
 
 using System.Linq;
 using System.Reflection;

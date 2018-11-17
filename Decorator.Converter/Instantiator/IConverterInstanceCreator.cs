@@ -1,4 +1,7 @@
-﻿namespace Decorator.ModuleAPI
+﻿using Decorator.Compiler;
+using Decorator.ModuleAPI;
+
+namespace Decorator.Converter
 {
 	public interface IConverterInstanceCreator
 	{

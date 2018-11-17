@@ -1,5 +1,8 @@
 ﻿using BenchmarkDotNet.Attributes;
 
+using Decorator.Attributes;
+using Decorator.Modules;
+
 using Deserialiser;
 
 using System;

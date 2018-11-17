@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Decorator
+namespace Decorator.Exceptions
 {
 	public class IrrationalAttributeValueException : IrrationalAttributeException
 	{

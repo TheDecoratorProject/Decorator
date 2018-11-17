@@ -1,10 +1,9 @@
 ﻿using Decorator.ModuleAPI;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
 
-namespace Decorator.ModuleAPI
+using System;
+using System.Reflection;
+
+namespace Decorator.Converter
 {
 	public static class MemberHelper
 	{

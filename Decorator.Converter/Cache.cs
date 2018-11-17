@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 
-namespace Decorator.ModuleAPI
+namespace Decorator.Converter
 {
 	internal class Cache
 	{
@@ -10,7 +10,7 @@ namespace Decorator.ModuleAPI
 
 		public object Request<TType>(Func<TType> create)
 		{
-			if(_storage.TryGetValue(typeof(TType), out var result))
+			if (_storage.TryGetValue(typeof(TType), out var result))
 			{
 				return result;
 			}

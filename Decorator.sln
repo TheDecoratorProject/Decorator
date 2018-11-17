@@ -29,7 +29,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decorator.Converter", "Deco
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decorator.Compiler", "Decorator.Compiler\Decorator.Compiler.csproj", "{B7220918-EAC2-4068-836B-2CC9DDF83F32}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Decorator.Attributes", "Decorator.Attributes\Decorator.Attributes.csproj", "{53CA159F-19FC-483D-8483-015B896EA925}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decorator.Attributes", "Decorator.Attributes\Decorator.Attributes.csproj", "{53CA159F-19FC-483D-8483-015B896EA925}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Main", "Main", "{5C481783-54F6-4681-8F30-2FE258355909}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -96,6 +98,15 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{939A06E0-BAF5-45D2-A27C-0D6F6910838A} = {5C481783-54F6-4681-8F30-2FE258355909}
+		{BFC62B04-4970-4FC1-B7AC-6BD2134C3B7E} = {5C481783-54F6-4681-8F30-2FE258355909}
+		{8A8EBBFC-0DE2-4613-A785-D5163FE66719} = {5C481783-54F6-4681-8F30-2FE258355909}
+		{17F9E7D9-45E3-409F-A2FB-2EE77D086AA2} = {5C481783-54F6-4681-8F30-2FE258355909}
+		{9384ECB5-E66A-4B5C-A263-C12E86E79A41} = {5C481783-54F6-4681-8F30-2FE258355909}
+		{B7220918-EAC2-4068-836B-2CC9DDF83F32} = {5C481783-54F6-4681-8F30-2FE258355909}
+		{53CA159F-19FC-483D-8483-015B896EA925} = {5C481783-54F6-4681-8F30-2FE258355909}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7F5AA364-9BE8-43DC-ADBC-7EAB9F13D925}

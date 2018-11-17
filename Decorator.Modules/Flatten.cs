@@ -1,13 +1,13 @@
-﻿using Decorator.ModuleAPI;
+﻿using Decorator.Converter;
+using Decorator.ModuleAPI;
 
 using System;
 using System.Linq;
-using System.Reflection;
 
-namespace Decorator
+namespace Decorator.Modules
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-	public sealed class FlattenAttribute : Attribute, IModuleBuilder
+	public sealed class FlattenAttribute : Attribute, IModuleAttribute
 	{
 		public Type ModifyAppliedType(Type attributeAppliedTo)
 			=> attributeAppliedTo;

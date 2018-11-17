@@ -1,7 +1,8 @@
 ﻿using System;
 
-namespace Decorator
+namespace Decorator.Exceptions
 {
+	// TODO: remove lol
 	public static class ExceptionManager
 	{
 		public const string InvalidDeclarationDefault

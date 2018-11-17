@@ -2,7 +2,7 @@
 
 namespace Decorator.ModuleAPI
 {
-	public interface IModuleBuilder
+	public interface IModuleAttribute
 	{
 		Type ModifyAppliedType(Type attributeAppliedTo);
 

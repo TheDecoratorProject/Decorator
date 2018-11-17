@@ -4,7 +4,7 @@ using SwissILKnife;
 
 using System.Collections.ObjectModel;
 
-namespace Decorator
+namespace Decorator.Converter
 {
 	public class Converter<T> : IConverter<T>
 		where T : new()

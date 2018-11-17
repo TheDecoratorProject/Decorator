@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Decorator.Attributes;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Decorator
+namespace Decorator.Compiler
 {
 	internal static class IrregularExtensions
 	{

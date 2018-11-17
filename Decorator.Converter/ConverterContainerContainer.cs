@@ -1,9 +1,6 @@
 ﻿using Decorator.ModuleAPI;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Decorator
+namespace Decorator.Converter
 {
 	public class ConverterContainerContainer : BaseContainer
 	{

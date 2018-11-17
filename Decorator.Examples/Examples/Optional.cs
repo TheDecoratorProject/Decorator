@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Decorator.Attributes;
+using Decorator.Modules;
+
+using System;
 
 namespace Decorator.Examples.Examples
 {
@@ -25,7 +26,6 @@ namespace Decorator.Examples.Examples
 		public override void Run()
 		{
 			var messageData = new object[][] {
-
 				// Optional fields *must* have some kind of data to them - it can be anything, as long as it exists
 				// e.g. 'null', or an integer (in case of h4x0r)
 
@@ -36,9 +36,9 @@ namespace Decorator.Examples.Examples
 				new object[] { "h4x0r", "aM hAcKuR tRyNa RuIn YeR sTuFf", 1337 },
 			};
 
-			foreach(var i in messageData)
+			foreach (var i in messageData)
 			{
-				if(!DConverter<Message>.TryDeserialize(i, out var message))
+				if (!DConverter<Message>.TryDeserialize(i, out var message))
 				{
 					// TODO: throw ThisShouldntHappenException()
 					Console.WriteLine("Uh-oh! The example failed D:");

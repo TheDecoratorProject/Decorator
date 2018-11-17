@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Decorator
+namespace Decorator.Attributes
 {
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
 	public sealed class DiscoverAttribute : Attribute

@@ -1,5 +1,8 @@
+using Decorator.Attributes;
+using Decorator.Modules;
+
 using FluentAssertions;
-using System;
+
 using Xunit;
 
 namespace Decorator.Server.Tests

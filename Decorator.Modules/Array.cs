@@ -1,11 +1,12 @@
-﻿using Decorator.ModuleAPI;
+﻿using Decorator.Exceptions;
+using Decorator.ModuleAPI;
 
 using System;
 
-namespace Decorator
+namespace Decorator.Modules
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-	public sealed class ArrayAttribute : Attribute, IModuleBuilder
+	public sealed class ArrayAttribute : Attribute, IModuleAttribute
 	{
 		public ArrayAttribute() : this(ushort.MaxValue)
 		{

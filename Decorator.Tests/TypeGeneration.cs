@@ -1,4 +1,8 @@
-﻿using Decorator.ModuleAPI;
+﻿using Decorator.Attributes;
+using Decorator.Converter;
+using Decorator.Exceptions;
+using Decorator.Modules;
+
 using FluentAssertions;
 
 using System;

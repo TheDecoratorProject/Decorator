@@ -1,4 +1,6 @@
-﻿namespace Decorator.ModuleAPI
+﻿using Decorator.Compiler;
+
+namespace Decorator.Converter
 {
 	public interface IConverterContainer
 	{

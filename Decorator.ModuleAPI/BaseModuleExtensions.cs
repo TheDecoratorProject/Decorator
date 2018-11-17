@@ -1,6 +1,4 @@
-﻿using Decorator.ModuleAPI;
-
-namespace Decorator
+﻿namespace Decorator.ModuleAPI
 {
 	public static class BaseModuleExtensions
 	{

@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Decorator.Attributes;
+using Decorator.Modules;
+
+using System;
 
 namespace Decorator.Examples.Examples
 {

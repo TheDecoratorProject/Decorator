@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Decorator.ModuleAPI
+﻿namespace Decorator.ModuleAPI
 {
 	public class IgnoredLogic : BaseModule
 	{

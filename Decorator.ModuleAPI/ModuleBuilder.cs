@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
 
 namespace Decorator.ModuleAPI
 {
 	public static class ModuleBuilder
 	{
-		public static BaseModule Build(BaseContainer modContainer, IModuleBuilder moduleBuilder)
+		public static BaseModule Build(BaseContainer modContainer, IModuleAttribute moduleBuilder)
 		{
 			if (modContainer == null) throw new ArgumentNullException(nameof(modContainer));
 			if (moduleBuilder == null) throw new ArgumentNullException(nameof(moduleBuilder));
@@ -16,7 +15,7 @@ namespace Decorator.ModuleAPI
 				return (BaseModule)InvokeBuildMethod(
 					moduleBuilder.GetType(),
 					moduleBuilder.ModifyAppliedType(modContainer.Member.MemberType),
-					nameof(IModuleBuilder.Build),
+					nameof(IModuleAttribute.Build),
 					moduleBuilder,
 					modContainer);
 			}

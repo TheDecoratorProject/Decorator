@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Decorator
+namespace Decorator.Attributes
 {
 	public sealed class PositionAttribute : Attribute
 	{

@@ -1,4 +1,5 @@
-﻿using Decorator.ModuleAPI;
+﻿using Decorator.Converter;
+using Decorator.ModuleAPI;
 
 using System.Collections.ObjectModel;
 

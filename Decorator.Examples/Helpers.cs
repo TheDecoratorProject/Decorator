@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
+
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Decorator.Examples
 {
@@ -11,11 +10,11 @@ namespace Decorator.Examples
 		{
 			Console.WriteLine("{");
 
-			for(int i = 0; i < objectArray.Length; i++)
+			for (int i = 0; i < objectArray.Length; i++)
 			{
 				Console.WriteLine($"  [{i}]:");
 
-				if(objectArray == null)
+				if (objectArray == null)
 				{
 					Console.WriteLine("    null");
 					continue;
