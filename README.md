@@ -19,16 +19,19 @@ Decorator was originally built for the purpose of taking loosely created, possib
 
 # Any examples?
 
-Unfortunently, not at the moment.
+Yes, they're a WIP
 
-You can, however, browse the [work in progress example project][link_examples]
+You can browse the [work in progress example project][link_examples]
+
+## Dependancy Graph
+
+![dependancy_graph]
 
 ### Older Decorator
 
 This is the final commit made to the Decorator 1.x.x series. If you'd like to view the repository in that mode, [feel free to do so][link_final_1xx].
 
 ## License
-
 
 [![MIT License (MIT)][badge_license]][link_license]
 
@@ -39,6 +42,8 @@ This is the final commit made to the Decorator 1.x.x series. If you'd like to vi
 [badge_codacy_grade]: https://api.codacy.com/project/badge/Grade/43061e7f10a04bfd8dd91f185fc1303a
 [badge_codecov]: https://img.shields.io/codecov/c/github/SirJosh3917/Decorator.svg
 [badge_license]: https://img.shields.io/github/license/SirJosh3917/Decorator.svg
+
+[dependancy_graph]: ./DependancyGraph.png
 
 [link_nuget]: https://www.nuget.org/packages/SirJosh3917.Decorator/
 [link_appveyor_build]: https://ci.appveyor.com/project/SirJosh3917/Decorator
