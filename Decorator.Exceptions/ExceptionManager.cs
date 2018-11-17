@@ -2,7 +2,7 @@
 
 namespace Decorator
 {
-	internal static class ExceptionManager
+	public static class ExceptionManager
 	{
 		public const string InvalidDeclarationDefault
 			= "The class isn't defined properly";

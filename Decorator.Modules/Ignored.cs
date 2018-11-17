@@ -10,12 +10,12 @@ namespace Decorator
 		public Type ModifyAppliedType(Type attributeAppliedTo)
 			=> attributeAppliedTo;
 
-		public Module<T> Build<T>(ModuleContainer modContainer)
+		public Module<T> Build<T>(BaseContainer modContainer)
 			=> new IgnoredModule<T>(modContainer);
 
 		public class IgnoredModule<T> : Module<T>
 		{
-			public IgnoredModule(ModuleContainer modContainer)
+			public IgnoredModule(BaseContainer modContainer)
 				: base(modContainer) => _logic = new IgnoredLogic();
 
 			private readonly IgnoredLogic _logic;
@@ -28,21 +28,6 @@ namespace Decorator
 
 			public override void EstimateSize(object instance, ref int i)
 				=> _logic.EstimateSize(instance, ref i);
-		}
-
-		public class IgnoredLogic : BaseModule
-		{
-			public override ModuleContainer ModuleContainer => default;
-
-			public override bool Deserialize(object instance, ref object[] array, ref int i)
-			{
-				i++;
-				return true;
-			}
-
-			public override void Serialize(object instance, ref object[] array, ref int i) => i++;
-
-			public override void EstimateSize(object instance, ref int i) => i++;
 		}
 	}
 }

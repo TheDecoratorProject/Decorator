@@ -10,14 +10,14 @@ namespace Decorator
 		public Type ModifyAppliedType(Type attributeAppliedTo)
 			=> attributeAppliedTo;
 
-		public Module<T> Build<T>(ModuleContainer modContainer)
-			=> modContainer.ModifiedType.IsValueType ?
+		public Module<T> Build<T>(BaseContainer modContainer)
+			=> typeof(T).IsValueType ?
 				(Module<T>)new RequiredValueTypeModule<T>(modContainer)
 				: (Module<T>)new RequiredReferenceTypeModule<T>(modContainer);
 
 		public class RequiredValueTypeModule<T> : Module<T>
 		{
-			public RequiredValueTypeModule(ModuleContainer modContainer)
+			public RequiredValueTypeModule(BaseContainer modContainer)
 				: base(modContainer)
 			{
 			}
@@ -42,7 +42,7 @@ namespace Decorator
 
 		public class RequiredReferenceTypeModule<T> : Module<T>
 		{
-			public RequiredReferenceTypeModule(ModuleContainer modContainer)
+			public RequiredReferenceTypeModule(BaseContainer modContainer)
 				: base(modContainer)
 			{
 			}

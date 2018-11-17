@@ -6,8 +6,13 @@ namespace Decorator.ModuleAPI
 {
 	public abstract class Module<T> : BaseModule
 	{
-		protected Module(ModuleContainer container)
+		protected Module(BaseContainer container)
 		{
+			if (container == null)
+			{
+				throw new ArgumentNullException(nameof(container));
+			}
+
 			var actualMember = container.Member.GetMember;
 
 			_setVal = MemberUtils.GetSetMethod(actualMember);
@@ -16,7 +21,7 @@ namespace Decorator.ModuleAPI
 			ModuleContainer = container;
 		}
 
-		public sealed override ModuleContainer ModuleContainer { get; }
+		public sealed override BaseContainer ModuleContainer { get; }
 
 		private readonly Action<object, object> _setVal;
 		private readonly Func<object, object> _getVal;

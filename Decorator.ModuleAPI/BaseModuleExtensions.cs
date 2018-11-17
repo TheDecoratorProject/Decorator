@@ -2,7 +2,7 @@
 
 namespace Decorator
 {
-	public static class Extensions
+	public static class BaseModuleExtensions
 	{
 		public static int EstimateSize<T>(this BaseModule[] decoratorModules, T item)
 		{

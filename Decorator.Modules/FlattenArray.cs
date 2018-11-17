@@ -8,7 +8,7 @@ namespace Decorator
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 	public sealed class FlattenArrayAttribute : Attribute, IModuleBuilder
 	{
-		public FlattenArrayAttribute() : this((int)ushort.MaxValue)
+		public FlattenArrayAttribute() : this(ushort.MaxValue)
 		{
 		}
 
@@ -25,26 +25,26 @@ namespace Decorator
 			}
 
 			var elementType = attributeAppliedTo.GetElementType();
-			
+
 			return elementType;
 		}
 
-		public Module<T> Build<T>(ModuleContainer modContainer)
+		public Module<T> Build<T>(BaseContainer modContainer)
 		{
 			return (Module<T>)typeof(FlattenArrayModule<>)
 				.MakeGenericType(typeof(T))
 				.GetConstructors()
 				.First()
-				.Invoke(new object[] { modContainer, MaxArraySize });
+				.Invoke(new object[] { (ConverterContainerContainer)modContainer, MaxArraySize });
 		}
 
 		public class FlattenArrayModule<T> : Module<T>
 			where T : new()
 		{
-			public FlattenArrayModule(ModuleContainer modContainer, int arraySize)
+			public FlattenArrayModule(ConverterContainerContainer modContainer, int arraySize)
 				: base(modContainer)
 			{
-				_converter = ModuleContainer.Container.RequestConverter<T>();
+				_converter = modContainer.Container.RequestConverter<T>();
 				_modules = _converter.Members.ToArray();
 				_maxSize = arraySize;
 			}
@@ -61,7 +61,7 @@ namespace Decorator
 				{
 					return false;
 				}
-				
+
 				i++;
 
 				if (len > _maxSize || len < 0) return false;
@@ -70,7 +70,7 @@ namespace Decorator
 
 				for (var desArrayIndex = 0; desArrayIndex < len; desArrayIndex++)
 				{
-					if (!DConverter<T>.TryDeserialize(array, ref i, out var item))
+					if (!_converter.TryDeserialize(array, ref i, out var item))
 					{
 						return false;
 					}
@@ -91,7 +91,7 @@ namespace Decorator
 
 				for (var arrayValIndex = 0; arrayValIndex < arrayVal.Length; arrayValIndex++)
 				{
-					var data = DConverter<T>.Serialize(arrayVal[arrayValIndex]);
+					var data = _converter.Serialize(arrayVal[arrayValIndex]);
 
 					for (var arrayIndex = 0; arrayIndex < data.Length; arrayIndex++)
 					{

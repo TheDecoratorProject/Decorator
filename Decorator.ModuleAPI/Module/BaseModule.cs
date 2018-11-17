@@ -2,7 +2,7 @@
 {
 	public abstract class BaseModule
 	{
-		public abstract ModuleContainer ModuleContainer { get; }
+		public abstract BaseContainer ModuleContainer { get; }
 
 		public abstract bool Deserialize(object instance, ref object[] array, ref int i);
 

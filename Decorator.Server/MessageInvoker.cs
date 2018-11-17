@@ -17,7 +17,7 @@ namespace Decorator.Server
 			_handlers = new ConcurrentDictionary<Type, Func<object, object[], object>>();
 
 			foreach(var i in typeof(T).GetMethods()
-										.Where(x => x.GetCustomAttributes(true).Where(y => y is MessageHandlerAttribute).Count() > 0))
+										.Where(x => x.GetCustomAttributes(true).Count(y => y is MessageHandlerAttribute) > 0))
 			{
 				_handlers.TryAdd(i.GetParameters()[0].ParameterType, MethodWrapper.Wrap(i));
 			}

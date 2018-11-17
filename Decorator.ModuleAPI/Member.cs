@@ -5,14 +5,14 @@ namespace Decorator.ModuleAPI
 {
 	public struct Member
 	{
-		internal Member(PropertyInfo property)
+		public Member(PropertyInfo property)
 		{
 			GetMember = property ?? throw new ArgumentNullException(nameof(property));
 
 			MemberType = property.PropertyType;
 		}
 
-		internal Member(FieldInfo field)
+		public Member(FieldInfo field)
 		{
 			GetMember = field ?? throw new ArgumentNullException(nameof(field));
 

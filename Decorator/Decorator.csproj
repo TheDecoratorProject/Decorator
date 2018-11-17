@@ -22,7 +22,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SwissILKnife" Version="0.0.2-pre" />
+    <ProjectReference Include="..\Decorator.Attributes\Decorator.Attributes.csproj" />
+    <ProjectReference Include="..\Decorator.Exceptions\Decorator.Exceptions.csproj" />
+    <ProjectReference Include="..\Decorator.ModuleAPI\Decorator.ModuleAPI.csproj" />
+    <ProjectReference Include="..\Decorator.Modules\Decorator.Modules.csproj" />
   </ItemGroup>
 
   <ItemGroup>

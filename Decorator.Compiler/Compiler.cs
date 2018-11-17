@@ -1,5 +1,5 @@
 ﻿using SwissILKnife;
-
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -9,7 +9,7 @@ namespace Decorator.ModuleAPI
 	public class Compiler<T> : ICompiler<T>
 		where T : new()
 	{
-		public BaseModule[] Compile(IConverterContainer container)
+		public BaseModule[] Compile(Func<MemberInfo, BaseContainer> getContainer)
 		{
 			// cache constructor
 			InstanceOf<T>.Create();
@@ -20,7 +20,7 @@ namespace Decorator.ModuleAPI
 
 			var dict = new SortedDictionary<int, BaseModule>();
 
-			SetDecoratorModules(dict, members, container);
+			SetDecoratorModules(dict, members, getContainer);
 
 			// fill up empty spaces with Ignored
 			var last = dict.Keys.LastOrDefault();
@@ -29,7 +29,7 @@ namespace Decorator.ModuleAPI
 			{
 				if (!dict.ContainsKey(i))
 				{
-					dict[i] = new IgnoredAttribute.IgnoredLogic();
+					dict[i] = new IgnoredLogic();
 				}
 			}
 
@@ -37,13 +37,15 @@ namespace Decorator.ModuleAPI
 			return dict.Values.ToArray();
 		}
 
-		private static void SetDecoratorModules(SortedDictionary<int, BaseModule> dictionary, IEnumerable<MemberInfo> members, IConverterContainer container)
+		private static void SetDecoratorModules(SortedDictionary<int, BaseModule> dictionary, IEnumerable<MemberInfo> members, Func<MemberInfo, BaseContainer> getContainer)
 		{
 			// for every member, get the DecoratorModule and store it in dict
 			foreach (var i in members)
 			{
+				var builder = GetPairingOf(i);
+
 				var decoratorModule =
-					ModuleBuilder.Build(i, container, GetPairingOf(i));
+					ModuleBuilder.Build(getContainer(i), builder);
 
 				var positionAttribute = i.GetCustomAttributes()
 											.OfType<PositionAttribute>()
@@ -104,7 +106,7 @@ namespace Decorator.ModuleAPI
 			if (attributesCount < 1)
 			{
 				throw ExceptionManager.GetBrokenAttributePairing<PositionAttribute>
-					(member.DeclaringType, member.Name, $"As a suggestion, could you add a {nameof(RequiredAttribute)} to it?");
+					(member.DeclaringType, member.Name, $"//TODO: FIX ME");
 			}
 			else if (attributesCount > 1)
 			{

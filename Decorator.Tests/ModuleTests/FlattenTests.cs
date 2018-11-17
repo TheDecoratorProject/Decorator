@@ -75,7 +75,7 @@ namespace Decorator.Tests.ModuleTests
 					.Should()
 					.Be(FlattenClass.TypeSetup[i]);
 
-				members[i].ModuleContainer.ModifiedType
+				members[i].GetType().GenericTypeArguments[0]
 					.Should()
 					.Be(FlattenClass.TypeSetup[i]);
 			}

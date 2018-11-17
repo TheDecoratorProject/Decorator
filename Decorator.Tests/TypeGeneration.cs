@@ -22,7 +22,7 @@ namespace Decorator.Tests
 				public int NoDecorableAttribute;
 			}
 		}
-		
+
 		public class NoSpecificationOnPositionAttribute
 		{
 			[Position(0)]

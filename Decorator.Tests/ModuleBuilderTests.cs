@@ -13,29 +13,28 @@ namespace Decorator.Tests
 	{
 		public string TestMember { get; set; }
 
-		public static PropertyInfo GetTestMember()
-			=> typeof(ModuleBuilderTests)
-				.GetProperty(nameof(TestMember));
+		public static BaseContainer GetTestMember()
+			=> new Container(typeof(string), new Member(typeof(ModuleBuilderTests).GetProperty(nameof(TestMember))));
 
 		[Fact]
 		public void Throws_InvalidDeclarationException_When_MemberInfoIsNull()
 			=> ((Action)(() =>
 			{
-				ModuleBuilder.Build(null, null, null);
+				ModuleBuilder.Build(null, null);
 			})).Should().ThrowExactly<ArgumentNullException>();
 
 		[Fact]
 		public void Throws_ArgumentNullException_When_ConverterContainerIsNull()
 			=> ((Action)(() =>
 			{
-				ModuleBuilder.Build(GetTestMember(), null, null);
+				ModuleBuilder.Build(GetTestMember(), null);
 			})).Should().ThrowExactly<ArgumentNullException>();
 
 		[Fact]
 		public void Throws_ArgumentNullException_When_ModuleBuilderIsNull()
 			=> ((Action)(() =>
 			{
-				ModuleBuilder.Build(GetTestMember(), new ConverterContainer(), null);
+				ModuleBuilder.Build(GetTestMember(), null);
 			})).Should().ThrowExactly<ArgumentNullException>();
 	}
 }

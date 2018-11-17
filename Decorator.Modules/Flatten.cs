@@ -10,26 +10,24 @@ namespace Decorator
 	public sealed class FlattenAttribute : Attribute, IModuleBuilder
 	{
 		public Type ModifyAppliedType(Type attributeAppliedTo)
-		{
-			return attributeAppliedTo;
-		}
+			=> attributeAppliedTo;
 
-		public Module<T> Build<T>(ModuleContainer modContainer)
+		public Module<T> Build<T>(BaseContainer modContainer)
 		{
 			return (Module<T>)typeof(FlattenModule<>)
 				.MakeGenericType(typeof(T))
 				.GetConstructors()
 				.First()
-				.Invoke(new object[] { modContainer });
+				.Invoke(new object[] { (ConverterContainerContainer)modContainer });
 		}
-		
+
 		public class FlattenModule<T> : Module<T>
 			where T : new()
 		{
-			public FlattenModule(ModuleContainer modContainer)
+			public FlattenModule(ConverterContainerContainer modContainer)
 				: base(modContainer)
 			{
-				_converter = ModuleContainer.Container.RequestConverter<T>();
+				_converter = modContainer.Container.RequestConverter<T>();
 				_modules = _converter.Members.ToArray();
 			}
 

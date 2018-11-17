@@ -12,7 +12,7 @@ namespace Decorator.Examples
 									.GetTypes()
 									.Where(x => x.BaseType == typeof(DecoratorExample));
 
-			string input = "";
+			var input = "";
 
 			if (args.Length > 0)
 			{

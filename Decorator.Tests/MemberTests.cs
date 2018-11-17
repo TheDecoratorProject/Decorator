@@ -18,19 +18,7 @@ namespace Decorator.Tests
 		{
 			((Action)(() =>
 			{
-				try
-				{
-					typeof(Member)
-						.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.CreateInstance,
-										Type.DefaultBinder,
-										new[] { typeof(PropertyInfo) },
-										null)
-						.Invoke(new object[] { null });
-				}
-				catch (TargetInvocationException tie)
-				{
-					throw tie.InnerException;
-				}
+				new Member((PropertyInfo)null);
 			})).Should().ThrowExactly<ArgumentNullException>();
 		}
 
@@ -39,19 +27,7 @@ namespace Decorator.Tests
 		{
 			((Action)(() =>
 			{
-				try
-				{
-					typeof(Member)
-					.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.CreateInstance,
-									Type.DefaultBinder,
-									new[] { typeof(FieldInfo) },
-									null)
-					.Invoke(new object[] { null });
-				}
-				catch (TargetInvocationException tie)
-				{
-					throw tie.InnerException;
-				}
+				new Member((FieldInfo)null);
 			})).Should().ThrowExactly<ArgumentNullException>();
 		}
 	}

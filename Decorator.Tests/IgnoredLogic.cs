@@ -6,12 +6,12 @@ using Xunit;
 
 namespace Decorator.Tests
 {
-	public class IgnoredLogic
+	public class IgnoredLogicTests
 	{
 		[Fact]
 		public void IsLogicless()
 		{
-			var t = new IgnoredAttribute.IgnoredLogic();
+			var t = new IgnoredLogic();
 
 			t.ModuleContainer
 				.Should()

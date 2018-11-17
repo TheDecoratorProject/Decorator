@@ -10,12 +10,12 @@ namespace Decorator
 		public Type ModifyAppliedType(Type attributeAppliedTo)
 			=> attributeAppliedTo;
 
-		public Module<T> Build<T>(ModuleContainer modContainer)
+		public Module<T> Build<T>(BaseContainer modContainer)
 			=> new OptionalModule<T>(modContainer);
 
 		public class OptionalModule<T> : Module<T>
 		{
-			public OptionalModule(ModuleContainer modContainer)
+			public OptionalModule(BaseContainer modContainer)
 				: base(modContainer)
 			{
 				if (!typeof(T).IsValueType)

@@ -7,7 +7,7 @@ namespace Decorator
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 	public sealed class ArrayAttribute : Attribute, IModuleBuilder
 	{
-		public ArrayAttribute() : this((int)ushort.MaxValue)
+		public ArrayAttribute() : this(ushort.MaxValue)
 		{
 		}
 
@@ -26,12 +26,12 @@ namespace Decorator
 			return attributeAppliedTo.GetElementType();
 		}
 
-		public Module<T> Build<T>(ModuleContainer modContainer)
+		public Module<T> Build<T>(BaseContainer modContainer)
 			=> new ArrayModule<T>(modContainer, MaxArraySize);
 
 		public class ArrayModule<T> : Module<T>
 		{
-			public ArrayModule(ModuleContainer modContainer, int maxSize) : base(modContainer)
+			public ArrayModule(BaseContainer modContainer, int maxSize) : base(modContainer)
 			{
 				_maxSize = maxSize;
 				_canBeNull = !typeof(T).IsValueType;

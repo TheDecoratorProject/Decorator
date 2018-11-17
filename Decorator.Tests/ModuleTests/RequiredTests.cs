@@ -53,7 +53,7 @@ namespace Decorator.Tests.ModuleTests
 				members[i].ModuleContainer.Member.MemberType
 					.Should().Be(RequiredClass.TypeSetup[i]);
 
-				members[i].ModuleContainer.ModifiedType
+				members[i].GetType().GenericTypeArguments[0]
 					.Should().Be(RequiredClass.TypeSetup[i]);
 			}
 		}
