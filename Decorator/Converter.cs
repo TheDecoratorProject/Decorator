@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 namespace Decorator
 {
 	public class Converter<T> : IConverter<T>
-		where T : IDecorable, new()
+		where T : new()
 	{
 		public Converter(BaseModule[] members)
 		{

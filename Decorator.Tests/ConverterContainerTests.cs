@@ -11,7 +11,7 @@ namespace Decorator.Tests
 	public class ConverterContainerTests
 	{
 		public class MockConverter<T> : IConverter<T>
-			where T : IDecorable, new()
+			where T : new()
 		{
 			public MockConverter(int id) => Id = id;
 
@@ -30,10 +30,10 @@ namespace Decorator.Tests
 		{
 			private int _counter;
 
-			public IConverter<T> Create<T>(BaseModule[] members) where T : IDecorable, new()
+			public IConverter<T> Create<T>(BaseModule[] members) where T : new()
 				=> new MockConverter<T>(_counter++);
 
-			public ICompiler<T> CreateCompiler<T>() where T : IDecorable, new()
+			public ICompiler<T> CreateCompiler<T>() where T : new()
 				=> new Compiler<T>();
 		}
 
@@ -41,7 +41,7 @@ namespace Decorator.Tests
 			=> new ConverterContainer(new MockConverterInstanceCreator());
 
 		public static void EnsureIdIs<T>(IConverter<T> converter, int id)
-			where T : IDecorable, new()
+			where T : new()
 			=> ((MockConverter<T>)converter).Id
 				.Should()
 				.Be(id);

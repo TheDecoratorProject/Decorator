@@ -1,7 +1,7 @@
 ﻿namespace Decorator.ModuleAPI
 {
 	public interface ICompiler<T>
-		where T : IDecorable, new()
+		where T : new()
 	{
 		BaseModule[] Compile(IConverterContainer container);
 	}

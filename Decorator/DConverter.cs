@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 namespace Decorator
 {
 	public static class DConverter<T>
-		where T : IDecorable, new()
+		where T : new()
 	{
 		private static readonly Converter<T> _converter;
 

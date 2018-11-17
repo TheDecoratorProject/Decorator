@@ -9,7 +9,7 @@ namespace Decorator.Tests
 {
 	public class TypeGeneration
 	{
-		public class FlattensNonDecorable : IDecorable
+		public class FlattensNonDecorable
 		{
 			public FlattensNonDecorable() => NonDecorableValue = new NonDecorable();
 
@@ -22,18 +22,8 @@ namespace Decorator.Tests
 				public int NoDecorableAttribute;
 			}
 		}
-
-		[Fact]
-		public void Throws_InvalidDeclarationException_When_AttemptingToFlattenAClassWithoutDecorableInterface()
-		{
-			((Action)(() =>
-			{
-				new ConverterContainer()
-					.RequestConverter<FlattensNonDecorable>();
-			})).Should().ThrowExactly<InvalidDeclarationException>();
-		}
-
-		public class NoSpecificationOnPositionAttribute : IDecorable
+		
+		public class NoSpecificationOnPositionAttribute
 		{
 			[Position(0)]
 			public string ReferenceType { get; set; }
@@ -48,7 +38,7 @@ namespace Decorator.Tests
 			})).Should().ThrowExactly<BrokenAttributePairingException>();
 		}
 
-		public class DuplicatePositionAttributes : IDecorable
+		public class DuplicatePositionAttributes
 		{
 			[Position(0), Required]
 			public string ReferenceType { get; set; }
@@ -66,7 +56,7 @@ namespace Decorator.Tests
 			})).Should().ThrowExactly<IrrationalAttributeValueException>();
 		}
 
-		public class IrrationalPositionAttribute : IDecorable
+		public class IrrationalPositionAttribute
 		{
 			public IrrationalPositionAttribute()
 			{
@@ -85,7 +75,7 @@ namespace Decorator.Tests
 			})).Should().ThrowExactly<IrrationalAttributeValueException>();
 		}
 
-		public class TooManyPairings : IDecorable
+		public class TooManyPairings
 		{
 			public TooManyPairings()
 			{
@@ -104,7 +94,7 @@ namespace Decorator.Tests
 			})).Should().ThrowExactly<IrrationalAttributeException>();
 		}
 
-		public class ArrayAppliedIncorrectly : IDecorable
+		public class ArrayAppliedIncorrectly
 		{
 			[Position(0), Array]
 			public string RefereceType { get; set; }
@@ -119,7 +109,7 @@ namespace Decorator.Tests
 			})).Should().ThrowExactly<InvalidDeclarationException>();
 		}
 
-		public class FlattenArrayAppliedIncorrectly : IDecorable
+		public class FlattenArrayAppliedIncorrectly
 		{
 			[Position(0), FlattenArray]
 			public string RefereceType { get; set; }
@@ -134,7 +124,7 @@ namespace Decorator.Tests
 			})).Should().ThrowExactly<InvalidDeclarationException>();
 		}
 
-		public class PerfectlyFineClass : IDecorable
+		public class PerfectlyFineClass
 		{
 			[Position(0), Required]
 			public string ReferenceType { get; set; }
@@ -155,7 +145,7 @@ namespace Decorator.Tests
 			})).Should().NotThrow();
 		}
 
-		public class HasNoMembers : IDecorable
+		public class HasNoMembers
 		{
 		}
 

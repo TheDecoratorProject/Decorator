@@ -8,7 +8,7 @@ namespace Decorator.Examples.Examples
 	public class Basic : DecoratorExample
 	{
 		// We have our class, and it *must* inherit IDecorable for Decorator to want to convert it.
-		public class UserInformation : JsonString, IDecorable
+		public class UserInformation : JsonString
 		{
 			// When we serialize our object[], the position attribute detonates
 			// where in the result object[] that property will be.

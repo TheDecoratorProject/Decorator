@@ -18,7 +18,7 @@ namespace Decorator
 			public OptionalModule(ModuleContainer modContainer)
 				: base(modContainer)
 			{
-				if (!ModuleContainer.ModifiedType.IsValueType)
+				if (!typeof(T).IsValueType)
 				{
 					_canBeNull = true;
 				}

@@ -8,7 +8,7 @@ namespace Decorator.Tests
 {
 	public class DeserializationTests
 	{
-		public class DeserializationTestsIgnoredAttributeBase : IDecorable
+		public class DeserializationTestsIgnoredAttributeBase
 		{
 			[Position(0), Ignored]
 			public string MyReferenceType { get; set; }
@@ -17,7 +17,7 @@ namespace Decorator.Tests
 			public int MyValueType { get; set; }
 		}
 
-		public class DeserializationTestsRequiredAttributeBase : IDecorable
+		public class DeserializationTestsRequiredAttributeBase
 		{
 			[Position(0), Required]
 			public string MyReferenceType { get; set; }
@@ -26,7 +26,7 @@ namespace Decorator.Tests
 			public int MyValueType { get; set; }
 		}
 
-		public class DeserializationTestsOptionalAttributeBase : IDecorable
+		public class DeserializationTestsOptionalAttributeBase
 		{
 			[Position(0), Optional]
 			public string MyReferenceType { get; set; }
@@ -35,7 +35,7 @@ namespace Decorator.Tests
 			public int MyValueType { get; set; }
 		}
 
-		public class DeserializationTestsArrayAttributeBase : IDecorable
+		public class DeserializationTestsArrayAttributeBase
 		{
 			[Position(0), Array]
 			public string[] MyReferenceTypes { get; set; }
@@ -44,7 +44,7 @@ namespace Decorator.Tests
 			public int[] MyValueTypes { get; set; }
 		}
 
-		public class DeserializationTestsFlattenAttributeBase : IDecorable
+		public class DeserializationTestsFlattenAttributeBase
 		{
 			[Position(0), Flatten]
 			public DeserializationTestsRequiredAttributeBase RequiredDecorable { get; set; }
@@ -53,7 +53,7 @@ namespace Decorator.Tests
 			public DeserializationTestsOptionalAttributeBase OptionalDecorable { get; set; }
 		}
 
-		public class DeserializationTestsFlattenArrayAttributeBase : IDecorable
+		public class DeserializationTestsFlattenArrayAttributeBase
 		{
 			[Position(0), FlattenArray]
 			public DeserializationTestsRequiredAttributeBase[] RequiredDecorable { get; set; }
@@ -126,7 +126,7 @@ namespace Decorator.Tests
 			=> DConverter<DeserializationTestsFlattenArrayAttributeBase>.TryDeserialize(deserializeInfo, out _)
 				.Should().BeTrue(comment);
 
-		public class HasNoMembers : IDecorable
+		public class HasNoMembers
 		{
 		}
 

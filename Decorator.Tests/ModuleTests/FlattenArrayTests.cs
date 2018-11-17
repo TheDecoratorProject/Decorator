@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Decorator.Tests.ModuleTests
 {
-	public class FlattenArrayClass : IDecorable
+	public class FlattenArrayClass
 	{
 		public class InnerFlattenTypeOne : FlattenClass.InnerFlattenTypeOne
 		{

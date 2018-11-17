@@ -11,12 +11,6 @@ namespace Decorator
 	{
 		public Type ModifyAppliedType(Type attributeAppliedTo)
 		{
-			if (!attributeAppliedTo.GetInterfaces()
-									.Contains(typeof(IDecorable)))
-			{
-				throw new InvalidDeclarationException($"{attributeAppliedTo} does not (properly) inherit from {typeof(IDecorable)}.");
-			}
-
 			return attributeAppliedTo;
 		}
 
@@ -30,7 +24,7 @@ namespace Decorator
 		}
 		
 		public class FlattenModule<T> : Module<T>
-			where T : IDecorable, new()
+			where T : new()
 		{
 			public FlattenModule(ModuleContainer modContainer)
 				: base(modContainer)

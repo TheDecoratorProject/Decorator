@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 namespace Decorator
 {
 	public interface IConverter<T>
-		where T : IDecorable, new()
+		where T : new()
 	{
 		ReadOnlyCollection<BaseModule> Members { get; }
 

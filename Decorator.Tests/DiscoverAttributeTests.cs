@@ -14,7 +14,7 @@ namespace Decorator.Tests
 		// do the same for the PrivateInstance while you're at it
 		// thank you, come again
 
-		public class DiscoverAttributeTestsBase : IDecorable
+		public class DiscoverAttributeTestsBase
 		{
 			[Position(0), Required]
 			public int PublicInstance;
@@ -40,7 +40,7 @@ namespace Decorator.Tests
 
 		private const int SUCCESS = 5;
 
-		private static T GetInst<T>() where T : IDecorable, new()
+		private static T GetInst<T>() where T : new()
 		{
 			if (!DConverter<T>.TryDeserialize(new object[] { SUCCESS }, out var result))
 			{

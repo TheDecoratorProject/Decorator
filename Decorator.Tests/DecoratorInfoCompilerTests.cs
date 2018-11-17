@@ -6,7 +6,7 @@ namespace Decorator.Tests
 {
 	public class DecoratorModuleCompilerTests
 	{
-		public class NeedsFillingIn : IDecorable
+		public class NeedsFillingIn
 		{
 			[Position(0), Required]
 			public int Property1 { get; set; }

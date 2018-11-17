@@ -3,9 +3,9 @@
 	public interface IConverterContainer
 	{
 		IConverter<T> RequestConverter<T>()
-			where T : IDecorable, new();
+			where T : new();
 
 		ICompiler<T> RequestCompiler<T>()
-			where T : IDecorable, new();
+			where T : new();
 	}
 }

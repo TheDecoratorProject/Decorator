@@ -34,7 +34,7 @@ namespace Decorator
 			public ArrayModule(ModuleContainer modContainer, int maxSize) : base(modContainer)
 			{
 				_maxSize = maxSize;
-				_canBeNull = !ModuleContainer.Member.MemberType.GetElementType().IsValueType;
+				_canBeNull = !typeof(T).IsValueType;
 			}
 
 			private readonly bool _canBeNull;
@@ -44,17 +44,20 @@ namespace Decorator
 			{
 				if (array[i] is int len)
 				{
-					i++;
-
-					if (len > _maxSize || len < 0) return false;
+					if (len > _maxSize || len < 0 ||
+						(array.Length <= i + len))
+					{
+						return false;
+					}
 
 					var desArray = new object[len];
 
-					if (array.Length <= (i - 1) + len) return false;
+					i++;
 
 					for (var desArrayIndex = 0; desArrayIndex < len; desArrayIndex++)
 					{
-						if (!(array[i] is T || (_canBeNull && array[i] == null)))
+						if (!(array[i] is T ||
+							(_canBeNull && array[i] == null)))
 						{
 							return false;
 						}

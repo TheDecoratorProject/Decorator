@@ -7,7 +7,7 @@ namespace Decorator.Examples.Examples
 	// This will feature the "Optional" attribute
 	public class Optional : DecoratorExample
 	{
-		public class Message : JsonString, IDecorable
+		public class Message : JsonString
 		{
 			// The username of the user who sent the message
 			[Position(0), Required]

@@ -25,13 +25,7 @@ namespace Decorator
 			}
 
 			var elementType = attributeAppliedTo.GetElementType();
-
-			if (!elementType.GetInterfaces()
-									.Contains(typeof(IDecorable)))
-			{
-				throw new InvalidDeclarationException($"{attributeAppliedTo} does not (properly) inherit from {typeof(IDecorable)}.");
-			}
-
+			
 			return elementType;
 		}
 
@@ -45,7 +39,7 @@ namespace Decorator
 		}
 
 		public class FlattenArrayModule<T> : Module<T>
-			where T : IDecorable, new()
+			where T : new()
 		{
 			public FlattenArrayModule(ModuleContainer modContainer, int arraySize)
 				: base(modContainer)

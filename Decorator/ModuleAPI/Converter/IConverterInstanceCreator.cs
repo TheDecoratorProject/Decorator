@@ -3,9 +3,9 @@
 	public interface IConverterInstanceCreator
 	{
 		IConverter<T> Create<T>(BaseModule[] members)
-			where T : IDecorable, new();
+			where T : new();
 
 		ICompiler<T> CreateCompiler<T>()
-			where T : IDecorable, new();
+			where T : new();
 	}
 }

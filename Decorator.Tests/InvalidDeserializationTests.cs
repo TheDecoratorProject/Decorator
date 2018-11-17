@@ -8,7 +8,7 @@ namespace Decorator.Tests
 {
 	public class InvalidDeserializationTests
 	{
-		public class InvalidDeserializationTestsIgnoredAttributeBase : IDecorable
+		public class InvalidDeserializationTestsIgnoredAttributeBase
 		{
 			[Position(0), Ignored]
 			public string MyReferenceType { get; set; }
@@ -17,7 +17,7 @@ namespace Decorator.Tests
 			public int MyValueType { get; set; }
 		}
 
-		public class InvalidDeserializationTestsRequiredAttributeBase : IDecorable
+		public class InvalidDeserializationTestsRequiredAttributeBase
 		{
 			[Position(0), Required]
 			public string MyReferenceType { get; set; }
@@ -26,7 +26,7 @@ namespace Decorator.Tests
 			public int MyValueType { get; set; }
 		}
 
-		public class InvalidDeserializationTestsOptionalAttributeBase : IDecorable
+		public class InvalidDeserializationTestsOptionalAttributeBase
 		{
 			[Position(0), Optional]
 			public string MyReferenceType { get; set; }
@@ -35,7 +35,7 @@ namespace Decorator.Tests
 			public int MyValueType { get; set; }
 		}
 
-		public class InvalidDeserializationTestsArrayAttributeBase : IDecorable
+		public class InvalidDeserializationTestsArrayAttributeBase
 		{
 			[Position(0), Array]
 			public string[] MyReferenceTypes { get; set; }
@@ -44,7 +44,7 @@ namespace Decorator.Tests
 			public int[] MyValueTypes { get; set; }
 		}
 
-		public class InvalidDeserializationTestsFlattenAttributeBase : IDecorable
+		public class InvalidDeserializationTestsFlattenAttributeBase
 		{
 			[Position(0), Flatten]
 			public InvalidDeserializationTestsRequiredAttributeBase RequiredDecorable { get; set; }
@@ -53,7 +53,7 @@ namespace Decorator.Tests
 			public InvalidDeserializationTestsOptionalAttributeBase OptionalDecorable { get; set; }
 		}
 
-		public class InvalidDeserializationTestsFlattenArrayAttributeBase : IDecorable
+		public class InvalidDeserializationTestsFlattenArrayAttributeBase
 		{
 			[Position(0), FlattenArray]
 			public InvalidDeserializationTestsRequiredAttributeBase[] RequiredDecorable { get; set; }

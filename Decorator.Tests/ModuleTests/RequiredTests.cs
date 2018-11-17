@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Decorator.Tests.ModuleTests
 {
-	public class RequiredClass : IDecorable
+	public class RequiredClass
 	{
 		public static Type[] TypeSetup = new[]
 		{

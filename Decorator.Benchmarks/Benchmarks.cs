@@ -16,7 +16,7 @@ namespace Decorator.Benchmarks
 
 	[Deserialisable]
 	[ProtocolMessage.Message(" ")]
-	public class TestClass : IDecorable
+	public class TestClass
 	{
 		[ProtocolMessage.Position(0), ProtocolMessage.Required]
 		[Position(0), Required]

@@ -7,7 +7,7 @@ using System.Reflection;
 namespace Decorator.ModuleAPI
 {
 	public class Compiler<T> : ICompiler<T>
-		where T : IDecorable, new()
+		where T : new()
 	{
 		public BaseModule[] Compile(IConverterContainer container)
 		{

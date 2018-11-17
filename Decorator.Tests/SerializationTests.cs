@@ -9,7 +9,7 @@ namespace Decorator.Tests
 {
 	public class SerializationTests
 	{
-		public class SerializationTestsIgnoredAttributeBase : IDecorable
+		public class SerializationTestsIgnoredAttributeBase
 		{
 			[Position(0), Ignored]
 			public string MyReferenceType { get; set; }
@@ -18,7 +18,7 @@ namespace Decorator.Tests
 			public int MyValueType { get; set; }
 		}
 
-		public class SerializationTestsRequiredAttributeBase : IDecorable
+		public class SerializationTestsRequiredAttributeBase
 		{
 			[Position(0), Required]
 			public string MyReferenceType { get; set; }
@@ -27,7 +27,7 @@ namespace Decorator.Tests
 			public int MyValueType { get; set; }
 		}
 
-		public class SerializationTestsOptionalAttributeBase : IDecorable
+		public class SerializationTestsOptionalAttributeBase
 		{
 			[Position(0), Optional]
 			public string MyReferenceType { get; set; }
@@ -36,7 +36,7 @@ namespace Decorator.Tests
 			public int MyValueType { get; set; }
 		}
 
-		public class SerializationTestsArrayAttributeBase : IDecorable
+		public class SerializationTestsArrayAttributeBase
 		{
 			[Position(0), Array]
 			public string[] MyReferenceTypes { get; set; }
@@ -45,7 +45,7 @@ namespace Decorator.Tests
 			public int[] MyValueTypes { get; set; }
 		}
 
-		public class SerializationTestsFlattenAttributeBase : IDecorable
+		public class SerializationTestsFlattenAttributeBase
 		{
 			[Position(0), Flatten]
 			public SerializationTestsRequiredAttributeBase RequiredDecorable { get; set; }
@@ -54,7 +54,7 @@ namespace Decorator.Tests
 			public SerializationTestsOptionalAttributeBase OptionalDecorable { get; set; }
 		}
 
-		public class SerializationTestsFlattenArrayAttributeBase : IDecorable
+		public class SerializationTestsFlattenArrayAttributeBase
 		{
 			[Position(0), FlattenArray]
 			public SerializationTestsRequiredAttributeBase[] RequiredDecorable { get; set; }

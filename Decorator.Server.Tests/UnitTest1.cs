@@ -5,7 +5,7 @@ using Xunit;
 namespace Decorator.Server.Tests
 {
 	[Message("a")]
-	public class TestMessageOne : IDecorableMessage
+	public class TestMessageOneMessage
 	{
 		[Position(0), Required]
 		public string TestName { get; set; }
@@ -15,7 +15,7 @@ namespace Decorator.Server.Tests
 	}
 
 	[Message("b")]
-	public class TestMessageTwo : IDecorableMessage
+	public class TestMessageTwoMessage
 	{
 		[Position(0), Required]
 		public int TestName { get; set; }
@@ -44,7 +44,7 @@ namespace Decorator.Server.Tests
 		}
 
 		[MessageHandler]
-		public void ExampleHandlerOne(TestMessageOne tmo)
+		public void ExampleHandlerOne(TestMessageOneMessage tmo)
 		{
 			_invokedOne = true;
 
@@ -53,7 +53,7 @@ namespace Decorator.Server.Tests
 		}
 
 		[MessageHandler]
-		public bool ExampleHandlerTwo(TestMessageTwo tmo)
+		public bool ExampleHandlerTwo(TestMessageTwoMessage tmo)
 		{
 			_invokedTwo = true;
 

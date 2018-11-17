@@ -8,7 +8,7 @@ namespace Decorator.Tests.ModuleTests
 	public static class Helpers
 	{
 		public static object[] GenerateAndCorrupt<T>(int pos)
-			where T : IDecorable, new()
+			where T : new()
 		{
 			var item = new T();
 			var result = DConverter<T>.Serialize(item);
@@ -26,7 +26,7 @@ namespace Decorator.Tests.ModuleTests
 		}
 
 		public static int EndsOn<T>(object[] deserialize)
-			where T : IDecorable, new()
+			where T : new()
 		{
 			var position = 0;
 
@@ -37,11 +37,11 @@ namespace Decorator.Tests.ModuleTests
 		}
 
 		public static int LengthOfDefault<T>()
-			where T : IDecorable, new()
+			where T : new()
 			=> DConverter<T>.Serialize(new T()).Length;
 
 		public static PropertyInfo[] GetProperties<T>()
-			where T : IDecorable
+			where T : new()
 			=> typeof(T)
 				.GetProperties()
 				.Where(x => x.GetCustomAttributes(true).OfType<PositionAttribute>().Count() > 0)

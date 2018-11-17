@@ -6,9 +6,9 @@ using Xunit;
 
 namespace Decorator.Tests.ModuleTests
 {
-	public class FlattenClass : IDecorable
+	public class FlattenClass
 	{
-		public class InnerFlattenTypeOne : IDecorable
+		public class InnerFlattenTypeOne
 		{
 			[Position(0), Required]
 			public string ReferenceType { get; set; }
@@ -17,7 +17,7 @@ namespace Decorator.Tests.ModuleTests
 			public int ValueType { get; set; }
 		}
 
-		public class InnerFlattenTypeTwo : IDecorable
+		public class InnerFlattenTypeTwo
 		{
 			[Position(0), Required]
 			public int ValueType { get; set; }
