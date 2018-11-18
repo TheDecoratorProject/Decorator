@@ -30,7 +30,7 @@ namespace Decorator.ModuleAPI
 				.GetMethod(name,
 					BindingFlags.Public | BindingFlags.Instance,
 					Type.DefaultBinder,
-					new Type[]
+					new []
 					{
 						typeof(BaseContainer),
 					},

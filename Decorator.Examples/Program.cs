@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
@@ -23,7 +24,7 @@ namespace Decorator.Examples
 
 			while (true)
 			{
-				selector = x => x.Name.ToLower() == input;
+				selector = x => x.Name.ToLower(CultureInfo.InvariantCulture) == input;
 
 				if (examples.Count(selector) > 0)
 				{

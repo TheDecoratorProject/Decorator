@@ -14,6 +14,9 @@ namespace Decorator.Converter
 
 		public ConverterContainer(IConverterInstanceCreator instantiator)
 		{
+			_converters = new Cache();
+			_compilers = new Cache();
+
 			_instantiator = instantiator;
 			_genContainer = (memberInfo) =>
 			{
@@ -23,8 +26,8 @@ namespace Decorator.Converter
 
 		private readonly IConverterInstanceCreator _instantiator;
 
-		private readonly Cache _converters = new Cache();
-		private readonly Cache _compilers = new Cache();
+		private readonly Cache _converters;
+		private readonly Cache _compilers;
 
 		private readonly Func<MemberInfo, BaseContainer> _genContainer;
 

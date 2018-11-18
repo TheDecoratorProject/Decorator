@@ -6,6 +6,6 @@ namespace Decorator
 	{
 		static StaticProvider() => Container = new ConverterContainer();
 
-		public static ConverterContainer Container;
+		public static readonly ConverterContainer Container;
 	}
 }
