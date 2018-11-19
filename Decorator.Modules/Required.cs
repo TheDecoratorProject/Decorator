@@ -24,13 +24,16 @@ namespace Decorator.Modules
 
 			public override bool Deserialize(object instance, ref object[] array, ref int i)
 			{
-				if (!(array[i] is T))
+				object value = array[i++];
+
+				if (!(value is T))
 				{
+					i--;
+
 					return false;
 				}
 
-				SetValue(instance, array[i]);
-				i++;
+				SetValue(instance, value);
 
 				return true;
 			}
@@ -49,17 +52,16 @@ namespace Decorator.Modules
 
 			public override bool Deserialize(object instance, ref object[] array, ref int i)
 			{
-				if (array[i] == null)
+				object value = array[i++];
+
+				if (value is T ||
+					value == null)
 				{
-					i++;
+					SetValue(instance, value);
 					return true;
 				}
 
-				if (array[i] is T)
-				{
-					SetValue(instance, array[i++]);
-					return true;
-				}
+				i--;
 
 				return false;
 			}
@@ -70,3 +72,5 @@ namespace Decorator.Modules
 		}
 	}
 }
+ 
+ 

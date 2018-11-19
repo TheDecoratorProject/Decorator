@@ -1,6 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 
 using Decorator.Attributes;
+using Decorator.Converter;
 using Decorator.Modules;
 
 using Deserialiser;
@@ -62,6 +63,7 @@ namespace Decorator.Benchmarks
 		private readonly TestClass _testClass;
 		private readonly object[] _data;
 		private readonly ProtocolMessage.ProtocolMessageManager _pm;
+		private Converter<TestClass> _tc;
 
 		public Benchmarks()
 		{
@@ -82,6 +84,8 @@ namespace Decorator.Benchmarks
 			_data = DConverter<TestClass>.Serialize(_testClass);
 
 			_pm = new ProtocolMessage.ProtocolMessageManager();
+
+			_tc = (Converter<TestClass>)new ConverterContainer().RequestConverter<TestClass>();
 
 			foreach (var benchmark in GetType()
 								.GetMethods()
@@ -113,6 +117,29 @@ namespace Decorator.Benchmarks
 		{
 			var i = 0;
 			if (DConverter<TestClass>.TryDeserialize(_data, ref i, out var result))
+			{
+				return result;
+			}
+
+			throw new ShouldNotHappenException();
+		}
+
+		[Benchmark]
+		public TestClass IDecoratorDeserialize()
+		{
+			if (_tc.TryDeserialize(_data, out var result))
+			{
+				return result;
+			}
+
+			throw new ShouldNotHappenException();
+		}
+
+		[Benchmark]
+		public TestClass IECDecoratorDeserialize()
+		{
+			var i = 0;
+			if (_tc.TryDeserialize(_data, ref i, out var result))
 			{
 				return result;
 			}

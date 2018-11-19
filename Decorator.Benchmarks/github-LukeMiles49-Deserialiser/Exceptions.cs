@@ -2,7 +2,7 @@
 
 namespace Deserialiser
 {
-	internal class NotDeserialisableException : Exception
+	public class NotDeserialisableException : Exception
 	{
 		public NotDeserialisableException()
 		{
@@ -17,7 +17,7 @@ namespace Deserialiser
 		}
 	}
 
-	internal class InvalidDeserialisationInfoException : Exception
+	public class InvalidDeserialisationInfoException : Exception
 	{
 		public InvalidDeserialisationInfoException()
 		{
@@ -32,7 +32,7 @@ namespace Deserialiser
 		}
 	}
 
-	internal class InvalidTypeException : Exception
+	public class InvalidTypeException : Exception
 	{
 		public InvalidTypeException()
 		{
@@ -43,6 +43,21 @@ namespace Deserialiser
 		}
 
 		public InvalidTypeException(string message, Exception inner) : base(message, inner)
+		{
+		}
+	}
+
+	public class IncorrectValueException : Exception
+	{
+		public IncorrectValueException()
+		{
+		}
+
+		public IncorrectValueException(string message) : base(message)
+		{
+		}
+
+		public IncorrectValueException(string message, Exception inner) : base(message, inner)
 		{
 		}
 	}

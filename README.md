@@ -11,25 +11,62 @@ Decorate classes with attributes and serialize object arrays into a concrete cla
 
 ```
 PM> Package-Install SirJosh3917.Decorator
+dotnet add package SirJosh3917.Decorator
 ```
 
-# Why object[]?
+## Overview
 
-Decorator was originally built for the purpose of taking loosely created, possibly incorrectly formulated `object[]`s and convert them into strictly typed classes and back.
+```cs
+public class User
+{
+	[Position(0), Required]
+	public string Username { get; set; }
 
-# Any examples?
+	[Position(1), Required]
+	public int Id { get; set; }
 
-Yes, they're a WIP
+	[Position(2), Required]
+	public int Money { get; set; }
+}
 
-You can browse the [work in progress example project][link_examples]
+public override void Run()
+{
+	User myUser = new User
+	{
+		Username = "SirJosh3917",
+		Id = 1337,
+		Money = 1_000_000,
+	};
+
+	object[] serializedUser = DConverter<User>.Serialize(myUser);
+	Console.WriteLine(JsonConvert.SerializeObject(serializedUser));
+	// outputs:
+	// ["SirJosh3917",1337,1000000]
+
+	object[] userData = new object[] { "Jeremy", 63, 1_000 };
+
+	if (DConverter<User>.TryDeserialize(userData, out User deserializedUser))
+	{
+		// this gets evaluated
+
+		Console.WriteLine(JsonConvert.SerializeObject(deserializedUser));
+		// outputs:
+		// {"Username":"Jeremy","Id":63,"Money":1000}
+	}
+}
+```
+
+## Examples
+
+See the [example project][link_examples] for examples.
 
 ## Dependancy Graph
 
 ![dependancy_graph]
 
-### Older Decorator
+### Legacy Decorator
 
-This is the final commit made to the Decorator 1.x.x series. If you'd like to view the repository in that mode, [feel free to do so][link_final_1xx].
+[This was the repo on the final commit of the 1xx Decorator series.][link_final_1xx]
 
 ## License
 

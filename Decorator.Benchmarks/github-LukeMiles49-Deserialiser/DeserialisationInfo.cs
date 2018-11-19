@@ -23,16 +23,8 @@ namespace Deserialiser
 	{
 		public readonly Action<object, object> set;
 
-		public ValueInfo(PropertyInfo info, bool recurse = false) : base(recurse) => set = SwissILKnife.MemberUtils.GetSetMethod(info);/*
-
-			var setMethodInfo = info.GetSetMethod(true);
-			var instance = Expression.Parameter(typeof(object), "instance");
-			var value = Expression.Parameter(typeof(object), "value");
-			var instanceCast = (!info.DeclaringType.GetTypeInfo().IsValueType) ? Expression.TypeAs(instance, info.DeclaringType) : Expression.Convert(instance, info.DeclaringType);
-			var valueCast = (!info.PropertyType.GetTypeInfo().IsValueType) ? Expression.TypeAs(value, info.PropertyType) : Expression.Convert(value, info.PropertyType);
-
-			this.set = Expression.Lambda<Action<object, object>>(Expression.Call(instanceCast, setMethodInfo, valueCast), new ParameterExpression[] { instance, value }).Compile();
-			*/
+		public ValueInfo(PropertyInfo info, bool recurse = false) : base(recurse)
+			=> set = SwissILKnife.MemberUtils.GetSetMethod(info);
 
 		public override void Deserialise(ref object to, object[] values, ref int i)
 		{
@@ -54,8 +46,10 @@ namespace Deserialiser
 
 		public override void Deserialise(ref object to, object[] values, ref int i)
 		{
-			object val = Deserialiser<T>.Deserialise(values, ref i);
-			if (!value.Equals(val)) throw new InvalidTypeException($"Expected type {typeof(T)} but instead got {val.GetType()}");
+			object val;
+			if (recurse) val = Deserialiser<T>.Deserialise(values, ref i);
+			else val = values[i++];
+			if (!value.Equals(val)) throw new IncorrectValueException($"Expected {value} but instead got {val}");
 		}
 	}
 }
