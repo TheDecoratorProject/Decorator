@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SwissILKnife" Version="0.0.2-pre" />
+    <PackageReference Include="SwissILKnife" Version="0.0.4-pre" />
   </ItemGroup>
 
   <ItemGroup>

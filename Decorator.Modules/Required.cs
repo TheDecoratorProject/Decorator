@@ -1,6 +1,9 @@
 ﻿using Decorator.ModuleAPI;
 
+using StrictEmit;
+
 using System;
+using System.Reflection.Emit;
 
 namespace Decorator.Modules
 {
@@ -43,7 +46,7 @@ namespace Decorator.Modules
 			public override void Serialize(object instance, ref object[] array, ref int i) => array[i++] = GetValue(instance);
 		}
 
-		public class RequiredReferenceTypeModule<T> : Module<T>
+		public class RequiredReferenceTypeModule<T> : Module<T>, ILSupport
 		{
 			public RequiredReferenceTypeModule(BaseContainer modContainer)
 				: base(modContainer)
@@ -67,8 +70,44 @@ namespace Decorator.Modules
 			}
 
 			public override void EstimateSize(object instance, ref int size) => size++;
-
 			public override void Serialize(object instance, ref object[] array, ref int i) => array[i++] = GetValue(instance);
+
+			public void GenerateDeserialize(ILGenerator il, Action loadMemberValue, Action<Action> setMemberValue, Action loadValue, Action loadI, Action<int> addToI)
+			{
+				var local = il.DeclareLocal(typeof(object));
+				var isntIt = il.DefineLabel();
+
+				// object objVal = array[i];
+				loadValue();
+
+				il.EmitSetLocalVariable(local);
+
+				// if (!(objVal is T
+				il.EmitLoadLocalVariable(local);
+				il.EmitIsInstance<T>();
+				il.EmitShortBranchTrue(isntIt);
+
+				// || objVal == null))
+				il.EmitLoadLocalVariable(local);
+				il.EmitShortBranchFalse(isntIt);
+
+				// return false;
+				il.EmitConstantInt(0);
+				il.EmitReturn();
+
+				il.MarkLabel(isntIt);
+
+				// i++;
+				addToI(1);
+
+				// result.Property = (T)objVal;
+				setMemberValue(() =>
+				{
+					il.EmitLoad(typeof(object));
+					il.EmitLoadLocalVariable(local);
+					il.EmitCastClass(typeof(T));
+				});
+			}
 		}
 	}
 }

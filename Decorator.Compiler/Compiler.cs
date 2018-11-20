@@ -1,16 +1,17 @@
 ﻿using Decorator.Attributes;
 using Decorator.Exceptions;
 using Decorator.ModuleAPI;
-
+using StrictEmit;
 using SwissILKnife;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-
 namespace Decorator.Compiler
 {
+	public delegate bool ILDeserialize<T>(object[] array, ref int i, out T result);
+
 	public class Compiler<T> : ICompiler<T>
 		where T : new()
 	{
@@ -40,6 +41,147 @@ namespace Decorator.Compiler
 
 			// save it as an array
 			return dict.Values.ToArray();
+		}
+
+		public bool SupportsIL(Func<MemberInfo, BaseContainer> getContainer)
+		{
+			var members = DiscoverMembers();
+
+			foreach(var i in members)
+			{
+				var builder = GetPairingOf(i);
+
+				var decoratorModule =
+					ModuleBuilder.Build(getContainer(i), builder);
+
+				if (!decoratorModule.GetType()
+						.GetInterfaces()
+						.Contains(typeof(ILSupport)))
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		public ILDeserialize<T> CompileDeserializeIL(Func<MemberInfo, BaseContainer> genContainer)
+		{
+			var dm = new DynamicMethod<ILDeserialize<T>>(string.Empty,
+				typeof(bool),
+				new[]
+				{
+					typeof(object[]),
+					typeof(int).MakeByRefType(),
+					typeof(T).MakeByRefType()
+				},
+				true);
+
+			var il = dm.ILGenerator;
+
+			GenIL(il, genContainer);
+
+			return dm.CreateDelegate();
+		}
+
+#if NET45
+		public static void SaveWrap(Func<MemberInfo, BaseContainer> genContainer)
+		{
+			var asm = System.Reflection.Emit.AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("TestAssembly"), System.Reflection.Emit.AssemblyBuilderAccess.RunAndSave);
+			var mod = asm.DefineDynamicModule("TestModule", "asm.dll", true);
+			var cls = mod.DefineType("SomeClass", TypeAttributes.Public | TypeAttributes.Class);
+			var dm = cls.DefineMethod("Test", MethodAttributes.Public, typeof(bool), new[] { typeof(object[]), typeof(int).MakeByRefType(), typeof(T).MakeByRefType() });
+			var il = dm.GetILGenerator();
+
+			GenIL(il, genContainer);
+
+			cls.CreateType();
+			asm.Save("asm.dll", PortableExecutableKinds.ILOnly, ImageFileMachine.AMD64);
+		}
+#endif
+
+		private static void GenIL(System.Reflection.Emit.ILGenerator il, Func<MemberInfo, BaseContainer> getContainer)
+		{
+			// result = new T();
+			il.EmitLoadArgument(2);
+			il.EmitNewObject<T>();
+			il.EmitSet(typeof(T));
+
+			foreach (var member in GetILModules(getContainer))
+			{
+				var i = GetPairingOf(member);
+
+				var container = getContainer(member);
+				var memberType = container.Member.MemberType;
+
+				var decoratorModule =
+					(ILSupport)ModuleBuilder.Build(container, i);
+
+				decoratorModule.GenerateDeserialize(il,
+					() =>
+					{
+						il.EmitILForGetMethod(member, () =>
+						{
+							il.EmitLoadArgument(2);
+						});
+					},
+					(v) =>
+					{
+						il.EmitILForSetMethod(member,
+						() =>
+						{
+							il.EmitLoadArgument(2);
+						},
+						() =>
+						{
+							v();
+						});
+					},
+					() =>
+					{
+						il.EmitLoadArgument(0);
+						il.EmitLoadArgument(1);
+						il.EmitLoad<int>();
+						il.EmitLoadArrayElement<object>();
+					},
+					() =>
+					{
+						il.EmitLoadArgument(1);
+					},
+					(a) =>
+					{
+						il.EmitLoadArgument(1);
+						il.EmitLoadArgument(1);
+						il.EmitLoad<int>();
+						il.EmitConstantInt(a);
+						il.EmitAdd();
+						il.EmitSet(typeof(int));
+					});
+			}
+
+			il.EmitConstantInt(1);
+			il.EmitReturn();
+		}
+
+		private static IEnumerable<MemberInfo> GetILModules(Func<MemberInfo, BaseContainer> getContainer)
+		{
+			var members = DiscoverMembers();
+
+			foreach (var i in members)
+			{
+				var attribute = GetPairingOf(i);
+
+				var decoratorModule = ModuleBuilder.Build(getContainer(i), attribute);
+				
+				if (!decoratorModule.GetType()
+						.GetInterfaces()
+						.Contains(typeof(ILSupport)))
+				{
+					throw new DecoratorCompilerException($"Cannot compile for IL if it doesn't support IL", null);
+				}
+
+				yield return i;
+			}
 		}
 
 		private static void SetDecoratorModules(SortedDictionary<int, BaseModule> dictionary, IEnumerable<MemberInfo> members, Func<MemberInfo, BaseContainer> getContainer)

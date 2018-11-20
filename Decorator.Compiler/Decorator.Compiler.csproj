@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="SwissILKnife" Version="0.0.4-pre" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Decorator.Attributes\Decorator.Attributes.csproj" />
     <ProjectReference Include="..\Decorator.Exceptions\Decorator.Exceptions.csproj" />
     <ProjectReference Include="..\Decorator.ModuleAPI\Decorator.ModuleAPI.csproj" />
