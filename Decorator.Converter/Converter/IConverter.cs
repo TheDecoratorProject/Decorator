@@ -1,4 +1,5 @@
-﻿using Decorator.ModuleAPI;
+﻿using Decorator.Compiler;
+using Decorator.ModuleAPI;
 
 using System.Collections.ObjectModel;
 
@@ -14,5 +15,12 @@ namespace Decorator.Converter
 		bool TryDeserialize(object[] array, ref int arrayIndex, out T result);
 
 		object[] Serialize(T item);
+	}
+
+	public interface IILConverter<T> : IConverter<T>
+		where T : new()
+	{
+		ILDeserialize<T> Deserialize { get; }
+		ILSerialize<T> Serialize { get; }
 	}
 }

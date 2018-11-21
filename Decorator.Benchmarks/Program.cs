@@ -24,24 +24,64 @@ namespace Decorator.Benchmarks
 		{
 			[Position(0), Required]
 			public string StringA { get; set; }
-
-			[Position(1), Required]
-			public string StringB { get; set; }
-
-			[Position(2), Required]
-			public string StringC { get; set; }
-
-			[Position(3), Required]
-			public string StringD { get; set; }
 		}
 
 		private object[] _data;
-		private ILDeserialize<Test> _il;
+		private Test _class;
+		private ILDeserialize<Test> _ilDes;
+		private ILSerialize<Test> _ilSer;
 
 		public ILPerformance()
 		{
-			_data = new object[] { "a", "b", "c", "d" };
-			_il = new Compiler<Test>().CompileDeserializeIL((i) => new Container(typeof(string), new Member((PropertyInfo)i)));
+			/*
+		[Fact]
+		public void Deserializes()
+		{
+			var c = new Compiler.Compiler<TestClass>();
+
+			var deserializer = c.CompileILDeserialize(c.Compile((i) =>
+			{
+				return new Container(((PropertyInfo)i).PropertyType, new Member((PropertyInfo)i));
+			}));
+
+			int l = 0;
+			deserializer(new object[] { "testing 1, 2, 3" }, ref l, out var result)
+				.Should().BeTrue();
+
+			result.MyProperty.Should().Be("testing 1, 2, 3");
+		}
+
+		[Fact]
+		public void Serializes()
+		{
+			var c = new Compiler.Compiler<TestClass>();
+
+			var serializer = c.CompileILSerialize(c.Compile((i) =>
+			{
+				return new Container(((PropertyInfo)i).PropertyType, new Member((PropertyInfo)i));
+			}));
+
+			var result = serializer(new TestClass
+			{
+				MyProperty = "testing 1, 2, 3"
+			});*/
+
+			var c = new Compiler<Test>();
+
+			var modules = c.Compile((i) =>
+			{
+				return new Container(((PropertyInfo)i).PropertyType, new Member((PropertyInfo)i));
+			});
+
+			_ilDes = c.CompileILDeserialize(modules);
+			_ilSer = c.CompileILSerialize(modules);
+
+			_class = new Test
+			{
+				StringA = "a"
+			};
+
+			_data = DConverter<Test>.Serialize(_class);
 
 			foreach (var benchmark in GetType()
 								.GetMethods()
@@ -49,12 +89,7 @@ namespace Decorator.Benchmarks
 												.OfType<BenchmarkAttribute>()
 												.Count() > 0))
 			{
-				var res = (Test)benchmark.Invoke(this, null);
-
-				if (res.StringA != "a") throw new Exception("A Des. Invalid");
-				if (res.StringB != "b") throw new Exception("B Des. Invalid");
-				if (res.StringC != "c") throw new Exception("C Des. Invalid");
-				if (res.StringD != "d") throw new Exception("D Des. Invalid");
+				benchmark.Invoke(this, null);
 			}
 		}
 
@@ -73,12 +108,25 @@ namespace Decorator.Benchmarks
 		public Test ILDeserialize()
 		{
 			int i = 0;
-			if (!_il(_data, ref i, out var result))
+			if (!_ilDes(_data, ref i, out var result))
 			{
 				throw new Exception();
 			}
 
 			return result;
 		}
+
+		[Benchmark]
+		public object[] DConverterSerialize()
+		{
+			return DConverter<Test>.Serialize(_class);
+		}
+
+		[Benchmark]
+		public object[] ILSerialize()
+		{
+			return _ilSer(_class);
+		}
 	}
 }
+ 

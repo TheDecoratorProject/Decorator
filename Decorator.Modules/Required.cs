@@ -108,6 +108,21 @@ namespace Decorator.Modules
 					il.EmitCastClass(typeof(T));
 				});
 			}
+
+			public void GenerateSerializeSize(ILGenerator il, Action loadValue, Action<Action> addValue)
+			{
+				addValue(() => il.EmitConstantInt(1));
+			}
+
+			public void GenerateSerialize(ILGenerator il, LocalBuilder index, Action loadMemberValue, Action<Action> setArrayValue)
+			{
+				setArrayValue(loadMemberValue);
+
+				il.EmitLoadLocalVariable(index);
+				il.EmitConstantInt(1);
+				il.EmitAdd();
+				il.EmitSetLocalVariable(index);
+			}
 		}
 	}
 }

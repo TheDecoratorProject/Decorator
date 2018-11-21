@@ -11,6 +11,7 @@ using System.Reflection;
 namespace Decorator.Compiler
 {
 	public delegate bool ILDeserialize<T>(object[] array, ref int i, out T result);
+	public delegate object[] ILSerialize<T>(T item);
 
 	public class Compiler<T> : ICompiler<T>
 		where T : new()
@@ -43,20 +44,13 @@ namespace Decorator.Compiler
 			return dict.Values.ToArray();
 		}
 
-		public bool SupportsIL(Func<MemberInfo, BaseContainer> getContainer)
+		public bool SupportsIL(BaseModule[] modules)
 		{
-			var members = DiscoverMembers();
-
-			foreach(var i in members)
+			foreach(var i in modules)
 			{
-				var builder = GetPairingOf(i);
-
-				var decoratorModule =
-					ModuleBuilder.Build(getContainer(i), builder);
-
-				if (!decoratorModule.GetType()
-						.GetInterfaces()
-						.Contains(typeof(ILSupport)))
+				if (!i.GetType()
+					.GetInterfaces()
+					.Contains(typeof(ILSupport)))
 				{
 					return false;
 				}
@@ -65,7 +59,7 @@ namespace Decorator.Compiler
 			return true;
 		}
 
-		public ILDeserialize<T> CompileDeserializeIL(Func<MemberInfo, BaseContainer> genContainer)
+		public ILDeserialize<T> CompileILDeserialize(BaseModule[] modules)
 		{
 			var dm = new DynamicMethod<ILDeserialize<T>>(string.Empty,
 				typeof(bool),
@@ -79,13 +73,30 @@ namespace Decorator.Compiler
 
 			var il = dm.ILGenerator;
 
-			GenIL(il, genContainer);
+			GenDesIL(il, modules);
+
+			return dm.CreateDelegate();
+		}
+
+		public ILSerialize<T> CompileILSerialize(BaseModule[] modules)
+		{
+			var dm = new DynamicMethod<ILSerialize<T>>(string.Empty,
+				typeof(object[]),
+				new[]
+				{
+					typeof(T)
+				},
+				true);
+
+			var il = dm.ILGenerator;
+
+			GenSerIL(il, modules);
 
 			return dm.CreateDelegate();
 		}
 
 #if NET45
-		public static void SaveWrap(Func<MemberInfo, BaseContainer> genContainer)
+		public static void SaveWrap(BaseModule[] modules)
 		{
 			var asm = System.Reflection.Emit.AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("TestAssembly"), System.Reflection.Emit.AssemblyBuilderAccess.RunAndSave);
 			var mod = asm.DefineDynamicModule("TestModule", "asm.dll", true);
@@ -93,41 +104,49 @@ namespace Decorator.Compiler
 			var dm = cls.DefineMethod("Test", MethodAttributes.Public, typeof(bool), new[] { typeof(object[]), typeof(int).MakeByRefType(), typeof(T).MakeByRefType() });
 			var il = dm.GetILGenerator();
 
-			GenIL(il, genContainer);
+			GenDesIL(il, modules);
+
+			cls.CreateType();
+			asm.Save("asm.dll", PortableExecutableKinds.ILOnly, ImageFileMachine.AMD64);
+		}
+		public static void SaveWrap2(BaseModule[] modules)
+		{
+			var asm = System.Reflection.Emit.AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("TestAssembly"), System.Reflection.Emit.AssemblyBuilderAccess.RunAndSave);
+			var mod = asm.DefineDynamicModule("TestModule", "asm.dll", true);
+			var cls = mod.DefineType("SomeClass", TypeAttributes.Public | TypeAttributes.Class);
+			var dm = cls.DefineMethod("Test", MethodAttributes.Public, typeof(T), new[] { typeof(object[]) });
+			var il = dm.GetILGenerator();
+
+			GenSerIL(il, modules);
 
 			cls.CreateType();
 			asm.Save("asm.dll", PortableExecutableKinds.ILOnly, ImageFileMachine.AMD64);
 		}
 #endif
 
-		private static void GenIL(System.Reflection.Emit.ILGenerator il, Func<MemberInfo, BaseContainer> getContainer)
+		private static void GenDesIL(System.Reflection.Emit.ILGenerator il, BaseModule[] modules)
 		{
 			// result = new T();
 			il.EmitLoadArgument(2);
 			il.EmitNewObject<T>();
 			il.EmitSet(typeof(T));
 
-			foreach (var member in GetILModules(getContainer))
+			int c = 0;
+			foreach (var member in GetILModules(modules))
 			{
-				var i = GetPairingOf(member);
+				var module = modules[c];
 
-				var container = getContainer(member);
-				var memberType = container.Member.MemberType;
-
-				var decoratorModule =
-					(ILSupport)ModuleBuilder.Build(container, i);
-
-				decoratorModule.GenerateDeserialize(il,
+				member.GenerateDeserialize(il,
 					() =>
 					{
-						il.EmitILForGetMethod(member, () =>
+						il.EmitILForGetMethod(module.ModuleContainer.Member.GetMember, () =>
 						{
 							il.EmitLoadArgument(2);
 						});
 					},
 					(v) =>
 					{
-						il.EmitILForSetMethod(member,
+						il.EmitILForSetMethod(module.ModuleContainer.Member.GetMember,
 						() =>
 						{
 							il.EmitLoadArgument(2);
@@ -157,31 +176,85 @@ namespace Decorator.Compiler
 						il.EmitAdd();
 						il.EmitSet(typeof(int));
 					});
+
+				c++; //c#; >:(
 			}
 
 			il.EmitConstantInt(1);
 			il.EmitReturn();
 		}
 
-		private static IEnumerable<MemberInfo> GetILModules(Func<MemberInfo, BaseContainer> getContainer)
+		public static void GenSerIL(System.Reflection.Emit.ILGenerator il, BaseModule[] modules)
 		{
-			var members = DiscoverMembers();
+			// get size
+			var objSize = il.DeclareLocal(typeof(int));
+			il.EmitConstantInt(0);
+			il.EmitSetLocalVariable(objSize);
 
-			foreach (var i in members)
+			foreach(var i in GetILModules(modules))
 			{
-				var attribute = GetPairingOf(i);
+				i.GenerateSerializeSize(il,
+					() =>
+					{
+						il.EmitLoadArgument(0);
+					},
+					(load) =>
+					{
+						load();
+						il.EmitLoadLocalVariable(objSize);
+						il.EmitAdd();
+						il.EmitSetLocalVariable(objSize);
+					});
+			}
 
-				var decoratorModule = ModuleBuilder.Build(getContainer(i), attribute);
-				
-				if (!decoratorModule.GetType()
-						.GetInterfaces()
-						.Contains(typeof(ILSupport)))
+			var objArray = il.DeclareLocal(typeof(object[]));
+			var index = il.DeclareLocal(typeof(int));
+
+			il.EmitConstantInt(0);
+			il.EmitSetLocalVariable(index);
+
+			il.EmitLoadLocalVariable(objSize);
+			il.EmitNewArray(typeof(object));
+			il.EmitSetLocalVariable(objArray);
+
+			int c = 0;
+			foreach(var i in GetILModules(modules))
+			{
+				i.GenerateSerialize(il, index,
+					() =>
+					{
+						MemberUtils.EmitILForGetMethod(il, modules[c].ModuleContainer.Member.GetMember, () =>
+						{
+							il.EmitLoadArgument(0);
+						});
+					},
+					(pushVal) =>
+					{
+						il.EmitLoadLocalVariable(objArray);
+						il.EmitLoadLocalVariable(index);
+						pushVal();
+						il.EmitSetArrayElement<object>();
+					});
+
+				c++;
+			}
+
+			il.EmitLoadLocalVariable(objArray);
+			il.EmitReturn();
+		}
+
+		private static IEnumerable<ILSupport> GetILModules(BaseModule[] modules)
+		{
+			foreach(var i in modules)
+			{
+				if (i is ILSupport ilSupport)
 				{
-					throw new DecoratorCompilerException($"Cannot compile for IL if it doesn't support IL", null);
+					yield return ilSupport;
+					continue;
 				}
 
-				yield return i;
-			}
+				throw new DecoratorCompilerException($"IL generation is not supported on this type.", null);
+			};
 		}
 
 		private static void SetDecoratorModules(SortedDictionary<int, BaseModule> dictionary, IEnumerable<MemberInfo> members, Func<MemberInfo, BaseContainer> getContainer)

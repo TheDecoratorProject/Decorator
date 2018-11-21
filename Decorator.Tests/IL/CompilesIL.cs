@@ -22,10 +22,10 @@ namespace Decorator.Tests.IL
 		public void SupportsIL()
 		{
 			var c = new Compiler.Compiler<TestClass>();
-			c.SupportsIL((i) =>
+			c.SupportsIL(c.Compile((i) =>
 			{
 				return new Container(((PropertyInfo)i).PropertyType, new Member((PropertyInfo)i));
-			})
+			}))
 				.Should()
 				.BeTrue();
 		}
@@ -35,16 +35,44 @@ namespace Decorator.Tests.IL
 		{
 			var c = new Compiler.Compiler<TestClass>();
 
-			var deserializer = c.CompileDeserializeIL((i) =>
+			var deserializer = c.CompileILDeserialize(c.Compile((i) =>
 			{
 				return new Container(((PropertyInfo)i).PropertyType, new Member((PropertyInfo)i));
-			});
+			}));
 
 			int l = 0;
 			deserializer(new object[] { "testing 1, 2, 3" }, ref l, out var result)
 				.Should().BeTrue();
 
 			result.MyProperty.Should().Be("testing 1, 2, 3");
+		}
+
+		[Fact]
+		public void Serializes()
+		{
+			var c = new Compiler.Compiler<TestClass>();
+
+			var serializer = c.CompileILSerialize(c.Compile((i) =>
+			{
+				return new Container(((PropertyInfo)i).PropertyType, new Member((PropertyInfo)i));
+			}));
+
+			var result = serializer(new TestClass
+			{
+				MyProperty = "testing 1, 2, 3"
+			});
+
+			result
+				.Should()
+				.NotBeNull();
+
+			result.Length
+				.Should()
+				.Be(1);
+
+			result[0]
+				.Should()
+				.Be("testing 1, 2, 3");
 		}
 	}
 }

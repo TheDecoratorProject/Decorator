@@ -9,5 +9,8 @@ namespace Decorator.Compiler
 		where T : new()
 	{
 		BaseModule[] Compile(Func<MemberInfo, BaseContainer> getContainer);
+
+		bool SupportsIL(BaseModule[] modules);
+		ILDeserialize<T> CompileILDeserialize(BaseModule[] modules);
 	}
 }

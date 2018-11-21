@@ -9,6 +9,7 @@ namespace Decorator.ModuleAPI
 	{
 		void GenerateDeserialize(ILGenerator il, Action loadMemberValue, Action<Action> setMemberValue, Action loadValue, Action loadI, Action<int> addToI);
 
-		// void GenerateSerialize(ILGenerator il, Action loadMemberValue, Action<Action> setMemberValue, Action setToArray);
+		void GenerateSerializeSize(ILGenerator il, Action loadValue, Action<Action> addValue);
+		void GenerateSerialize(ILGenerator il, LocalBuilder index, Action loadMemberValue, Action<Action> setArrayValue);
 	}
 }
