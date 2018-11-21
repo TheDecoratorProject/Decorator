@@ -15,33 +15,36 @@ namespace Decorator.Modules
 
 		public Module<T> Build<T>(BaseContainer modContainer)
 			=> typeof(T).IsValueType ?
-				new RequiredValueTypeModule<T>(modContainer)
-				: (Module<T>)new RequiredReferenceTypeModule<T>(modContainer);
+				new RequiredModule<T>(modContainer)
+				: (Module<T>)new RequiredModule<T>(modContainer);
 
 		// TODO: Combine these
 		// TODO: Comment on what the IL so i can actually read it
 
-		public class RequiredValueTypeModule<T> : Module<T>, ILSupport
+		public class RequiredModule<T> : Module<T>, ILSupport
 		{
-			public RequiredValueTypeModule(BaseContainer modContainer)
+			public RequiredModule(BaseContainer modContainer)
 				: base(modContainer)
 			{
+				_valueType = modContainer.Member.MemberType.IsValueType;
 			}
+
+			private bool _valueType;
 
 			public override bool Deserialize(object instance, ref object[] array, ref int i)
 			{
 				object value = array[i++];
 
-				if (!(value is T))
+				if (value is T ||
+					(_valueType ? false : value == null))
 				{
-					i--;
-
-					return false;
+					SetValue(instance, value);
+					return true;
 				}
 
-				SetValue(instance, value);
+				i--;
 
-				return true;
+				return false;
 			}
 
 			public override void EstimateSize(object instance, ref int size) => size++;
@@ -63,6 +66,13 @@ namespace Decorator.Modules
 				il.EmitIsInstance<T>();
 				il.EmitShortBranchTrue(isntIt);
 
+				if (!_valueType)
+				{
+					// || objVal == null))
+					il.EmitLoadLocalVariable(local);
+					il.EmitShortBranchFalse(isntIt);
+				}
+
 				// return false;
 				il.EmitConstantInt(0);
 				il.EmitReturn();
@@ -75,8 +85,12 @@ namespace Decorator.Modules
 				// result.Property = (T)objVal;
 				setMemberValue(() =>
 				{
-					il.EmitLoad(typeof(object));
 					il.EmitLoadLocalVariable(local);
+
+					if(!_valueType)
+					{
+						il.EmitCastClass(typeof(T));
+					}
 				});
 			}
 
@@ -95,10 +109,10 @@ namespace Decorator.Modules
 				il.EmitSetLocalVariable(index);
 			}
 		}
-
-		public class RequiredReferenceTypeModule<T> : Module<T>, ILSupport
+		/*
+		public class RequiredModule<T> : Module<T>, ILSupport
 		{
-			public RequiredReferenceTypeModule(BaseContainer modContainer)
+			public RequiredModule(BaseContainer modContainer)
 				: base(modContainer)
 			{
 			}
@@ -153,7 +167,6 @@ namespace Decorator.Modules
 				// result.Property = (T)objVal;
 				setMemberValue(() =>
 				{
-					il.EmitLoad(typeof(object));
 					il.EmitLoadLocalVariable(local);
 					il.EmitCastClass(typeof(T));
 				});
@@ -173,7 +186,7 @@ namespace Decorator.Modules
 				il.EmitAdd();
 				il.EmitSetLocalVariable(index);
 			}
-		}
+		}*/
 	}
 }
  

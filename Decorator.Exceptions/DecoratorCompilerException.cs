@@ -2,10 +2,16 @@
 
 namespace Decorator.Exceptions
 {
-	// TODO: why are the other overloads not available
-
 	public class DecoratorCompilerException : Exception
 	{
+		public DecoratorCompilerException() : base()
+		{
+		}
+
+		public DecoratorCompilerException(string message) : base(message)
+		{
+		}
+
 		public DecoratorCompilerException(string message, Exception inner) : base(message, inner)
 		{
 		}

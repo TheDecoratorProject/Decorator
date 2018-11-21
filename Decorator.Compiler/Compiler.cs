@@ -25,13 +25,9 @@ namespace Decorator.Compiler
 			// cache constructor
 			InstanceOf<T>.Create();
 
-			// get all props/fields with pos attrib
-
-			var members = DiscoverMembers();
-
+			// store all the props/fields that we need
 			var dict = new SortedDictionary<int, BaseModule>();
-
-			SetDecoratorModules(dict, members, getContainer);
+			SetDecoratorModules(dict, DiscoverMembers(), getContainer);
 
 			// fill up empty spaces with Ignored
 			var last = dict.Keys.LastOrDefault();
@@ -50,8 +46,10 @@ namespace Decorator.Compiler
 
 		public bool SupportsIL(BaseModule[] modules)
 		{
+			// for every module
 			foreach(var i in modules)
 			{
+				// if it doesn't have ILSupport
 				if (!i.GetType()
 					.GetInterfaces()
 					.Contains(typeof(ILSupport)))
@@ -77,9 +75,117 @@ namespace Decorator.Compiler
 
 			var il = dm.ILGenerator;
 
-			GenDesIL(il, modules);
+			genDesIL();
 
 			return dm.CreateDelegate();
+
+			// setup loading arguments
+			void loadObjArray() => il.EmitLoadArgument(0);
+
+			void loadIndex()
+			{
+				il.EmitLoadArgument(1);
+			}
+
+			void loadIndexValue()
+			{
+				loadIndex();
+				il.EmitLoad<int>();
+			}
+
+			void loadResult() => il.EmitLoadArgument(2);
+
+			// helper functions
+			void emitLoadObjArrayLength()
+			{
+				loadObjArray();
+				il.EmitLoadArrayLength();
+				il.EmitConvertToInt();
+			}
+
+			void returnInt(int ret)
+			{
+				il.EmitConstantInt(ret);
+				il.EmitReturn();
+			}
+
+			void returnBool(bool val) => returnInt(val ? 1 : 0);
+
+			void genDesIL()
+			{
+				// result = new T();
+				loadResult();
+				il.EmitNewObject<T>();
+				il.EmitSet(typeof(T));
+
+				int c = 0;
+				foreach (var member in GetILModules(modules))
+				{
+					var module = modules[c];
+					var returnIfLessLabel = il.DefineLabel();
+
+					// if (objArray.Length < i) {
+					emitLoadObjArrayLength();
+					loadIndexValue();
+					il.EmitShortBranchGreaterThan(returnIfLessLabel);
+
+					// return false;
+					returnBool(false);
+
+					// }
+					il.MarkLabel(returnIfLessLabel);
+
+					member.GenerateDeserialize(il,
+						() =>
+						{
+							// pushes result.Property onto the stack
+							il.EmitILForGetMethod(module.ModuleContainer.Member.GetMember, () =>
+							{
+								loadResult();
+							});
+						},
+						(v) =>
+						{
+							// result.Property = <whatever v() pushes>;
+							il.EmitILForSetMethod(module.ModuleContainer.Member.GetMember,
+							() =>
+							{
+								loadResult();
+							},
+							() =>
+							{
+								il.EmitLoad(typeof(object));
+								v();
+							});
+						},
+						() =>
+						{
+							// objArray[i];
+							loadObjArray();
+							loadIndexValue();
+							il.EmitLoadArrayElement<object>();
+						},
+						() =>
+						{
+							// i;
+							loadIndexValue();
+						},
+						(a) =>
+						{
+							// i += a;
+							loadIndex();
+							loadIndexValue();
+							il.EmitConstantInt(a);
+							il.EmitAdd();
+							il.EmitSet(typeof(int));
+						});
+
+					c++;
+				}
+
+				// return true;
+				returnBool(true);
+			}
 		}
 
 		public ILSerialize<T> CompileILSerialize(BaseModule[] modules)
@@ -97,109 +203,6 @@ namespace Decorator.Compiler
 			GenSerIL(il, modules);
 
 			return dm.CreateDelegate();
-		}
-
-#if NET45
-		public static void SaveWrap(BaseModule[] modules)
-		{
-			var asm = System.Reflection.Emit.AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("TestAssembly"), System.Reflection.Emit.AssemblyBuilderAccess.RunAndSave);
-			var mod = asm.DefineDynamicModule("TestModule", "asm.dll", true);
-			var cls = mod.DefineType("SomeClass", TypeAttributes.Public | TypeAttributes.Class);
-			var dm = cls.DefineMethod("Test", MethodAttributes.Public, typeof(bool), new[] { typeof(object[]), typeof(int).MakeByRefType(), typeof(T).MakeByRefType() });
-			var il = dm.GetILGenerator();
-
-			GenDesIL(il, modules);
-
-			cls.CreateType();
-			asm.Save("asm.dll", PortableExecutableKinds.ILOnly, ImageFileMachine.AMD64);
-		}
-		public static void SaveWrap2(BaseModule[] modules)
-		{
-			var asm = System.Reflection.Emit.AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("TestAssembly"), System.Reflection.Emit.AssemblyBuilderAccess.RunAndSave);
-			var mod = asm.DefineDynamicModule("TestModule", "asm.dll", true);
-			var cls = mod.DefineType("SomeClass", TypeAttributes.Public | TypeAttributes.Class);
-			var dm = cls.DefineMethod("Test", MethodAttributes.Public, typeof(T), new[] { typeof(object[]) });
-			var il = dm.GetILGenerator();
-
-			GenSerIL(il, modules);
-
-			cls.CreateType();
-			asm.Save("asm.dll", PortableExecutableKinds.ILOnly, ImageFileMachine.AMD64);
-		}
-#endif
-
-		private static void GenDesIL(System.Reflection.Emit.ILGenerator il, BaseModule[] modules)
-		{
-			// result = new T();
-			il.EmitLoadArgument(2);
-			il.EmitNewObject<T>();
-			il.EmitSet(typeof(T));
-
-			int c = 0;
-			foreach (var member in GetILModules(modules))
-			{
-				var module = modules[c];
-
-				var returnIfLessLabel = il.DefineLabel();
-
-				il.EmitLoadArgument(0);
-				il.EmitLoadArrayLength();
-				il.EmitConvertToInt();
-				il.EmitLoadArgument(1);
-				il.EmitLoad<int>();
-				il.EmitShortBranchGreaterThan(returnIfLessLabel);
-
-				il.EmitConstantInt(0);
-				il.EmitReturn();
-
-				il.MarkLabel(returnIfLessLabel);
-
-				member.GenerateDeserialize(il,
-					() =>
-					{
-						il.EmitILForGetMethod(module.ModuleContainer.Member.GetMember, () =>
-						{
-							il.EmitLoadArgument(2);
-						});
-					},
-					(v) =>
-					{
-						il.EmitILForSetMethod(module.ModuleContainer.Member.GetMember,
-						() =>
-						{
-							il.EmitLoadArgument(2);
-						},
-						() =>
-						{
-							v();
-						});
-					},
-					() =>
-					{
-						il.EmitLoadArgument(0);
-						il.EmitLoadArgument(1);
-						il.EmitLoad<int>();
-						il.EmitLoadArrayElement<object>();
-					},
-					() =>
-					{
-						il.EmitLoadArgument(1);
-					},
-					(a) =>
-					{
-						il.EmitLoadArgument(1);
-						il.EmitLoadArgument(1);
-						il.EmitLoad<int>();
-						il.EmitConstantInt(a);
-						il.EmitAdd();
-						il.EmitSet(typeof(int));
-					});
-
-				c++; //c#; >:(
-			}
-
-			il.EmitConstantInt(1);
-			il.EmitReturn();
 		}
 
 		public static void GenSerIL(System.Reflection.Emit.ILGenerator il, BaseModule[] modules)
