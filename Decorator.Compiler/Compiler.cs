@@ -136,6 +136,20 @@ namespace Decorator.Compiler
 			{
 				var module = modules[c];
 
+				var returnIfLessLabel = il.DefineLabel();
+
+				il.EmitLoadArgument(0);
+				il.EmitLoadArrayLength();
+				il.EmitConvertToInt();
+				il.EmitLoadArgument(1);
+				il.EmitLoad<int>();
+				il.EmitShortBranchGreaterThan(returnIfLessLabel);
+
+				il.EmitConstantInt(0);
+				il.EmitReturn();
+
+				il.MarkLabel(returnIfLessLabel);
+
 				member.GenerateDeserialize(il,
 					() =>
 					{

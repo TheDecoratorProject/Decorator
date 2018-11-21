@@ -32,7 +32,7 @@ namespace Decorator.Tests
 		{
 			private int _counter;
 
-			public IConverter<T> Create<T>(BaseModule[] members) where T : new()
+			public IConverter<T> Create<T>(BaseModule[] members, ILSerialize<T> ilSer, ILDeserialize<T> ilDes) where T : new()
 				=> new MockConverter<T>(_counter++);
 
 			public ICompiler<T> CreateCompiler<T>() where T : new()

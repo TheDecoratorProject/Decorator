@@ -13,7 +13,9 @@ namespace Decorator.Benchmarks
 	{
 		private static void Main()
 		{
-			BenchmarkDotNet.Running.BenchmarkRunner.Run<ILPerformance>();
+			var _ensureRuns = new Benchmarks();
+
+			BenchmarkDotNet.Running.BenchmarkRunner.Run<Benchmarks>();
 			Console.ReadLine();
 		}
 	}
@@ -33,39 +35,6 @@ namespace Decorator.Benchmarks
 
 		public ILPerformance()
 		{
-			/*
-		[Fact]
-		public void Deserializes()
-		{
-			var c = new Compiler.Compiler<TestClass>();
-
-			var deserializer = c.CompileILDeserialize(c.Compile((i) =>
-			{
-				return new Container(((PropertyInfo)i).PropertyType, new Member((PropertyInfo)i));
-			}));
-
-			int l = 0;
-			deserializer(new object[] { "testing 1, 2, 3" }, ref l, out var result)
-				.Should().BeTrue();
-
-			result.MyProperty.Should().Be("testing 1, 2, 3");
-		}
-
-		[Fact]
-		public void Serializes()
-		{
-			var c = new Compiler.Compiler<TestClass>();
-
-			var serializer = c.CompileILSerialize(c.Compile((i) =>
-			{
-				return new Container(((PropertyInfo)i).PropertyType, new Member((PropertyInfo)i));
-			}));
-
-			var result = serializer(new TestClass
-			{
-				MyProperty = "testing 1, 2, 3"
-			});*/
-
 			var c = new Compiler<Test>();
 
 			var modules = c.Compile((i) =>

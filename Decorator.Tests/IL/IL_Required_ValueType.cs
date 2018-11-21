@@ -10,12 +10,12 @@ using Xunit;
 
 namespace Decorator.Tests.IL
 {
-	public class CompilesIL
+	public class IL_Required_ValueType
 	{
 		public class TestClass
 		{
 			[Position(0), Required]
-			public string MyProperty { get; set; }
+			public int MyProperty { get; set; }
 		}
 
 		[Fact]
@@ -41,10 +41,10 @@ namespace Decorator.Tests.IL
 			}));
 
 			int l = 0;
-			deserializer(new object[] { "testing 1, 2, 3" }, ref l, out var result)
+			deserializer(new object[] { 1337 }, ref l, out var result)
 				.Should().BeTrue();
 
-			result.MyProperty.Should().Be("testing 1, 2, 3");
+			result.MyProperty.Should().Be(1337);
 		}
 
 		[Fact]
@@ -59,7 +59,7 @@ namespace Decorator.Tests.IL
 
 			var result = serializer(new TestClass
 			{
-				MyProperty = "testing 1, 2, 3"
+				MyProperty = 420
 			});
 
 			result
@@ -72,7 +72,7 @@ namespace Decorator.Tests.IL
 
 			result[0]
 				.Should()
-				.Be("testing 1, 2, 3");
+				.Be(420);
 		}
 	}
 }

@@ -63,7 +63,7 @@ namespace Decorator.Benchmarks
 		private readonly TestClass _testClass;
 		private readonly object[] _data;
 		private readonly ProtocolMessage.ProtocolMessageManager _pm;
-		private Converter<TestClass> _tc;
+		private ILConverter<TestClass> _tc;
 
 		public Benchmarks()
 		{
@@ -85,7 +85,12 @@ namespace Decorator.Benchmarks
 
 			_pm = new ProtocolMessage.ProtocolMessageManager();
 
-			_tc = (Converter<TestClass>)new ConverterContainer().RequestConverter<TestClass>();
+			if(!(new ConverterContainer().RequestConverter<TestClass>() is ILConverter<TestClass> ilConv))
+			{
+				throw new Exception($"IL is not fully spported for the benchmarks yet.");
+			}
+
+			_tc = ilConv;
 
 			foreach (var benchmark in GetType()
 								.GetMethods()
@@ -102,7 +107,11 @@ namespace Decorator.Benchmarks
 			=> DConverter<TestClass>.Serialize(_testClass);
 
 		[Benchmark]
-		public TestClass DecoratorDeserialize()
+		public object[] LocalDecoratorSerialize()
+			=> _tc.Serialize(_testClass);
+
+		[Benchmark]
+		public TestClass DConverterDecoratorDeserialize()
 		{
 			if (DConverter<TestClass>.TryDeserialize(_data, out var result))
 			{
@@ -113,7 +122,7 @@ namespace Decorator.Benchmarks
 		}
 
 		[Benchmark]
-		public TestClass ECDecoratorDeserialize()
+		public TestClass DConverterRefIDecoratorDeserialize()
 		{
 			var i = 0;
 			if (DConverter<TestClass>.TryDeserialize(_data, ref i, out var result))
@@ -125,21 +134,10 @@ namespace Decorator.Benchmarks
 		}
 
 		[Benchmark]
-		public TestClass IDecoratorDeserialize()
+		public TestClass LocalILDecoratorDeserialize()
 		{
-			if (_tc.TryDeserialize(_data, out var result))
-			{
-				return result;
-			}
-
-			throw new ShouldNotHappenException();
-		}
-
-		[Benchmark]
-		public TestClass IECDecoratorDeserialize()
-		{
-			var i = 0;
-			if (_tc.TryDeserialize(_data, ref i, out var result))
+			int i = 0;
+			if (_tc.Deserialize(_data, ref i, out var result))
 			{
 				return result;
 			}

@@ -8,11 +8,11 @@ namespace Decorator
 	public static class DConverter<T>
 		where T : new()
 	{
-		private static readonly Converter<T> _converter;
+		private static readonly IConverter<T> _converter;
 
 		static DConverter()
 		{
-			_converter = (Converter<T>)StaticProvider.Container.RequestConverter<T>();
+			_converter = StaticProvider.Container.RequestConverter<T>();
 			Members = _converter.Members;
 		}
 

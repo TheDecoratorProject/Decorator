@@ -16,13 +16,19 @@ namespace TestIL
 		public class TestClass
 		{
 			[Position(0), Required]
-			public string MyProperty { get; set; }
+			public string MyReferenceType { get; set; }
+
+			[Position(1), Required]
+			public int MyValueType { get; set; }
 		}
+
 
 		static void Main(string[] args)
 		{
 			var c = new Compiler<TestClass>();
 
+			Compiler<TestClass>.SaveWrap(c.Compile((i) => new Container(typeof(string), new Member((PropertyInfo)i))));
+			Console.ReadLine();
 			Compiler<TestClass>.SaveWrap2(c.Compile((i) => new Container(typeof(string), new Member((PropertyInfo)i))));
 			// Compiler<TestClass>.SaveWrap((i) => new Container(((PropertyInfo)i).PropertyType, new Member((PropertyInfo)i)));
 		}

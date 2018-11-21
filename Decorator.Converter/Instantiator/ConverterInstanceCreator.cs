@@ -5,8 +5,17 @@ namespace Decorator.Converter
 {
 	public class ConverterInstanceCreator : IConverterInstanceCreator
 	{
-		IConverter<T> IConverterInstanceCreator.Create<T>(BaseModule[] members)
-			=> new Converter<T>(members);
+		IConverter<T> IConverterInstanceCreator.Create<T>(BaseModule[] members, ILSerialize<T> ilSer, ILDeserialize<T> ilDes)
+		{
+			if (ilSer == null || ilDes == null)
+			{
+				return new Converter<T>(members);
+			}
+			else
+			{
+				return new ILConverter<T>(members, ilSer, ilDes);
+			}
+		}
 
 		ICompiler<T> IConverterInstanceCreator.CreateCompiler<T>()
 			=> new Compiler<T>();

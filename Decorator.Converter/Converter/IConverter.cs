@@ -16,11 +16,4 @@ namespace Decorator.Converter
 
 		object[] Serialize(T item);
 	}
-
-	public interface IILConverter<T> : IConverter<T>
-		where T : new()
-	{
-		ILDeserialize<T> Deserialize { get; }
-		ILSerialize<T> Serialize { get; }
-	}
 }

@@ -1,11 +1,13 @@
-﻿using Decorator.ModuleAPI;
+﻿using Decorator.Compiler;
+using Decorator.ModuleAPI;
 
 using SwissILKnife;
-
+using System;
 using System.Collections.ObjectModel;
 
 namespace Decorator.Converter
 {
+
 	public class Converter<T> : IConverter<T>
 		where T : new()
 	{

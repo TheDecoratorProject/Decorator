@@ -40,7 +40,16 @@ namespace Decorator.Converter
 
 				var compiled = compiler.Compile(_genContainer);
 
-				return _instantiator.Create<T>(compiled);
+				ILSerialize<T> ilSer = null;
+				ILDeserialize<T> ilDes = null;
+
+				if (compiler.SupportsIL(compiled))
+				{
+					ilSer = compiler.CompileILSerialize(compiled);
+					ilDes = compiler.CompileILDeserialize(compiled);
+				}
+
+				return _instantiator.Create<T>(compiled, ilSer, ilDes);
 			}
 
 			return (IConverter<T>)_converters.Request(requestNew);

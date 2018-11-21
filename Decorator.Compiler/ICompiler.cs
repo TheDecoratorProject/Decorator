@@ -12,5 +12,6 @@ namespace Decorator.Compiler
 
 		bool SupportsIL(BaseModule[] modules);
 		ILDeserialize<T> CompileILDeserialize(BaseModule[] modules);
+		ILSerialize<T> CompileILSerialize(BaseModule[] modules);
 	}
 }
