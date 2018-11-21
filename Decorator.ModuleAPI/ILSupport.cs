@@ -5,6 +5,8 @@ using System.Text;
 
 namespace Decorator.ModuleAPI
 {
+	// TODO: xml doc on everyone
+
 	public interface ILSupport
 	{
 		void GenerateDeserialize(ILGenerator il, Action loadMemberValue, Action<Action> setMemberValue, Action loadValue, Action loadI, Action<int> addToI);

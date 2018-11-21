@@ -3,6 +3,10 @@ using Decorator.ModuleAPI;
 
 namespace Decorator.Converter
 {
+	// [CLEAN]
+	// TODO: Clean
+	// ilSer and ilDes being passed as parameters is bad, should make an overload
+
 	public class ConverterInstanceCreator : IConverterInstanceCreator
 	{
 		IConverter<T> IConverterInstanceCreator.Create<T>(BaseModule[] members, ILSerialize<T> ilSer, ILDeserialize<T> ilDes)

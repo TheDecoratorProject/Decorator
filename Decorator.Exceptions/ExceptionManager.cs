@@ -2,7 +2,8 @@
 
 namespace Decorator.Exceptions
 {
-	// TODO: remove lol
+	// TODO: refactor it out
+
 	public static class ExceptionManager
 	{
 		public const string InvalidDeclarationDefault

@@ -10,6 +10,10 @@ using System.Linq;
 using System.Reflection;
 namespace Decorator.Compiler
 {
+	// [CLEAN]
+	// TODO: Clean
+	// TODO: Comment on what the IL so i can actually read it
+
 	public delegate bool ILDeserialize<T>(object[] array, ref int i, out T result);
 	public delegate object[] ILSerialize<T>(T item);
 

@@ -6,6 +6,9 @@ using System.Reflection;
 
 namespace Decorator.Converter
 {
+	// [CLEAN]
+	// TODO: Clean
+
 	public class ConverterContainer : IConverterContainer
 	{
 		public ConverterContainer() : this(new ConverterInstanceCreator())

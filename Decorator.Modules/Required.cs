@@ -18,6 +18,9 @@ namespace Decorator.Modules
 				new RequiredValueTypeModule<T>(modContainer)
 				: (Module<T>)new RequiredReferenceTypeModule<T>(modContainer);
 
+		// TODO: Combine these
+		// TODO: Comment on what the IL so i can actually read it
+
 		public class RequiredValueTypeModule<T> : Module<T>, ILSupport
 		{
 			public RequiredValueTypeModule(BaseContainer modContainer)

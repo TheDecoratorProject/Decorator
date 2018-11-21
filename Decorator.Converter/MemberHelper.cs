@@ -5,6 +5,9 @@ using System.Reflection;
 
 namespace Decorator.Converter
 {
+	// TODO: Use this in the unit tests & other parts of the code
+	// TODO: move to ModuleAPI?
+
 	public static class MemberHelper
 	{
 		public static Member GetMemberFrom(this MemberInfo memberInfo)
