@@ -28,7 +28,7 @@ namespace TestIL
 			var c = new Compiler<TestClass>();
 			
 			Console.ReadLine();
-			// Compiler<TestClass>.SaveWrap((i) => new Container(((PropertyInfo)i).PropertyType, new Member((PropertyInfo)i)));
+			// Compiler<TestClass>.SaveWrap(new Compiler<TestClass>().Compile((i) => new Container(((PropertyInfo)i).PropertyType, new Member((PropertyInfo)i))));
 		}
 	}
 }

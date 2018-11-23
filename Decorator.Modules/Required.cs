@@ -1,5 +1,5 @@
 ﻿using Decorator.ModuleAPI;
-
+using Decorator.ModuleAPI.IL;
 using StrictEmit;
 
 using System;
@@ -35,7 +35,7 @@ namespace Decorator.Modules
 			{
 				object value = array[i++];
 
-				if (value is T ||
+				if (value is T || // TODO: oh no, we need to unit test this :(
 					(_valueType ? false : value == null))
 				{
 					SetValue(instance, value);
@@ -51,14 +51,13 @@ namespace Decorator.Modules
 
 			public override void Serialize(object instance, ref object[] array, ref int i) => array[i++] = GetValue(instance);
 
-			public void GenerateDeserialize(ILGenerator il, Action loadMemberValue, Action<Action> setMemberValue, Action loadValue, Action loadI, Action<int> addToI)
+			public void GenerateDeserialize(ILGenerator il, ILDeserializeMethodContainer ilMethods)
 			{
 				var local = il.DeclareLocal(typeof(object));
 				var isntIt = il.DefineLabel();
 
 				// object objVal = array[i];
-				loadValue();
-
+				ilMethods.LoadCurrentObject();
 				il.EmitSetLocalVariable(local);
 
 				// if (!(objVal is T))
@@ -66,6 +65,7 @@ namespace Decorator.Modules
 				il.EmitIsInstance<T>();
 				il.EmitShortBranchTrue(isntIt);
 
+				// if it's not a value type, we can check if it's null (since reference types can be null)
 				if (!_valueType)
 				{
 					// || objVal == null))
@@ -80,113 +80,32 @@ namespace Decorator.Modules
 				il.MarkLabel(isntIt);
 
 				// i++;
-				addToI(1);
+				ilMethods.AddToIndex(() => il.EmitConstantInt(1));
 
 				// result.Property = (T)objVal;
-				setMemberValue(() =>
+				ilMethods.SetMemberValue(() =>
 				{
 					il.EmitLoadLocalVariable(local);
 
-					if(!_valueType)
-					{
-						il.EmitCastClass(typeof(T));
-					}
+
 				});
 			}
 
-			public void GenerateSerializeSize(ILGenerator il, Action loadValue, Action<Action> addValue)
+			public void GenerateEstimateSize(ILGenerator il, ILEstimateSizeMethodContainer ilMethods)
 			{
-				addValue(() => il.EmitConstantInt(1));
+				ilMethods.AddToSize(() => il.EmitConstantInt(1));
 			}
 
-			public void GenerateSerialize(ILGenerator il, LocalBuilder index, Action loadMemberValue, Action<Action> setArrayValue)
+			public void GenerateSerialize(ILGenerator il, ILSerializeMethodContainer ilMethods)
 			{
-				setArrayValue(loadMemberValue);
+				ilMethods.SetArrayValue(ilMethods.LoadMemberValue);
 
-				il.EmitLoadLocalVariable(index);
+				il.EmitLoadLocalVariable(ilMethods.Index);
 				il.EmitConstantInt(1);
 				il.EmitAdd();
-				il.EmitSetLocalVariable(index);
+				il.EmitSetLocalVariable(ilMethods.Index);
 			}
 		}
-		/*
-		public class RequiredModule<T> : Module<T>, ILSupport
-		{
-			public RequiredModule(BaseContainer modContainer)
-				: base(modContainer)
-			{
-			}
-
-			public override bool Deserialize(object instance, ref object[] array, ref int i)
-			{
-				object value = array[i++];
-
-				if (value is T ||
-					value == null)
-				{
-					SetValue(instance, value);
-					return true;
-				}
-
-				i--;
-
-				return false;
-			}
-
-			public override void EstimateSize(object instance, ref int size) => size++;
-			public override void Serialize(object instance, ref object[] array, ref int i) => array[i++] = GetValue(instance);
-
-			public void GenerateDeserialize(ILGenerator il, Action loadMemberValue, Action<Action> setMemberValue, Action loadValue, Action loadI, Action<int> addToI)
-			{
-				var local = il.DeclareLocal(typeof(object));
-				var isntIt = il.DefineLabel();
-
-				// object objVal = array[i];
-				loadValue();
-
-				il.EmitSetLocalVariable(local);
-
-				// if (!(objVal is T
-				il.EmitLoadLocalVariable(local);
-				il.EmitIsInstance<T>();
-				il.EmitShortBranchTrue(isntIt);
-
-				// || objVal == null))
-				il.EmitLoadLocalVariable(local);
-				il.EmitShortBranchFalse(isntIt);
-
-				// return false;
-				il.EmitConstantInt(0);
-				il.EmitReturn();
-
-				il.MarkLabel(isntIt);
-
-				// i++;
-				addToI(1);
-
-				// result.Property = (T)objVal;
-				setMemberValue(() =>
-				{
-					il.EmitLoadLocalVariable(local);
-					il.EmitCastClass(typeof(T));
-				});
-			}
-
-			public void GenerateSerializeSize(ILGenerator il, Action loadValue, Action<Action> addValue)
-			{
-				addValue(() => il.EmitConstantInt(1));
-			}
-
-			public void GenerateSerialize(ILGenerator il, LocalBuilder index, Action loadMemberValue, Action<Action> setArrayValue)
-			{
-				setArrayValue(loadMemberValue);
-
-				il.EmitLoadLocalVariable(index);
-				il.EmitConstantInt(1);
-				il.EmitAdd();
-				il.EmitSetLocalVariable(index);
-			}
-		}*/
 	}
 }
  

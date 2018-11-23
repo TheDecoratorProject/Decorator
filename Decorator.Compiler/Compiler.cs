@@ -1,13 +1,17 @@
 ﻿using Decorator.Attributes;
 using Decorator.Exceptions;
 using Decorator.ModuleAPI;
+using Decorator.ModuleAPI.IL;
+
 using StrictEmit;
+
 using SwissILKnife;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+
 namespace Decorator.Compiler
 {
 	// [CLEAN]
@@ -15,6 +19,7 @@ namespace Decorator.Compiler
 	// TODO: Comment on what the IL so i can actually read it
 
 	public delegate bool ILDeserialize<T>(object[] array, ref int i, out T result);
+
 	public delegate object[] ILSerialize<T>(T item);
 
 	public class Compiler<T> : ICompiler<T>
@@ -42,240 +47,6 @@ namespace Decorator.Compiler
 
 			// save it as an array
 			return dict.Values.ToArray();
-		}
-
-		public bool SupportsIL(BaseModule[] modules)
-		{
-			// for every module
-			foreach(var i in modules)
-			{
-				// if it doesn't have ILSupport
-				if (!i.GetType()
-					.GetInterfaces()
-					.Contains(typeof(ILSupport)))
-				{
-					return false;
-				}
-			}
-
-			return true;
-		}
-
-		public ILDeserialize<T> CompileILDeserialize(BaseModule[] modules)
-		{
-			var dm = new DynamicMethod<ILDeserialize<T>>(string.Empty,
-				typeof(bool),
-				new[]
-				{
-					typeof(object[]),
-					typeof(int).MakeByRefType(),
-					typeof(T).MakeByRefType()
-				},
-				true);
-
-			var il = dm.ILGenerator;
-
-			genDesIL();
-
-			return dm.CreateDelegate();
-
-			// setup loading arguments
-			void loadObjArray() => il.EmitLoadArgument(0);
-
-			void loadIndex()
-			{
-				il.EmitLoadArgument(1);
-			}
-
-			void loadIndexValue()
-			{
-				loadIndex();
-				il.EmitLoad<int>();
-			}
-
-			void loadResult() => il.EmitLoadArgument(2);
-
-			// helper functions
-			void emitLoadObjArrayLength()
-			{
-				loadObjArray();
-				il.EmitLoadArrayLength();
-				il.EmitConvertToInt();
-			}
-
-			void returnInt(int ret)
-			{
-				il.EmitConstantInt(ret);
-				il.EmitReturn();
-			}
-
-			void returnBool(bool val) => returnInt(val ? 1 : 0);
-
-			void genDesIL()
-			{
-				// result = new T();
-				loadResult();
-				il.EmitNewObject<T>();
-				il.EmitSet(typeof(T));
-
-				int c = 0;
-				foreach (var member in GetILModules(modules))
-				{
-					var module = modules[c];
-					var returnIfLessLabel = il.DefineLabel();
-
-					// if (objArray.Length < i) {
-					emitLoadObjArrayLength();
-					loadIndexValue();
-					il.EmitShortBranchGreaterThan(returnIfLessLabel);
-
-					// return false;
-					returnBool(false);
-
-					// }
-					il.MarkLabel(returnIfLessLabel);
-
-					member.GenerateDeserialize(il,
-						() =>
-						{
-							// pushes result.Property onto the stack
-							il.EmitILForGetMethod(module.ModuleContainer.Member.GetMember, () =>
-							{
-								loadResult();
-							});
-						},
-						(v) =>
-						{
-							// result.Property = <whatever v() pushes>;
-							il.EmitILForSetMethod(module.ModuleContainer.Member.GetMember,
-							() =>
-							{
-								loadResult();
-							},
-							() =>
-							{
-								il.EmitLoad(typeof(object));
-								v();
-							});
-						},
-						() =>
-						{
-							// objArray[i];
-							loadObjArray();
-							loadIndexValue();
-							il.EmitLoadArrayElement<object>();
-						},
-						() =>
-						{
-							// i;
-							loadIndexValue();
-						},
-						(a) =>
-						{
-							// i += a;
-							loadIndex();
-							loadIndexValue();
-							il.EmitConstantInt(a);
-							il.EmitAdd();
-							il.EmitSet(typeof(int));
-						});
-
-					c++;
-				}
-
-				// return true;
-				returnBool(true);
-			}
-		}
-
-		public ILSerialize<T> CompileILSerialize(BaseModule[] modules)
-		{
-			var dm = new DynamicMethod<ILSerialize<T>>(string.Empty,
-				typeof(object[]),
-				new[]
-				{
-					typeof(T)
-				},
-				true);
-
-			var il = dm.ILGenerator;
-
-			GenSerIL(il, modules);
-
-			return dm.CreateDelegate();
-		}
-
-		public static void GenSerIL(System.Reflection.Emit.ILGenerator il, BaseModule[] modules)
-		{
-			// get size
-			var objSize = il.DeclareLocal(typeof(int));
-			il.EmitConstantInt(0);
-			il.EmitSetLocalVariable(objSize);
-
-			foreach(var i in GetILModules(modules))
-			{
-				i.GenerateSerializeSize(il,
-					() =>
-					{
-						il.EmitLoadArgument(0);
-					},
-					(load) =>
-					{
-						load();
-						il.EmitLoadLocalVariable(objSize);
-						il.EmitAdd();
-						il.EmitSetLocalVariable(objSize);
-					});
-			}
-
-			var objArray = il.DeclareLocal(typeof(object[]));
-			var index = il.DeclareLocal(typeof(int));
-
-			il.EmitConstantInt(0);
-			il.EmitSetLocalVariable(index);
-
-			il.EmitLoadLocalVariable(objSize);
-			il.EmitNewArray(typeof(object));
-			il.EmitSetLocalVariable(objArray);
-
-			int c = 0;
-			foreach(var i in GetILModules(modules))
-			{
-				i.GenerateSerialize(il, index,
-					() =>
-					{
-						MemberUtils.EmitILForGetMethod(il, modules[c].ModuleContainer.Member.GetMember, () =>
-						{
-							il.EmitLoadArgument(0);
-						});
-					},
-					(pushVal) =>
-					{
-						il.EmitLoadLocalVariable(objArray);
-						il.EmitLoadLocalVariable(index);
-						pushVal();
-						il.EmitSetArrayElement<object>();
-					});
-
-				c++;
-			}
-
-			il.EmitLoadLocalVariable(objArray);
-			il.EmitReturn();
-		}
-
-		private static IEnumerable<ILSupport> GetILModules(BaseModule[] modules)
-		{
-			foreach(var i in modules)
-			{
-				if (i is ILSupport ilSupport)
-				{
-					yield return ilSupport;
-					continue;
-				}
-
-				throw new DecoratorCompilerException($"IL generation is not supported on this type.", null);
-			};
 		}
 
 		private static void SetDecoratorModules(SortedDictionary<int, BaseModule> dictionary, IEnumerable<MemberInfo> members, Func<MemberInfo, BaseContainer> getContainer)
@@ -356,6 +127,242 @@ namespace Decorator.Compiler
 			}
 
 			return attributes.First();
+		}
+
+		public bool SupportsIL(BaseModule[] modules)
+		{
+			// for every module
+			foreach (var i in modules)
+			{
+				// if it doesn't have ILSupport
+				if (!i.GetType()
+					.GetInterfaces()
+					.Contains(typeof(ILSupport)))
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+		public ILSerialize<T> CompileILSerialize(BaseModule[] modules)
+		{
+			var dm = new DynamicMethod<ILSerialize<T>>(string.Empty,
+				typeof(object[]),
+				new[]
+				{
+					typeof(T)
+				},
+				true);
+
+			var il = dm.ILGenerator;
+
+			// int objSize = 0;
+			var objSize = il.DeclareLocal(typeof(int));
+			il.EmitConstantInt(0);
+			il.EmitSetLocalVariable(objSize);
+
+			foreach (var i in GetILModules(modules))
+			{
+				i.GenerateEstimateSize(il, getEstimateSizeMethodContainer());
+			}
+
+			var objArray = il.DeclareLocal(typeof(object[]));
+			var index = il.DeclareLocal(typeof(int));
+
+			// int i = 0;
+			il.EmitConstantInt(0);
+			il.EmitSetLocalVariable(index);
+
+			// object[] objArray = new object[objSize];
+			il.EmitLoadLocalVariable(objSize);
+			il.EmitNewArray(typeof(object));
+			il.EmitSetLocalVariable(objArray);
+
+			int c = 0;
+			foreach (var i in GetILModules(modules))
+			{
+				i.GenerateSerialize(il, getSerializeMethodContainer());
+
+				c++;
+			}
+
+			// return objArray;
+			il.EmitLoadLocalVariable(objArray);
+			il.EmitReturn();
+
+			return dm.CreateDelegate();
+
+			void emitLoadSerializingItem() => il.EmitLoadArgument(0);
+
+			ILEstimateSizeMethodContainer getEstimateSizeMethodContainer() => new ILEstimateSizeMethodContainer(
+					() =>
+					{
+						emitLoadSerializingItem();
+					},
+					(load) =>
+					{
+						load();
+						il.EmitLoadLocalVariable(objSize);
+						il.EmitAdd();
+						il.EmitSetLocalVariable(objSize);
+					}
+				);
+
+			ILSerializeMethodContainer getSerializeMethodContainer() => new ILSerializeMethodContainer(
+					index,
+					() =>
+					{
+						MemberUtils.EmitILForGetMethod(il, modules[c].ModuleContainer.Member.GetMember, () =>
+						{
+							emitLoadSerializingItem();
+						});
+					},
+					(emit) =>
+					{
+						il.EmitLoadLocalVariable(objArray);
+						il.EmitLoadLocalVariable(index);
+						emit();
+						il.EmitSetArrayElement<object>();
+					}
+				);
+		}
+
+		public ILDeserialize<T> CompileILDeserialize(BaseModule[] modules)
+		{
+			var dm = new DynamicMethod<ILDeserialize<T>>(string.Empty,
+				typeof(bool),
+				new[]
+				{
+					typeof(object[]),
+					typeof(int).MakeByRefType(),
+					typeof(T).MakeByRefType()
+				},
+				true);
+
+			var il = dm.ILGenerator;
+
+			// result = new T();
+			emitLoadResultArg();
+			il.EmitNewObject<T>();
+			il.EmitSet(typeof(T));
+
+			int c = 0;
+			foreach (var member in GetILModules(modules))
+			{
+				var module = modules[c];
+				var returnIfLessLabel = il.DefineLabel();
+
+				// if (objArray.Length < i) {
+				emitLoadObjectArrayArg();
+				il.EmitLoadArrayLength();
+				il.EmitConvertToInt();
+
+				emitLoadIndexArg();
+				il.EmitLoad<int>();
+
+				il.EmitShortBranchGreaterThan(returnIfLessLabel); // <
+
+				// return false;
+				emitReturnBool(false);
+
+				// }
+				il.MarkLabel(returnIfLessLabel);
+
+				// emit whatever code is in that part of IL
+				member.GenerateDeserialize(il, getDeserializeMethodContainer(module));
+
+				c++;
+			}
+
+			// return true;
+			emitReturnBool(true);
+
+			return dm.CreateDelegate();
+
+			// il helpers
+			void emitLoadObjectArrayArg() => il.EmitLoadArgument(0);
+			void emitLoadIndexArg() => il.EmitLoadArgument(1);
+			void emitLoadResultArg() => il.EmitLoadArgument(2);
+
+			void emitIndexValue()
+			{
+				emitLoadIndexArg();
+				il.EmitLoad<int>();
+			}
+
+			void emitReturnBool(bool returnResult)
+			{
+				const int trueValue = 1;
+				const int falseValue = 0;
+				il.EmitConstantInt(returnResult ? trueValue : falseValue);
+
+				il.EmitReturn();
+			}
+
+			ILDeserializeMethodContainer getDeserializeMethodContainer(BaseModule module)
+			{
+				return new ILDeserializeMethodContainer(
+					loadMemberValue: () =>
+					{
+						// pushes result.Property onto the stack
+						il.EmitILForGetMethod(module.ModuleContainer.Member.GetMember,
+						() =>
+						{
+							emitLoadResultArg();
+						});
+					},
+					setMemberValue: (emitValueToSetTo) =>
+					{
+						// result.Property = <whatever v() pushes>;
+						il.EmitILForSetMethod(module.ModuleContainer.Member.GetMember,
+							() =>
+							{
+								emitLoadResultArg();
+							},
+							() =>
+							{
+								il.EmitLoad(typeof(object));
+								emitValueToSetTo();
+							});
+					},
+					loadCurrentObject: () =>
+					{
+						// objArray[i];
+						emitLoadObjectArrayArg();
+						emitIndexValue();
+						il.EmitLoadArrayElement<object>();
+					},
+					loadIndex: () =>
+					{
+						// i;
+						emitIndexValue();
+					},
+					addToIndex: (emitAmountToAdd) =>
+					{
+						// i += a;
+						emitLoadIndexArg();
+						emitIndexValue();
+						emitAmountToAdd();
+						il.EmitAdd();
+						il.EmitSet(typeof(int));
+					}
+				);
+			}
+		}
+
+		private static IEnumerable<ILSupport> GetILModules(BaseModule[] modules)
+		{
+			foreach (var i in modules)
+			{
+				if (i is ILSupport ilSupport)
+				{
+					yield return ilSupport;
+					continue;
+				}
+
+				throw new DecoratorCompilerException($"IL generation is not supported on this type.", null);
+			};
 		}
 	}
 }
