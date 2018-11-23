@@ -86,8 +86,6 @@ namespace Decorator.Modules
 				ilMethods.SetMemberValue(() =>
 				{
 					il.EmitLoadLocalVariable(local);
-
-
 				});
 			}
 
@@ -100,10 +98,7 @@ namespace Decorator.Modules
 			{
 				ilMethods.SetArrayValue(ilMethods.LoadMemberValue);
 
-				il.EmitLoadLocalVariable(ilMethods.Index);
-				il.EmitConstantInt(1);
-				il.EmitAdd();
-				il.EmitSetLocalVariable(ilMethods.Index);
+				ilMethods.AddToIndex(() => il.EmitConstantInt(1));
 			}
 		}
 	}

@@ -196,11 +196,11 @@ namespace Decorator.Compiler
 			void emitLoadSerializingItem() => il.EmitLoadArgument(0);
 
 			ILEstimateSizeMethodContainer getEstimateSizeMethodContainer() => new ILEstimateSizeMethodContainer(
-					() =>
+					loadCurrentObject: () =>
 					{
 						emitLoadSerializingItem();
 					},
-					(load) =>
+					addToSize: (load) =>
 					{
 						load();
 						il.EmitLoadLocalVariable(objSize);
@@ -211,19 +211,26 @@ namespace Decorator.Compiler
 
 			ILSerializeMethodContainer getSerializeMethodContainer() => new ILSerializeMethodContainer(
 					index,
-					() =>
+					loadMemberValue: () =>
 					{
 						MemberUtils.EmitILForGetMethod(il, modules[c].ModuleContainer.Member.GetMember, () =>
 						{
 							emitLoadSerializingItem();
 						});
 					},
-					(emit) =>
+					setArrayValue: (emit) =>
 					{
 						il.EmitLoadLocalVariable(objArray);
 						il.EmitLoadLocalVariable(index);
 						emit();
 						il.EmitSetArrayElement<object>();
+					},
+					addToIndex: (emit) =>
+					{
+						il.EmitLoadLocalVariable(index);
+						emit();
+						il.EmitAdd();
+						il.EmitSetLocalVariable(index);
 					}
 				);
 		}
