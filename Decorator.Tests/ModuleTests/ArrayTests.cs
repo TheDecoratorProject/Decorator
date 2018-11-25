@@ -34,17 +34,17 @@ namespace Decorator.Tests.ModuleTests
 
 	public class ArrayTests
 	{
-		private static object[] GetAndCorrupt(int pos)
-			=> Helpers.GenerateAndCorrupt<ArrayClass>(pos);
+		private static object[] GetAndCorrupt(bool il, int pos)
+			=> Helpers.GenerateAndCorrupt<ArrayClass>(il, pos);
 
-		private static int GetEndsOn(object[] pos)
-			=> Helpers.EndsOn<ArrayClass>(pos);
+		private static int GetEndsOn(bool il, object[] pos)
+			=> Helpers.EndsOn<ArrayClass>(il, pos);
 
 		[Fact]
 		public void TypesAreCorrect()
 		{
 			var props = Helpers.GetProperties<ArrayClass>();
-			var members = DConverter<ArrayClass>.Members;
+			var members = TestConverter<ArrayClass>.Members;
 
 			for (var i = 0; i < ArrayClass.TypeSetup.Length; i++)
 			{
@@ -68,9 +68,33 @@ namespace Decorator.Tests.ModuleTests
 		[Fact]
 		public void EndsOnCorrectPosition()
 		{
-			for (var position = 0; position < Helpers.LengthOfDefault<ArrayClass>(); position++)
+			for (var position = 0; position < Helpers.LengthOfDefault<ArrayClass>(false); position++)
 			{
-				GetEndsOn(GetAndCorrupt(position))
+				GetEndsOn(false, GetAndCorrupt(false, position))
+					.Should().Be(position);
+
+				GetEndsOn(false, GetAndCorrupt(true, position))
+					.Should().Be(position);
+
+				GetEndsOn(true, GetAndCorrupt(false, position))
+					.Should().Be(position);
+
+				GetEndsOn(true, GetAndCorrupt(true, position))
+					.Should().Be(position);
+			}
+
+			for (var position = 0; position < Helpers.LengthOfDefault<ArrayClass>(true); position++)
+			{
+				GetEndsOn(false, GetAndCorrupt(false, position))
+					.Should().Be(position);
+
+				GetEndsOn(false, GetAndCorrupt(true, position))
+					.Should().Be(position);
+
+				GetEndsOn(true, GetAndCorrupt(false, position))
+					.Should().Be(position);
+
+				GetEndsOn(true, GetAndCorrupt(true, position))
 					.Should().Be(position);
 			}
 		}

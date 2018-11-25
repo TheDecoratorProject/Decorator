@@ -23,7 +23,18 @@ namespace Decorator.Tests
 		{
 			var data = new object[] { 1, null, null, null, null, null, null, null, null, null, 10 };
 
-			DConverter<NeedsFillingIn>.TryDeserialize(data, out var result)
+			TestConverter<NeedsFillingIn>.TryDeserialize(false, data, out var result)
+				.Should().Be(true);
+
+			result
+				.Property1
+				.Should().Be((int)data[0]);
+
+			result
+				.Property10
+				.Should().Be((int)data[10]);
+
+			TestConverter<NeedsFillingIn>.TryDeserialize(true, data, out result)
 				.Should().Be(true);
 
 			result

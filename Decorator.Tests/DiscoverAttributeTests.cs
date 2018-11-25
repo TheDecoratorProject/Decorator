@@ -43,9 +43,9 @@ namespace Decorator.Tests
 
 		private const int SUCCESS = 5;
 
-		private static T GetInst<T>() where T : new()
+		private static T GetInst<T>(bool il) where T : new()
 		{
-			if (!DConverter<T>.TryDeserialize(new object[] { SUCCESS }, out var result))
+			if (!TestConverter<T>.TryDeserialize(il, new object[] { SUCCESS }, out var result))
 			{
 				throw new TestException(nameof(GetInst) + ", " + typeof(T));
 			}
@@ -56,33 +56,41 @@ namespace Decorator.Tests
 		[Discover(BindingFlags.Public | BindingFlags.Instance)]
 		public class DiscoversPublicAndInstanceClass : DiscoverAttributeTestsBase { }
 
-		[Fact]
-		public void DiscoversPublicAndInstance()
-			=> GetInst<DiscoversPublicAndInstanceClass>()
+		[Theory]
+		[InlineData(false)]
+		[InlineData(true)]
+		public void DiscoversPublicAndInstance(bool il)
+			=> GetInst<DiscoversPublicAndInstanceClass>(il)
 				.PublicInstance.Should().Be(SUCCESS);
 
 		public class DiscoversDefaultClass : DiscoverAttributeTestsBase { }
 
-		[Fact]
-		public void DiscoversDefault()
-			=> GetInst<DiscoversDefaultClass>()
+		[Theory]
+		[InlineData(false)]
+		[InlineData(true)]
+		public void DiscoversDefault(bool il)
+			=> GetInst<DiscoversDefaultClass>(il)
 				.PublicInstance.Should().Be(SUCCESS);
 
 		[Discover(BindingFlags.NonPublic | BindingFlags.Instance)]
 		public class DiscoversPrivateAndInstanceClass : DiscoverAttributeTestsBase { }
 
-		[Fact]
-		public void DiscoversPrivateAndInstance()
-			=> GetInst<DiscoversPrivateAndInstanceClass>()
+		[Theory]
+		[InlineData(false)]
+		[InlineData(true)]
+		public void DiscoversPrivateAndInstance(bool il)
+			=> GetInst<DiscoversPrivateAndInstanceClass>(il)
 				.PrivateInstanceAccessor.Should().Be(SUCCESS);
 
 		[Discover(BindingFlags.Public | BindingFlags.Static)]
 		public class DiscoversPublicAndStaticClass : DiscoverAttributeTestsBase { }
 
-		[Fact]
-		public void DiscoversPublicAndStatic()
+		[Theory]
+		[InlineData(false)]
+		[InlineData(true)]
+		public void DiscoversPublicAndStatic(bool il)
 		{
-			GetInst<DiscoversPublicAndStaticClass>();
+			GetInst<DiscoversPublicAndStaticClass>(il);
 			DiscoversPublicAndStaticClass.PublicStatic
 				.Should().Be(SUCCESS);
 		}
@@ -90,10 +98,12 @@ namespace Decorator.Tests
 		[Discover(BindingFlags.NonPublic | BindingFlags.Static)]
 		public class DiscoversPrivateAndStaticClass : DiscoverAttributeTestsBase { }
 
-		[Fact]
-		public void DiscoversPrivateAndStatic()
+		[Theory]
+		[InlineData(false)]
+		[InlineData(true)]
+		public void DiscoversPrivateAndStatic(bool il)
 		{
-			GetInst<DiscoversPrivateAndStaticClass>();
+			GetInst<DiscoversPrivateAndStaticClass>(il);
 			DiscoversPrivateAndStaticClass.PrivateStaticAccessor
 				.Should().Be(SUCCESS);
 		}

@@ -70,7 +70,10 @@ namespace Decorator.Tests
 		[MemberData(nameof(IgnoredData))]
 		public void Ignored(SerializationTestsIgnoredAttributeBase test, object[] serializedData)
 		{
-			DConverter<SerializationTestsIgnoredAttributeBase>.Serialize(test)
+			TestConverter<SerializationTestsIgnoredAttributeBase>.Serialize(false, test)
+				.Should().BeEquivalentTo(serializedData);
+
+			TestConverter<SerializationTestsIgnoredAttributeBase>.Serialize(true, test)
 				.Should().BeEquivalentTo(serializedData);
 		}
 
@@ -104,7 +107,10 @@ namespace Decorator.Tests
 		[MemberData(nameof(RequiredData))]
 		public void Required(SerializationTestsRequiredAttributeBase test, object[] serializedData)
 		{
-			DConverter<SerializationTestsRequiredAttributeBase>.Serialize(test)
+			TestConverter<SerializationTestsRequiredAttributeBase>.Serialize(false, test)
+				.Should().BeEquivalentTo(serializedData);
+
+			TestConverter<SerializationTestsRequiredAttributeBase>.Serialize(true, test)
 				.Should().BeEquivalentTo(serializedData);
 		}
 
@@ -142,7 +148,10 @@ namespace Decorator.Tests
 		[MemberData(nameof(OptionalData))]
 		public void Optional(SerializationTestsOptionalAttributeBase test, object[] serializedData)
 		{
-			DConverter<SerializationTestsOptionalAttributeBase>.Serialize(test)
+			TestConverter<SerializationTestsOptionalAttributeBase>.Serialize(false, test)
+				.Should().BeEquivalentTo(serializedData);
+
+			TestConverter<SerializationTestsOptionalAttributeBase>.Serialize(true, test)
 				.Should().BeEquivalentTo(serializedData);
 		}
 
@@ -176,7 +185,10 @@ namespace Decorator.Tests
 		[MemberData(nameof(ArrayData))]
 		public void Array(SerializationTestsArrayAttributeBase test, object[] serializedData)
 		{
-			DConverter<SerializationTestsArrayAttributeBase>.Serialize(test)
+			TestConverter<SerializationTestsArrayAttributeBase>.Serialize(false, test)
+				.Should().BeEquivalentTo(serializedData);
+
+			TestConverter<SerializationTestsArrayAttributeBase>.Serialize(true, test)
 				.Should().BeEquivalentTo(serializedData);
 		}
 
@@ -240,7 +252,10 @@ namespace Decorator.Tests
 		[MemberData(nameof(FlattenData))]
 		public void Flatten(SerializationTestsFlattenAttributeBase test, object[] serializedData)
 		{
-			DConverter<SerializationTestsFlattenAttributeBase>.Serialize(test)
+			TestConverter<SerializationTestsFlattenAttributeBase>.Serialize(false, test)
+				.Should().BeEquivalentTo(serializedData);
+
+			TestConverter<SerializationTestsFlattenAttributeBase>.Serialize(true, test)
 				.Should().BeEquivalentTo(serializedData);
 		}
 
@@ -295,7 +310,10 @@ namespace Decorator.Tests
 		[MemberData(nameof(FlattenArrayData))]
 		public void FlattenArray(SerializationTestsFlattenArrayAttributeBase test, object[] serializedData)
 		{
-			DConverter<SerializationTestsFlattenArrayAttributeBase>.Serialize(test)
+			TestConverter<SerializationTestsFlattenArrayAttributeBase>.Serialize(false, test)
+				.Should().BeEquivalentTo(serializedData);
+
+			TestConverter<SerializationTestsFlattenArrayAttributeBase>.Serialize(true, test)
 				.Should().BeEquivalentTo(serializedData);
 		}
 

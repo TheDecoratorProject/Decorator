@@ -9,11 +9,11 @@ namespace Decorator.Tests.ModuleTests
 {
 	public static class Helpers
 	{
-		public static object[] GenerateAndCorrupt<T>(int pos)
+		public static object[] GenerateAndCorrupt<T>(bool il, int pos)
 			where T : new()
 		{
 			var item = new T();
-			var result = DConverter<T>.Serialize(item);
+			var result = TestConverter<T>.Serialize(il, item);
 
 			if (result[pos].GetType() == typeof(int))
 			{
@@ -27,20 +27,20 @@ namespace Decorator.Tests.ModuleTests
 			return result;
 		}
 
-		public static int EndsOn<T>(object[] deserialize)
+		public static int EndsOn<T>(bool il, object[] deserialize)
 			where T : new()
 		{
 			var position = 0;
 
-			DConverter<T>.TryDeserialize(deserialize, ref position, out _)
+			TestConverter<T>.TryDeserialize(il, deserialize, ref position, out _)
 				.Should().Be(false, "Ensure the data being modified is corrupt.\r\nIf this happens to sometimes pass, please revise the data corruptor.");
 
 			return position;
 		}
 
-		public static int LengthOfDefault<T>()
+		public static int LengthOfDefault<T>(bool il)
 			where T : new()
-			=> DConverter<T>.Serialize(new T()).Length;
+			=> TestConverter<T>.Serialize(il, new T()).Length;
 
 		public static PropertyInfo[] GetProperties<T>()
 			where T : new()

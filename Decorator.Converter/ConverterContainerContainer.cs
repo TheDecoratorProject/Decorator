@@ -1,13 +1,14 @@
 ﻿using Decorator.ModuleAPI;
+using System;
 
 namespace Decorator.Converter
 {
 	public class ConverterContainerContainer : BaseContainer
 	{
-		internal ConverterContainerContainer(Member member, IConverterContainer container)
+		public ConverterContainerContainer(Member member, IConverterContainer container)
 		{
 			Member = member;
-			Container = container;
+			Container = container ?? throw new ArgumentNullException(nameof(container));
 		}
 
 		public IConverterContainer Container { get; }

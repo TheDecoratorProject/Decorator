@@ -35,7 +35,7 @@ namespace Decorator.Modules
 			{
 				object value = array[i++];
 
-				if (value is T || // TODO: oh no, we need to unit test this :(
+				if (value is T || 
 					(_valueType ? false : value == null))
 				{
 					SetValue(instance, value);

@@ -68,8 +68,13 @@ namespace Decorator.Tests
 		[Theory]
 		[InlineData("Not enough args", "a")]
 		public void Ignored(string comment, params object[] deserializeInfo)
-			=> DConverter<InvalidDeserializationTestsIgnoredAttributeBase>.TryDeserialize(deserializeInfo, out _)
+		{
+			TestConverter<InvalidDeserializationTestsIgnoredAttributeBase>.TryDeserialize(false, deserializeInfo, out _)
 				.Should().BeFalse(comment);
+
+			TestConverter<InvalidDeserializationTestsIgnoredAttributeBase>.TryDeserialize(true, deserializeInfo, out _)
+				.Should().BeFalse(comment);
+		}
 
 		[Theory]
 		[InlineData("Null parameter", null)]
@@ -83,8 +88,13 @@ namespace Decorator.Tests
 		[InlineData("Not the right type for reference type", 5f, 0)]
 		[InlineData("Not the right types", 5f, 5f)]
 		public void Required(string comment, params object[] deserializeInfo)
-			=> DConverter<InvalidDeserializationTestsRequiredAttributeBase>.TryDeserialize(deserializeInfo, out _)
-				.Should().BeFalse(comment);
+		{
+			TestConverter<InvalidDeserializationTestsRequiredAttributeBase>.TryDeserialize(false, deserializeInfo, out _)
+				  .Should().BeFalse(comment);
+
+			TestConverter<InvalidDeserializationTestsRequiredAttributeBase>.TryDeserialize(true, deserializeInfo, out _)
+				  .Should().BeFalse(comment);
+		}
 
 		[Theory]
 		[InlineData("Null parameter", null)]
@@ -93,8 +103,13 @@ namespace Decorator.Tests
 		[InlineData("Single valid parameter", new object[] { "" })]
 		[InlineData("Single invalid parameter", new object[] { 0 })]
 		public void Optional(string comment, params object[] deserializeInfo)
-			=> DConverter<InvalidDeserializationTestsOptionalAttributeBase>.TryDeserialize(deserializeInfo, out _)
-				.Should().BeFalse(comment);
+		{
+			TestConverter<InvalidDeserializationTestsOptionalAttributeBase>.TryDeserialize(false, deserializeInfo, out _)
+				  .Should().BeFalse(comment);
+
+			TestConverter<InvalidDeserializationTestsOptionalAttributeBase>.TryDeserialize(true, deserializeInfo, out _)
+				  .Should().BeFalse(comment);
+		}
 
 		[Theory]
 		[InlineData("Null parameter", null)]
@@ -110,8 +125,13 @@ namespace Decorator.Tests
 		[InlineData("Largest array size", new object[] { 3, "a", "b", "c", int.MaxValue })]
 		[InlineData("Smallest array size", new object[] { 3, "a", "b", "c", int.MinValue })]
 		public void Array(string comment, params object[] deserializeInfo)
-			=> DConverter<InvalidDeserializationTestsArrayAttributeBase>.TryDeserialize(deserializeInfo, out _)
-				.Should().BeFalse(comment);
+		{
+			TestConverter<InvalidDeserializationTestsArrayAttributeBase>.TryDeserialize(false, deserializeInfo, out _)
+				  .Should().BeFalse(comment);
+
+			TestConverter<InvalidDeserializationTestsArrayAttributeBase>.TryDeserialize(true, deserializeInfo, out _)
+				  .Should().BeFalse(comment);
+		}
 
 		[Theory]
 		[InlineData("Null parameter", null)]
@@ -119,8 +139,13 @@ namespace Decorator.Tests
 		[InlineData("Single null parameter", new object[] { null })]
 		[InlineData("Optionals aren't fufilled", new object[] { "", 0 })]
 		public void Flatten(string comment, params object[] deserializeInfo)
-			=> DConverter<InvalidDeserializationTestsFlattenAttributeBase>.TryDeserialize(deserializeInfo, out _)
-				.Should().BeFalse(comment);
+		{
+			TestConverter<InvalidDeserializationTestsFlattenAttributeBase>.TryDeserialize(false, deserializeInfo, out _)
+				  .Should().BeFalse(comment);
+
+			TestConverter<InvalidDeserializationTestsFlattenAttributeBase>.TryDeserialize(true, deserializeInfo, out _)
+				  .Should().BeFalse(comment);
+		}
 
 		[Theory]
 		[InlineData("Null parameter", null)]
@@ -137,7 +162,12 @@ namespace Decorator.Tests
 		[InlineData("Largest array size", new object[] { 3, "a", 1, "b", 2, "c", 3, int.MaxValue, int.MaxValue })]
 		[InlineData("Smallest array size", new object[] { 3, "a", 1, "b", 2, "c", 3, int.MinValue, int.MinValue })]
 		public void FlattenArray(string comment, params object[] deserializeInfo)
-			=> DConverter<InvalidDeserializationTestsFlattenArrayAttributeBase>.TryDeserialize(deserializeInfo, out _)
-				.Should().BeFalse(comment);
+		{
+			TestConverter<InvalidDeserializationTestsFlattenArrayAttributeBase>.TryDeserialize(false, deserializeInfo, out _)
+				  .Should().BeFalse(comment);
+
+			TestConverter<InvalidDeserializationTestsFlattenArrayAttributeBase>.TryDeserialize(true, deserializeInfo, out _)
+				  .Should().BeFalse(comment);
+		}
 	}
 }
