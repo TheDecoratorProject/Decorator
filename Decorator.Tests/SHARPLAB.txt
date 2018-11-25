@@ -1,0 +1,47 @@
+using System;
+public static class C {
+    public static bool Test(object[] array, ref int i, out TestClass result) {
+        result = new TestClass();
+        
+        if (array.Length <= i)
+        {
+            return false;
+        }
+        
+        object obj = array[i];
+        
+        if (!(obj is string ||
+              obj == null))
+        {
+            return false;
+        }
+        
+        i++;
+        
+        result.MyReferenceType = (string)obj;
+        
+        if (array.Length <= i)
+        {
+            return false;
+        }
+        
+        object obj2 = array[i];
+        
+        if (obj2 is int)
+        {
+            return false;
+        }
+        
+        i++;
+        
+        result.MyValueType = (int)obj2;
+        
+        return true;
+    }
+    
+    public class TestClass
+    {
+        public string MyReferenceType {get;set;}
+        public int MyValueType {get;set;}
+    }
+}

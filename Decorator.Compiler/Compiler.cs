@@ -176,7 +176,7 @@ namespace Decorator.Compiler
 
 			// object[] objArray = new object[objSize];
 			il.EmitLoadLocalVariable(objSize);
-			il.EmitNewArray(typeof(object));
+			il.EmitNewArray<object>();
 			il.EmitSetLocalVariable(objArray);
 
 			int c = 0;
@@ -329,7 +329,7 @@ namespace Decorator.Compiler
 							},
 							() =>
 							{
-								il.EmitLoad(typeof(object));
+								il.EmitLoad<object>();
 								emitValueToSetTo();
 							});
 					},

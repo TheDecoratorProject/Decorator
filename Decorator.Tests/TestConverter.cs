@@ -78,8 +78,8 @@ namespace Decorator.Tests
 	public static class TestConverter<T>
 		where T : new()
 	{
-		private static readonly IConverter<T> _converter;
-		private static readonly IConverter<T> _ilconverter;
+		public static readonly IConverter<T> _converter;
+		public static readonly IConverter<T> _ilconverter;
 
 		static TestConverter()
 		{

@@ -91,24 +91,30 @@ namespace Decorator.Tests
 
 		[Theory]
 		[InlineData("Normal Deserialization", "", 0)]
-		[InlineData("Literally anything else", null, null)]
-		[InlineData("Literally anything else", "", null)]
-		[InlineData("Literally anything else", "", "")]
-		[InlineData("Literally anything else", null, "")]
-		[InlineData("Literally anything else", 0, null)]
-		[InlineData("Literally anything else", 0, 0)]
-		[InlineData("Literally anything else", null, 0)]
-		[InlineData("Literally anything else", 0, "")]
+		[InlineData("1, Literally anything else", null, null)]
+		[InlineData("2, Literally anything else", "", null)]
+		[InlineData("3, Literally anything else", "", "")]
+		[InlineData("4, Literally anything else", null, "")]
+		[InlineData("5, Literally anything else", 0, null)]
+		[InlineData("6, Literally anything else", 0, 0)]
+		[InlineData("7, Literally anything else", null, 0)]
+		[InlineData("8, Literally anything else", 0, "")]
 		[InlineData("Not the right reference type", 5f, 0)]
 		[InlineData("Not the right value type", "", 5f)]
 		[InlineData("Not the right types", 5f, 5f)]
 		public void Optional(string comment, params object[] deserializeInfo)
 		{
-			TestConverter<DeserializationTestsOptionalAttributeBase>.TryDeserialize(false, deserializeInfo, out _)
-				  .Should().BeTrue(comment);
+			((Action)(() =>
+			{
+				TestConverter<DeserializationTestsOptionalAttributeBase>.TryDeserialize(false, deserializeInfo, out _)
+				  .Should().BeTrue($"NO IL - {comment}");
+			})).Should().NotThrow("NO IL");
 
-			TestConverter<DeserializationTestsOptionalAttributeBase>.TryDeserialize(true, deserializeInfo, out _)
-				  .Should().BeTrue(comment);
+			((Action)(() =>
+			{
+				TestConverter<DeserializationTestsOptionalAttributeBase>.TryDeserialize(true, deserializeInfo, out _)
+				  .Should().BeTrue($"IL - {comment}");
+			})).Should().NotThrow("IL");
 		}
 
 		[Theory]
