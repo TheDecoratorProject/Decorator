@@ -10,18 +10,15 @@ namespace Decorator.Converter
 	{
 		public ILConverter(BaseModule[] members, ILSerialize<T> ilSerialize, ILDeserialize<T> ilDeserialize)
 		{
-			_serialize = ilSerialize;
-			_deserialize = ilDeserialize;
+			Serialize = ilSerialize;
+			Deserialize = ilDeserialize;
 
 			_members = members;
 			Members = new ReadOnlyCollection<BaseModule>(_members);
 		}
 
-		private readonly ILSerialize<T> _serialize;
-		private readonly ILDeserialize<T> _deserialize;
-
-		public ILSerialize<T> Serialize => _serialize;
-		public ILDeserialize<T> Deserialize => _deserialize;
+		public ILSerialize<T> Serialize { get; }
+		public ILDeserialize<T> Deserialize { get; }
 
 		private readonly BaseModule[] _members;
 		public ReadOnlyCollection<BaseModule> Members { get; }
@@ -39,9 +36,9 @@ namespace Decorator.Converter
 		}
 
 		public bool TryDeserialize(object[] array, ref int arrayIndex, out T result)
-			=> _deserialize(array, ref arrayIndex, out result);
+			=> Deserialize(array, ref arrayIndex, out result);
 
 		object[] IConverter<T>.Serialize(T item)
-			=> _serialize(item);
+			=> Serialize(item);
 	}
 }

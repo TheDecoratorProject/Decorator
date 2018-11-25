@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Decorator.ModuleAPI
 {
-	public struct Member : IEquatable<Member>
+	public struct Member
 	{
 		public Member(PropertyInfo property)
 		{
@@ -22,16 +22,5 @@ namespace Decorator.ModuleAPI
 		public MemberInfo GetMember { get; }
 
 		public Type MemberType { get; }
-
-		public bool Equals(Member other)
-		{
-			if(other.GetMember == GetMember &&
-				other.MemberType == MemberType)
-			{
-				return true;
-			}
-
-			return false;
-		}
 	}
 }

@@ -13,7 +13,7 @@ namespace Decorator.Tests
 		public string TestMember { get; set; }
 
 		public static BaseContainer GetTestMember()
-			=> new Container(typeof(string), new Member(typeof(ModuleBuilderTests).GetProperty(nameof(TestMember))));
+			=> new Container(new Member(typeof(ModuleBuilderTests).GetProperty(nameof(TestMember))));
 
 		[Fact]
 		public void Throws_InvalidDeclarationException_When_MemberInfoIsNull()

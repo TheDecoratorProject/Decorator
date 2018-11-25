@@ -24,7 +24,7 @@ namespace Decorator.Tests.IL
 			var c = new Compiler.Compiler<TestClass>();
 			c.SupportsIL(c.Compile((i) =>
 			{
-				return new Container(((PropertyInfo)i).PropertyType, new Member((PropertyInfo)i));
+				return new Container(new Member((PropertyInfo)i));
 			}))
 				.Should()
 				.BeTrue();
@@ -37,7 +37,7 @@ namespace Decorator.Tests.IL
 
 			var deserializer = c.CompileILDeserialize(c.Compile((i) =>
 			{
-				return new Container(((PropertyInfo)i).PropertyType, new Member((PropertyInfo)i));
+				return new Container(new Member((PropertyInfo)i));
 			}));
 
 			int l = 0;
@@ -54,7 +54,7 @@ namespace Decorator.Tests.IL
 
 			var serializer = c.CompileILSerialize(c.Compile((i) =>
 			{
-				return new Container(((PropertyInfo)i).PropertyType, new Member((PropertyInfo)i));
+				return new Container(new Member((PropertyInfo)i));
 			}));
 
 			var result = serializer(new TestClass

@@ -39,7 +39,7 @@ namespace Decorator.Benchmarks
 
 			var modules = c.Compile((i) =>
 			{
-				return new Container(((PropertyInfo)i).PropertyType, new Member((PropertyInfo)i));
+				return new Container(new Member((PropertyInfo)i));
 			});
 
 			_ilDes = c.CompileILDeserialize(modules);
