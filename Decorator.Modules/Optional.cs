@@ -70,15 +70,15 @@ namespace Decorator.Modules
 					il.EmitIsInstance<T>();
 					il.EmitShortBranchFalse(ifCompleted);
 
-					il.EmitLoadLocalVariable(local);
-					il.EmitSetLocalVariable(isInst);
+					// result.Member = (int)isBranchSet;
 					ilMethods.SetMemberValue(() =>
 					{
-						il.EmitLoadLocalVariable(isInst);
+						il.EmitLoadLocalVariable(local);
 					});
 
 					il.MarkLabel(ifCompleted);
 
+					// i++;
 					ilMethods.AddToIndex(() => il.EmitConstantInt(1));
 				}
 				else

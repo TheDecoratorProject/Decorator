@@ -90,30 +90,55 @@ namespace Decorator.Tests
 		}
 
 		[Theory]
-		[InlineData("Normal Deserialization", "", 0)]
+		[InlineData("Normal Deserialization", "a", 1)]
 		[InlineData("1, Literally anything else", null, null)]
-		[InlineData("2, Literally anything else", "", null)]
-		[InlineData("3, Literally anything else", "", "")]
-		[InlineData("4, Literally anything else", null, "")]
-		[InlineData("5, Literally anything else", 0, null)]
-		[InlineData("6, Literally anything else", 0, 0)]
-		[InlineData("7, Literally anything else", null, 0)]
-		[InlineData("8, Literally anything else", 0, "")]
-		[InlineData("Not the right reference type", 5f, 0)]
-		[InlineData("Not the right value type", "", 5f)]
+		[InlineData("2, Literally anything else", "a", null)]
+		[InlineData("3, Literally anything else", "a", "a")]
+		[InlineData("4, Literally anything else", null, "a")]
+		[InlineData("5, Literally anything else", 1, null)]
+		[InlineData("6, Literally anything else", 1, 1)]
+		[InlineData("7, Literally anything else", null, 1)]
+		[InlineData("8, Literally anything else", 1, "a")]
+		[InlineData("Not the right reference type", 5f, 1)]
+		[InlineData("Not the right value type", "a", 5f)]
 		[InlineData("Not the right types", 5f, 5f)]
 		public void Optional(string comment, params object[] deserializeInfo)
 		{
 			((Action)(() =>
 			{
-				TestConverter<DeserializationTestsOptionalAttributeBase>.TryDeserialize(false, deserializeInfo, out _)
+				TestConverter<DeserializationTestsOptionalAttributeBase>.TryDeserialize(false, deserializeInfo, out var item)
 				  .Should().BeTrue($"NO IL - {comment}");
+
+				if (deserializeInfo[0] is string str)
+				{
+					item.MyReferenceType
+						.Should().Be(str);
+				}
+
+				if (deserializeInfo[1] is int intg)
+				{
+					item.MyValueType
+						.Should().Be(intg);
+				}
 			})).Should().NotThrow("NO IL");
 
 			((Action)(() =>
 			{
-				TestConverter<DeserializationTestsOptionalAttributeBase>.TryDeserialize(true, deserializeInfo, out _)
+				TestConverter<DeserializationTestsOptionalAttributeBase>.TryDeserialize(true, deserializeInfo, out var item)
 				  .Should().BeTrue($"IL - {comment}");
+
+				if (deserializeInfo[0] is string str)
+				{
+					item.MyReferenceType
+						.Should().Be(str);
+				}
+
+				if (deserializeInfo[1] is int intg)
+				{
+					item.MyValueType
+						.Should().Be(intg);
+				}
+
 			})).Should().NotThrow("IL");
 		}
 
