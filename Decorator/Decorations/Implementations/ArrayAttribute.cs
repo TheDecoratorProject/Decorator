@@ -30,17 +30,17 @@ namespace Decorator
 		private ArrayDecoration<T> MakeDecoration<T>(MemberInfo member)
 			=> new ArrayDecoration<T>
 			(
-				MemberUtils.GetSetMethod(member),
-				MemberUtils.GetGetMethod(member)
+				MemberUtils.GenerateSetMethod(member),
+				MemberUtils.GenerateGetMethod(member)
 			);
 
 		public class ArrayDecoration<T> : IDecoration
 		{
 			private readonly bool _canBeNull;
-			private readonly Action<object, object> _setMethod;
-			private readonly Func<object, object> _getMethod;
+			private readonly SetMethod _setMethod;
+			private readonly GetMethod _getMethod;
 
-			public ArrayDecoration(Action<object, object> setMethod, Func<object, object> getMethod)
+			public ArrayDecoration(SetMethod setMethod, GetMethod getMethod)
 			{
 				_setMethod = setMethod;
 				_getMethod = getMethod;

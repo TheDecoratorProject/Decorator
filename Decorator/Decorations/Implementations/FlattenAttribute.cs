@@ -19,8 +19,8 @@ namespace Decorator
 		private IDecoration MakeDecoration<T>(MemberInfo memberInfo)
 			=> new FlattenDecoration<T>
 			(
-				MemberUtils.GetGetMethod(memberInfo),
-				MemberUtils.GetSetMethod(memberInfo)
+				MemberUtils.GenerateGetMethod(memberInfo),
+				MemberUtils.GenerateSetMethod(memberInfo)
 			);
 
 		public class FlattenDecoration<T> : IDecoration
@@ -38,13 +38,15 @@ namespace Decorator
 			// and you will too.
 
 			private readonly IDecorator<T> _decorator;
-			private readonly Func<object, object> _getMethod;
-			private readonly Action<object, object> _setMethod;
+			private readonly GetMethod _getMethod;
+			private readonly SetMethod _setMethod;
 
-			public FlattenDecoration(Func<object, object> getMethod, Action<object, object> setMethod)
+			public FlattenDecoration(GetMethod getMethod, SetMethod setMethod)
 			{
 				_decorator = DDecorator<T>.Instance;
 				_getMethod = getMethod;
+				_getMethod = getMethod;
+				_setMethod = setMethod;
 				_setMethod = setMethod;
 			}
 
