@@ -3,7 +3,7 @@
 namespace Decorator
 {
 	// the static
-	public partial class DDecorator<T>
+	public class DDecorator<T>
 	{
 		public static Decorator<T> Instance { get; } =
 			new Decorator<T>

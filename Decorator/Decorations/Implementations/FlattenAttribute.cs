@@ -45,8 +45,6 @@ namespace Decorator
 			{
 				_decorator = DDecorator<T>.Instance;
 				_getMethod = getMethod;
-				_getMethod = getMethod;
-				_setMethod = setMethod;
 				_setMethod = setMethod;
 			}
 

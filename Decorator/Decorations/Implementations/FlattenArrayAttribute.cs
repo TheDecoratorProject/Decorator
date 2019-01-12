@@ -1,18 +1,19 @@
 ﻿using SwissILKnife;
-
 using System;
+using System.Collections.Generic;
 using System.Reflection;
+using System.Text;
 
 namespace Decorator
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-	public sealed class ArrayAttribute : Attribute, IDecorationFactory
+	public class FlattenArrayAttribute : Attribute, IDecorationFactory
 	{
-		public ArrayAttribute() : this(short.MaxValue)
+		public FlattenArrayAttribute() : this(short.MaxValue)
 		{
 		}
 
-		public ArrayAttribute(int maxSize) => MaxSize = maxSize;
+		public FlattenArrayAttribute(int maxSize) => MaxSize = maxSize;
 
 		public int MaxSize { get; set; }
 
@@ -35,27 +36,29 @@ namespace Decorator
 			return input.GetElementType();
 		}
 
-		private ArrayDecoration<T> MakeDecoration<T>(MemberInfo member)
-			=> new ArrayDecoration<T>
+		private FlattenArrayDecoration<T> MakeDecoration<T>(MemberInfo member)
+			=> new FlattenArrayDecoration<T>
 			(
 				MemberUtils.GenerateSetMethod(member),
 				MemberUtils.GenerateGetMethod(member),
 				MaxSize
 			);
 
-		public class ArrayDecoration<T> : IDecoration
+		public class FlattenArrayDecoration<T> : IDecoration
 		{
 			private readonly bool _canBeNull;
+			private readonly Decorator<T> _decorator;
 			private readonly SetMethod _setMethod;
 			private readonly GetMethod _getMethod;
 			private readonly int _maxSize;
 
-			public ArrayDecoration(SetMethod setMethod, GetMethod getMethod, int maxSize)
+			public FlattenArrayDecoration(SetMethod setMethod, GetMethod getMethod, int maxSize)
 			{
 				_setMethod = setMethod;
 				_getMethod = getMethod;
 				_maxSize = maxSize;
 				_canBeNull = !typeof(T).IsValueType; // IsReferenceType
+				_decorator = DDecorator<T>.Instance;
 			}
 
 			// =-------=
@@ -70,17 +73,6 @@ namespace Decorator
 			// i'm pretty much relying on the fact that i tested these thoroughly in the previous decorator
 			// so if you're reading this and don't know how to help out... :D?
 
-			public void Serialize(ref object[] array, object instance, ref int index)
-			{
-				var arrayVal = (T[])_getMethod(instance);
-				array[index++] = arrayVal.Length;
-
-				for (var arrayValInex = 0; arrayValInex < arrayVal.Length; arrayValInex++)
-				{
-					array[index++] = arrayVal[arrayValInex];
-				}
-			}
-
 			public bool Deserialize(ref object[] array, object instance, ref int index)
 			{
 				if (!(array[index] is int len))
@@ -88,27 +80,20 @@ namespace Decorator
 					return false;
 				}
 
-				if (len > _maxSize || len < 0 ||
-					(array.Length <= index + len))
-				{
-					return false;
-				}
+				index++;
+
+				if (len > _maxSize || len < 0) return false;
 
 				var desArray = new object[len];
 
-				index++;
-
 				for (var desArrayIndex = 0; desArrayIndex < len; desArrayIndex++)
 				{
-					if (!(array[index] is T ||
-						(_canBeNull && array[index] == null)))
+					if (!_decorator.TryDeserialize(array, ref index, out var item))
 					{
 						return false;
 					}
 
-					desArray[desArrayIndex] = array[index];
-
-					index++;
+					desArray[desArrayIndex] = item;
 				}
 
 				_setMethod(instance, desArray);
@@ -116,7 +101,34 @@ namespace Decorator
 				return true;
 			}
 
-			public void EstimateSize(object instance, ref int size) => size += ((T[])_getMethod(instance)).Length + 1;
+			public void Serialize(ref object[] array, object instance, ref int index)
+			{
+				var arrayVal = (T[])_getMethod(instance);
+
+				array[index++] = arrayVal.Length;
+
+				for (var arrayValIndex = 0; arrayValIndex < arrayVal.Length; arrayValIndex++)
+				{
+					var data = _decorator.Serialize(arrayVal[arrayValIndex]);
+
+					for (var arrayIndex = 0; arrayIndex < data.Length; arrayIndex++)
+					{
+						array[index++] = data[arrayIndex];
+					}
+				}
+			}
+
+			public void EstimateSize(object instance, ref int i)
+			{
+				var array = (T[])_getMethod(instance);
+
+				i++;
+
+				for (var arrayIndex = 0; arrayIndex < array.Length; arrayIndex++)
+				{
+					i += _decorator.EstimateSize(array[arrayIndex]);
+				}
+			}
 		}
 	}
 }

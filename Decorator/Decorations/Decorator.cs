@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Decorator
 {
-	public partial class Decorator<T> : IDecorator<T>
+	public class Decorator<T> : IDecorator<T>
 	{
 		private readonly IDecoration[] _decorations;
 
