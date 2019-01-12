@@ -50,21 +50,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Decorator.Attributes\Decorator.Attributes.csproj">
-      <Project>{53CA159F-19FC-483D-8483-015B896EA925}</Project>
-      <Name>Decorator.Attributes</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Decorator.Compiler\Decorator.Compiler.csproj">
-      <Project>{B7220918-EAC2-4068-836B-2CC9DDF83F32}</Project>
-      <Name>Decorator.Compiler</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Decorator.ModuleAPI\Decorator.ModuleAPI.csproj">
       <Project>{BFC62B04-4970-4FC1-B7AC-6BD2134C3B7E}</Project>
       <Name>Decorator.ModuleAPI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Decorator.Modules\Decorator.Modules.csproj">
-      <Project>{8A8EBBFC-0DE2-4613-A785-D5163FE66719}</Project>
-      <Name>Decorator.Modules</Name>
     </ProjectReference>
     <ProjectReference Include="..\Decorator\Decorator.csproj">
       <Project>{939a06e0-baf5-45d2-a27c-0d6f6910838a}</Project>

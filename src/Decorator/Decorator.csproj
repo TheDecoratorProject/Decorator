@@ -22,8 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Decorator.Converter\Decorator.Converter.csproj" />
-    <ProjectReference Include="..\Decorator.Modules\Decorator.Modules.csproj" />
+    <ProjectReference Include="..\Decorator.ModuleAPI\Decorator.ModuleAPI.csproj" />
   </ItemGroup>
 
   <ItemGroup>

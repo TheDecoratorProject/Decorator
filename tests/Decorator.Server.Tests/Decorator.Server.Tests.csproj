@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Decorator.Server\Decorator.Server.csproj" />
-    <ProjectReference Include="..\Decorator\Decorator.csproj" />
+    <ProjectReference Include="..\..\src\Decorator.Server\Decorator.Server.csproj" />
+    <ProjectReference Include="..\Decorator.Tests\Decorator.Tests.csproj" />
   </ItemGroup>
 
 </Project>
