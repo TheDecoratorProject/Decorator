@@ -1,4 +1,4 @@
-# Decorator
+# Decorator 
 
 Decorate classes with attributes and serialize object arrays into a concrete classes.
 
