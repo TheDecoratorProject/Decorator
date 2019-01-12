@@ -28,7 +28,7 @@ To see **examples**, **tutorial usage**, etc., go to the appropriate repo.
 
 [![MIT License (MIT)][badge_license]][link_license]
 
-[badge_nuget_version]: https://img.shields.io/nuget/v/SirJosh3917.Decorator.svg
+[badge_nuget_version]: https://img.shields.io/nuget/vpre/SirJosh3917.Decorator.svg
 [badge_nuget_downloads]: https://img.shields.io/nuget/dt/SirJosh3917.Decorator.svg
 [badge_appveyor_build]: https://ci.appveyor.com/api/projects/status/6ooio3rqlsbhs1q2?svg=true
 [badge_appveyor_tests]: https://img.shields.io/appveyor/tests/SirJosh3917/Decorator/master.svg
