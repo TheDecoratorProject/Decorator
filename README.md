@@ -20,8 +20,9 @@ This is what you're probably here for.
 
 To see **examples**, **tutorial usage**, etc., go to the appropriate repo.
 
-[This was the repo on the final commit of the pre 2.0.x Decoratr series.][link_20x]
-[This was the repo on the final commit of the 1.x.x Decorator series.][link_1xx]
+[This was the repo on the final commit of the pre 2.0.x Decorator series.][link_legacy_20x]
+
+[This was the repo on the final commit of the 1.x.x Decorator series.][link_legacy_1xx]
 
 ## License
 
